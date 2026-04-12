@@ -1033,12 +1033,19 @@ let state = {
   values: { LIMITED:15, ICON:10, HERO:5, BASE:1 },
 };
 
+const CATALOG_VERSION = DEFAULT_CARDS.length; // 630
+
 function loadState() {
   try {
     const s = localStorage.getItem('wc2026');
     if (s) {
       const saved = JSON.parse(s);
-      state.cards = saved.cards || DEFAULT_CARDS;
+      // Si le catalogue sauvegardé n'a pas le bon nombre de cartes → reset catalogue
+      if (!saved.cards || saved.cards.length !== CATALOG_VERSION) {
+        state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+      } else {
+        state.cards = saved.cards;
+      }
       state.collection = saved.collection || {};
       state.wishlist = saved.wishlist || [];
       state.players = saved.players || [];
