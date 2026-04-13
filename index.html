@@ -384,9 +384,124 @@
       .hero-title{font-size:1.7rem;}
       .hero-stat-row{gap:14px;}
     }
+
+    /* ═══════════════ PROFILE SCREEN ═══════════════ */
+    #profile-screen{
+      position:fixed;inset:0;z-index:1000;
+      background:linear-gradient(145deg,#07080f 0%,#0e1120 50%,#07080f 100%);
+      display:flex;align-items:center;justify-content:center;padding:20px;
+      transition:opacity .35s ease;
+    }
+    #profile-screen.ps-hidden{opacity:0;pointer-events:none;}
+    .ps-inner{width:100%;max-width:540px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+    .ps-logo{font-size:2rem;font-weight:900;letter-spacing:1px;
+      background:linear-gradient(120deg,#ffd700,#ff9f43);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      filter:drop-shadow(0 0 18px rgba(255,215,0,.3));}
+    .ps-tagline{font-size:.75rem;color:var(--muted);margin-top:-14px;text-align:center;}
+    .ps-section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);align-self:flex-start;}
+    .ps-profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;width:100%;}
+    .ps-profile-card{
+      background:var(--surface);border:1px solid var(--border);border-radius:14px;
+      padding:16px 10px;cursor:pointer;text-align:center;
+      transition:transform .2s,box-shadow .2s,border-color .2s;
+      display:flex;flex-direction:column;align-items:center;gap:9px;
+    }
+    .ps-profile-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 22px rgba(79,142,247,.22);}
+    .ps-profile-card.ps-new{border-style:dashed;border-color:var(--border);}
+    .ps-profile-card.ps-new:hover{border-color:var(--green);box-shadow:0 8px 22px rgba(46,213,115,.15);}
+    .ps-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff;flex-shrink:0;}
+    .ps-pname{font-size:.8rem;font-weight:700;color:var(--text);}
+    .ps-new-icon{font-size:1.6rem;color:var(--muted);}
+    .ps-new-label{font-size:.74rem;color:var(--muted);}
+
+    /* PIN pad */
+    .ps-pin-wrap{width:100%;max-width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+    .ps-pin-title{font-size:.88rem;font-weight:700;}
+    .ps-pin-who{font-size:.72rem;color:var(--muted);}
+    .ps-pin-dots{display:flex;gap:12px;margin:2px 0;}
+    .ps-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--muted);background:transparent;transition:all .12s;}
+    .ps-dot.on{background:var(--accent);border-color:var(--accent);}
+    .ps-dot.err{background:var(--limited-c);border-color:var(--limited-c);}
+    .ps-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:100%;}
+    .ps-key{padding:13px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:1.05rem;font-weight:700;cursor:pointer;text-align:center;transition:background .12s,transform .1s;user-select:none;}
+    .ps-key:hover{background:var(--accent);border-color:var(--accent);}
+    .ps-key:active{transform:scale(.94);}
+    .ps-key.ps-del{color:var(--muted);font-size:.82rem;}
+    .ps-pin-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:6px 18px;cursor:pointer;font-size:.74rem;transition:color .2s,border-color .2s;}
+    .ps-pin-cancel:hover{color:var(--text);border-color:var(--muted);}
+    .ps-pin-err{font-size:.72rem;color:var(--limited-c);min-height:1em;text-align:center;}
+
+    /* Create form */
+    .ps-create-wrap{width:100%;max-width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;display:flex;flex-direction:column;gap:12px;}
+    .ps-create-title{font-size:.9rem;font-weight:700;text-align:center;}
+    .ps-input{padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.83rem;outline:none;width:100%;}
+    .ps-input:focus{border-color:var(--accent);}
+    .ps-pin-row{display:flex;gap:6px;}
+    .ps-pin-row .ps-input{text-align:center;letter-spacing:6px;font-size:1rem;font-weight:700;}
+    .ps-create-btn{padding:10px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .2s;}
+    .ps-create-btn:hover{background:#3a7ce8;}
+    .ps-create-err{font-size:.72rem;color:var(--limited-c);text-align:center;min-height:1em;}
+    .ps-migrate-notice{font-size:.71rem;color:var(--green);background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.18);border-radius:7px;padding:7px 10px;text-align:center;}
+
+    /* Profile indicator in header */
+    .profile-indicator{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 3px;}
+    .pi-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;color:#fff;flex-shrink:0;}
+    .pi-name{font-size:.7rem;font-weight:600;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .pi-lock{background:transparent;border:none;cursor:pointer;font-size:.78rem;opacity:.45;padding:2px;line-height:1;transition:opacity .2s;}
+    .pi-lock:hover{opacity:1;}
   </style>
 </head>
 <body>
+
+<!-- ══════════════════════════ PROFILE SCREEN ══════════════════════════ -->
+<div id="profile-screen">
+  <div class="ps-inner">
+    <div class="ps-logo">🏆 WC 2026 · Adrenalyn XL</div>
+    <div class="ps-tagline">Doubles &amp; Échanges Panini</div>
+
+    <!-- Liste des profils -->
+    <div id="ps-list">
+      <div class="ps-section-title" id="ps-section-lbl">Choisissez votre profil</div>
+      <div class="ps-profiles-grid" id="ps-profiles-grid"></div>
+    </div>
+
+    <!-- Saisie PIN -->
+    <div id="ps-pin" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;">
+      <div class="ps-pin-wrap">
+        <div class="ps-pin-title">Entrez votre PIN</div>
+        <div class="ps-pin-who" id="ps-pin-who"></div>
+        <div class="ps-pin-dots" id="ps-pin-dots">
+          <div class="ps-dot" id="pd0"></div><div class="ps-dot" id="pd1"></div>
+          <div class="ps-dot" id="pd2"></div><div class="ps-dot" id="pd3"></div>
+        </div>
+        <div class="ps-pad" id="ps-pad">
+          <div class="ps-key" data-k="1">1</div><div class="ps-key" data-k="2">2</div><div class="ps-key" data-k="3">3</div>
+          <div class="ps-key" data-k="4">4</div><div class="ps-key" data-k="5">5</div><div class="ps-key" data-k="6">6</div>
+          <div class="ps-key" data-k="7">7</div><div class="ps-key" data-k="8">8</div><div class="ps-key" data-k="9">9</div>
+          <div class="ps-key ps-del" data-k="del">⌫</div><div class="ps-key" data-k="0">0</div><div class="ps-key ps-del" data-k="cancel" style="font-size:.7rem">✕</div>
+        </div>
+        <div class="ps-pin-err" id="ps-pin-err"></div>
+      </div>
+    </div>
+
+    <!-- Création de profil -->
+    <div id="ps-create" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;">
+      <div class="ps-create-wrap">
+        <div class="ps-create-title">Nouveau profil</div>
+        <div id="ps-migrate-notice" class="ps-migrate-notice" style="display:none">
+          ✅ Collection existante détectée — elle sera importée dans ce profil
+        </div>
+        <input class="ps-input" id="ps-create-name" placeholder="Votre prénom ou pseudo" maxlength="20" autocomplete="off"/>
+        <input class="ps-input ps-pin-row" id="ps-create-pin" type="password" placeholder="PIN (4 chiffres)" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
+        <input class="ps-input ps-pin-row" id="ps-create-pin2" type="password" placeholder="Confirmer PIN" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
+        <button class="ps-create-btn" id="ps-create-submit">Créer le profil</button>
+        <div class="ps-create-err" id="ps-create-err"></div>
+        <button class="ps-pin-cancel" id="ps-create-back">← Retour</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="header-left">
@@ -394,6 +509,11 @@
       <h1>🏆 COUPE DU MONDE DE FOOTBALL 2026</h1>
       <span>Doubles &amp; Échanges · Adrenalyn XL Panini</span>
     </div>
+  </div>
+  <div class="profile-indicator" id="profile-indicator" style="display:none">
+    <div class="pi-avatar" id="pi-avatar"></div>
+    <span class="pi-name" id="pi-name"></span>
+    <button class="pi-lock" onclick="lockProfile()" title="Changer de profil">🔒</button>
   </div>
   <div class="stats-bar">
     <div class="stat"><div class="stat-val sv-blue" id="st-total">0</div><div class="stat-lbl">Cartes total</div></div>
@@ -1399,31 +1519,243 @@ let state = {
 
 const CATALOG_VERSION = DEFAULT_CARDS.length; // 630
 
+// ─────────────────────────────────────────────────────────────────────
+// PROFILES
+// ─────────────────────────────────────────────────────────────────────
+const PROFILES_KEY = 'wc2026_profiles';
+const SESSION_KEY  = 'wc2026_active';
+
+const AVATAR_COLORS = [
+  'linear-gradient(135deg,#4f8ef7,#b44fff)',
+  'linear-gradient(135deg,#ff4757,#ff9f43)',
+  'linear-gradient(135deg,#2ed573,#1a8754)',
+  'linear-gradient(135deg,#ffd700,#ff9f43)',
+  'linear-gradient(135deg,#b44fff,#ff4757)',
+  'linear-gradient(135deg,#4f8ef7,#2ed573)',
+];
+function avatarColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function avatarInitials(name) {
+  return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+let activeProfile = null;
+
+function getProfiles() {
+  try { return JSON.parse(localStorage.getItem(PROFILES_KEY)) || []; } catch { return []; }
+}
+function saveProfiles(profiles) {
+  localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+}
+
+function loadProfileData(profile) {
+  state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
+  state.collection = profile.collection || {};
+  state.wishlist   = profile.wishlist   || [];
+  state.players    = profile.players    || [];
+  state.values     = Object.assign({LIMITED:15,ICON:10,HERO:5,BASE:1}, profile.values || {});
+}
+
 function loadState() {
-  try {
-    const s = localStorage.getItem('wc2026');
-    if (s) {
-      const saved = JSON.parse(s);
-      // Si le catalogue sauvegardé n'a pas le bon nombre de cartes → reset catalogue
-      if (!saved.cards || saved.cards.length !== CATALOG_VERSION) {
-        state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
-      } else {
-        state.cards = saved.cards;
-      }
-      state.collection = saved.collection || {};
-      state.wishlist = saved.wishlist || [];
-      state.players = saved.players || [];
-      state.values = Object.assign({LIMITED:15,ICON:10,HERO:5,BASE:1}, saved.values || {});
-    } else {
-      state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
-    }
-  } catch(e) {
+  // Called only after a profile is activated — loadProfileData handles the real loading
+  if (activeProfile) {
+    loadProfileData(activeProfile);
+  } else {
     state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
   }
 }
 
 function saveState() {
-  localStorage.setItem('wc2026', JSON.stringify(state));
+  if (!activeProfile) return;
+  const profiles = getProfiles();
+  const idx = profiles.findIndex(p => p.id === activeProfile.id);
+  if (idx === -1) return;
+  profiles[idx].collection = state.collection;
+  profiles[idx].wishlist   = state.wishlist;
+  profiles[idx].players    = state.players;
+  profiles[idx].values     = state.values;
+  saveProfiles(profiles);
+  activeProfile = profiles[idx];
+}
+
+async function doLogin(profileId, pin) {
+  const profiles = getProfiles();
+  const profile = profiles.find(p => p.id === profileId);
+  if (!profile) return false;
+  const hash = await sha256(pin);
+  if (hash !== profile.pinHash) return false;
+  sessionStorage.setItem(SESSION_KEY, profileId);
+  activeProfile = profile;
+  loadProfileData(profile);
+  return true;
+}
+
+async function doCreateProfile(name, pin) {
+  const profiles = getProfiles();
+  if (profiles.find(p => p.name.toLowerCase() === name.toLowerCase())) return 'duplicate';
+  const id = uid();
+  const pinHash = await sha256(pin);
+  const newProfile = { id, name, pinHash, collection:{}, wishlist:[], players:[], values:{LIMITED:15,ICON:10,HERO:5,BASE:1} };
+  // Migration : si données legacy présentes et premier profil
+  if (profiles.length === 0) {
+    const legacy = localStorage.getItem('wc2026');
+    if (legacy) {
+      try {
+        const d = JSON.parse(legacy);
+        newProfile.collection = d.collection || {};
+        newProfile.wishlist   = d.wishlist   || [];
+        newProfile.players    = d.players    || [];
+        newProfile.values     = d.values     || newProfile.values;
+      } catch {}
+    }
+  }
+  profiles.push(newProfile);
+  saveProfiles(profiles);
+  sessionStorage.setItem(SESSION_KEY, id);
+  activeProfile = newProfile;
+  loadProfileData(newProfile);
+  return 'ok';
+}
+
+function lockProfile() {
+  sessionStorage.removeItem(SESSION_KEY);
+  activeProfile = null;
+  document.getElementById('profile-indicator').style.display = 'none';
+  showProfileScreen();
+}
+
+function updateProfileIndicator() {
+  if (!activeProfile) return;
+  const ind = document.getElementById('profile-indicator');
+  const av  = document.getElementById('pi-avatar');
+  const nm  = document.getElementById('pi-name');
+  av.style.background = avatarColor(activeProfile.name);
+  av.textContent = avatarInitials(activeProfile.name);
+  nm.textContent  = activeProfile.name;
+  ind.style.display = 'flex';
+}
+
+// ─── Profile screen UI ────────────────────────────────────────────────
+function showProfileScreen() {
+  const ps = document.getElementById('profile-screen');
+  ps.classList.remove('ps-hidden');
+  renderProfileList();
+}
+
+function hideProfileScreen() {
+  const ps = document.getElementById('profile-screen');
+  ps.classList.add('ps-hidden');
+  setTimeout(() => { ps.style.display = 'none'; }, 350);
+}
+
+function renderProfileList() {
+  document.getElementById('ps-list').style.display   = '';
+  document.getElementById('ps-pin').style.display    = 'none';
+  document.getElementById('ps-create').style.display = 'none';
+  document.getElementById('ps-section-lbl').textContent = 'Choisissez votre profil';
+
+  const profiles = getProfiles();
+  const grid = document.getElementById('ps-profiles-grid');
+  grid.innerHTML = '';
+
+  profiles.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'ps-profile-card';
+    card.innerHTML = `
+      <div class="ps-avatar" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>
+      <div class="ps-pname">${p.name}</div>`;
+    card.addEventListener('click', () => showPinEntry(p.id));
+    grid.appendChild(card);
+  });
+
+  // "+" card
+  const newCard = document.createElement('div');
+  newCard.className = 'ps-profile-card ps-new';
+  newCard.innerHTML = `<div class="ps-new-icon">＋</div><div class="ps-new-label">Nouveau profil</div>`;
+  newCard.addEventListener('click', showCreateForm);
+  grid.appendChild(newCard);
+}
+
+let pinTarget = null;
+let pinBuffer = '';
+
+function showPinEntry(profileId) {
+  pinTarget = profileId;
+  pinBuffer = '';
+  const profiles = getProfiles();
+  const p = profiles.find(x => x.id === profileId);
+  document.getElementById('ps-list').style.display   = 'none';
+  document.getElementById('ps-pin').style.display    = 'flex';
+  document.getElementById('ps-create').style.display = 'none';
+  document.getElementById('ps-pin-who').textContent = p ? p.name : '';
+  document.getElementById('ps-pin-err').textContent = '';
+  updatePinDots(false);
+}
+
+function updatePinDots(error) {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.className = 'ps-dot' + (error ? ' err' : (i < pinBuffer.length ? ' on' : ''));
+  }
+}
+
+async function pinKeyPress(k) {
+  if (k === 'cancel') { renderProfileList(); return; }
+  if (k === 'del') { pinBuffer = pinBuffer.slice(0, -1); updatePinDots(false); return; }
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += k;
+  updatePinDots(false);
+  if (pinBuffer.length === 4) {
+    const ok = await doLogin(pinTarget, pinBuffer);
+    if (ok) {
+      hideProfileScreen();
+      updateProfileIndicator();
+      renderAll();
+    } else {
+      updatePinDots(true);
+      document.getElementById('ps-pin-err').textContent = 'PIN incorrect — réessayez';
+      setTimeout(() => { pinBuffer = ''; updatePinDots(false); document.getElementById('ps-pin-err').textContent = ''; }, 900);
+    }
+  }
+}
+
+function showCreateForm() {
+  document.getElementById('ps-list').style.display   = 'none';
+  document.getElementById('ps-pin').style.display    = 'none';
+  document.getElementById('ps-create').style.display = 'flex';
+  document.getElementById('ps-create-name').value = '';
+  document.getElementById('ps-create-pin').value  = '';
+  document.getElementById('ps-create-pin2').value = '';
+  document.getElementById('ps-create-err').textContent = '';
+  // Afficher notice de migration si données legacy présentes et aucun profil
+  const hasLegacy = !!localStorage.getItem('wc2026');
+  const noProfiles = getProfiles().length === 0;
+  document.getElementById('ps-migrate-notice').style.display = (hasLegacy && noProfiles) ? '' : 'none';
+  setTimeout(() => document.getElementById('ps-create-name').focus(), 50);
+}
+
+async function submitCreateProfile() {
+  const name = document.getElementById('ps-create-name').value.trim();
+  const pin  = document.getElementById('ps-create-pin').value.trim();
+  const pin2 = document.getElementById('ps-create-pin2').value.trim();
+  const errEl = document.getElementById('ps-create-err');
+  errEl.textContent = '';
+  if (!name) { errEl.textContent = 'Entrez un prénom ou pseudo'; return; }
+  if (!/^\d{4}$/.test(pin)) { errEl.textContent = 'Le PIN doit contenir exactement 4 chiffres'; return; }
+  if (pin !== pin2) { errEl.textContent = 'Les deux PIN ne correspondent pas'; return; }
+  const result = await doCreateProfile(name, pin);
+  if (result === 'duplicate') { errEl.textContent = 'Ce nom est déjà utilisé'; return; }
+  hideProfileScreen();
+  updateProfileIndicator();
+  renderAll();
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -2171,8 +2503,34 @@ function switchTab(tab) {
 // ─────────────────────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  loadState();
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wiring up profile screen buttons
+  document.getElementById('ps-pad').addEventListener('click', e => {
+    const k = e.target.closest('.ps-key');
+    if (k) pinKeyPress(k.dataset.k);
+  });
+  document.getElementById('ps-create-submit').addEventListener('click', submitCreateProfile);
+  document.getElementById('ps-create-back').addEventListener('click', renderProfileList);
+  document.getElementById('ps-create-pin').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ps-create-pin2').focus(); });
+  document.getElementById('ps-create-pin2').addEventListener('keydown', e => { if (e.key === 'Enter') submitCreateProfile(); });
+
+  // Check for active session
+  const sessionId = sessionStorage.getItem(SESSION_KEY);
+  if (sessionId) {
+    const profiles = getProfiles();
+    const p = profiles.find(x => x.id === sessionId);
+    if (p) {
+      activeProfile = p;
+      loadProfileData(p);
+      document.getElementById('profile-screen').style.display = 'none';
+      updateProfileIndicator();
+    } else {
+      showProfileScreen();
+    }
+  } else {
+    showProfileScreen();
+  }
+
   createParticles();
 
   // 3D tilt on blister card
@@ -2241,9 +2599,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('btn-reset-all').addEventListener('click', () => {
-    if (!confirm('Supprimer toutes les données ? (irréversible)')) return;
-    localStorage.removeItem('wc2026');
-    loadState();
+    if (!confirm('Supprimer toutes les données de ce profil ? (irréversible)')) return;
+    state.collection = {};
+    state.wishlist   = [];
+    state.players    = [];
+    saveState();
     renderAll();
     toast('Données effacées');
   });
