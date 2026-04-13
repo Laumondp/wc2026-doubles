@@ -292,6 +292,19 @@
     .cc-bar-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .85s cubic-bezier(.22,1,.36,1);}
     .cc-info{font-size:.6rem;color:var(--muted);}
 
+    /* Possessed states */
+    .country-card.cc-partial{background:rgba(46,213,115,.07);border-color:rgba(46,213,115,.28);}
+    .country-card.cc-partial .cc-bar-fill{background:var(--green);}
+    .country-card.cc-partial .cc-info{color:var(--green);}
+    .country-card.cc-partial:hover{border-color:rgba(46,213,115,.6);box-shadow:0 6px 20px rgba(46,213,115,.18);}
+    .country-card.cc-complete{background:rgba(46,213,115,.18);border-color:rgba(46,213,115,.55);box-shadow:0 4px 16px rgba(46,213,115,.18);}
+    .country-card.cc-complete .cc-bar-fill{background:linear-gradient(90deg,#2ed573,#7bed9f);}
+    .country-card.cc-complete .cc-name{color:var(--green);}
+    .country-card.cc-complete .cc-info{color:var(--green);font-weight:600;}
+    .country-card.cc-complete:hover{border-color:rgba(46,213,115,.85);box-shadow:0 8px 28px rgba(46,213,115,.3);}
+    .cc-check{display:none;font-size:.65rem;margin-top:2px;}
+    .country-card.cc-complete .cc-check{display:block;color:var(--green);}
+
     /* Slide transitions */
     @keyframes slide-in-left {from{transform:translateX(36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
     @keyframes slide-in-right{from{transform:translateX(-36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
@@ -1934,12 +1947,15 @@ function renderCountryCards(type, slideIn = false) {
     const pct   = total > 0 ? Math.round(owned / total * 100) : 0;
     const div   = document.createElement('div');
     div.className = 'country-card';
+    if (owned > 0 && pct < 100) div.classList.add('cc-partial');
+    if (pct === 100)             div.classList.add('cc-complete');
     div.style.animationDelay = `${i * 0.03}s`;
     div.innerHTML = `
       <div class="cc-flag">${flag || '🌍'}</div>
       <div class="cc-name">${team}</div>
       <div class="cc-bar-wrap"><div class="cc-bar-fill" data-pct="${pct}"></div></div>
       <div class="cc-info">${owned}/${total} · ${pct}%</div>
+      <div class="cc-check">✔ Complète</div>
     `;
     div.addEventListener('click', () => renderCardLevel(type, cc, true));
     grid.appendChild(div);
