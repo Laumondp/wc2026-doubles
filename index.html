@@ -87,9 +87,8 @@
     .c-wish{position:absolute;top:5px;left:5px;background:var(--accent);color:#fff;font-size:.58rem;font-weight:700;padding:2px 5px;border-radius:4px;}
 
     .c-num{font-size:.6rem;color:var(--muted);margin-bottom:3px;}
-    .c-flag{font-size:1.4rem;line-height:1;margin-bottom:3px;}
-    .c-name{font-size:.72rem;font-weight:600;line-height:1.2;margin-bottom:1px;}
-    .c-team{font-size:.62rem;color:var(--muted);margin-bottom:4px;}
+    .c-flag{font-size:1.6rem;line-height:1;margin-bottom:4px;}
+    .c-name{font-size:.72rem;font-weight:600;line-height:1.2;margin-bottom:4px;}
     .c-val{font-size:.68rem;color:var(--or-c);font-weight:600;}
 
     /* QTY CONTROLS */
@@ -1341,9 +1340,8 @@ function renderCard(card, options = {}) {
   div.innerHTML = `
     ${badges}
     <div class="c-num">${card.num}</div>
-    <div class="c-flag">${card.flag || '🌍'}</div>
+    <div class="c-flag" title="${card.team}">${card.flag || '🌍'}</div>
     <div class="c-name">${card.name}</div>
-    <div class="c-team">${card.team}</div>
     ${showVal ? `<div class="c-val">Valeur ${val} pt${val>1?'s':''}</div>` : ''}
     ${readOnly ? '' : `
     <div class="qty-wrap">
