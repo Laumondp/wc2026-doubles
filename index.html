@@ -482,6 +482,13 @@
     .ps-create-err{font-size:.72rem;color:var(--limited-c);text-align:center;min-height:1em;}
     .ps-migrate-notice{font-size:.71rem;color:var(--green);background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.18);border-radius:7px;padding:7px 10px;text-align:center;}
 
+    /* Masquer l'UI quand l'écran profil est actif */
+    body.ps-open header,
+    body.ps-open nav,
+    body.ps-open #filters-bar,
+    body.ps-open main,
+    body.ps-open #toast { display:none !important; }
+
     /* Profile indicator in header */
     .profile-indicator{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px 3px 3px;}
     .pi-avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;color:#fff;flex-shrink:0;}
@@ -1684,7 +1691,9 @@ function updateProfileIndicator() {
 
 // ─── Profile screen UI ────────────────────────────────────────────────
 function showProfileScreen() {
+  document.body.classList.add('ps-open');
   const ps = document.getElementById('profile-screen');
+  ps.style.display = '';
   ps.classList.remove('ps-hidden');
   renderProfileList();
 }
@@ -1692,7 +1701,10 @@ function showProfileScreen() {
 function hideProfileScreen() {
   const ps = document.getElementById('profile-screen');
   ps.classList.add('ps-hidden');
-  setTimeout(() => { ps.style.display = 'none'; }, 350);
+  setTimeout(() => {
+    ps.style.display = 'none';
+    document.body.classList.remove('ps-open');
+  }, 350);
 }
 
 function renderProfileList() {
@@ -2560,6 +2572,8 @@ function toggleTheme() {
 // INIT
 // ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  // Masquer l'UI par défaut jusqu'à connexion
+  document.body.classList.add('ps-open');
   // Apply saved theme immediately
   applyTheme(localStorage.getItem(THEME_KEY) === 'light');
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
