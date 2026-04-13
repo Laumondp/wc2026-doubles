@@ -20,8 +20,46 @@
       --base-c: #4f8ef7;
       --green: #2ed573;
     }
+    body.light {
+      --bg: #f0f2fb;
+      --surface: #ffffff;
+      --surface2: #e6e9f8;
+      --border: #ced3ec;
+      --text: #1b1e2e;
+      --muted: #656d9a;
+      --icon-c: #c9960a;
+      --green: #17a84a;
+    }
+    /* Light mode — éléments avec couleurs hardcodées */
+    body.light header{background:linear-gradient(135deg,#ffffff,#f0f2fb);}
+    body.light nav{background:#ffffff;}
+    body.light .filters{background:#f8f9ff;}
+    body.light .tc-LIMITED{background:linear-gradient(145deg,#fff0f3,#ffdde3) !important;}
+    body.light .tc-ICON   {background:linear-gradient(145deg,#fffceb,#fff7c0) !important;}
+    body.light .tc-HERO   {background:linear-gradient(145deg,#f7eeff,#eedeff) !important;}
+    body.light .tc-BASE   {background:linear-gradient(145deg,#eaf2ff,#dce8ff) !important;}
+    body.light .tc-progress-bar{background:rgba(0,0,0,.08);}
+    body.light .tc-progress-meta{opacity:.55;}
+    body.light .type-card::before{display:none;}
+    body.light .hero-inner{background:linear-gradient(135deg,#eef0fb,#f5f7ff);}
+    body.light #profile-screen{background:linear-gradient(145deg,#e8eaf8,#f5f7ff,#e8eaf8);}
+    body.light .ps-profile-card,body.light .ps-pin-wrap,body.light .ps-create-wrap{background:#fff;}
+    body.light .ps-key{background:#f0f2fb;border-color:#ced3ec;}
+    body.light .ps-pin-cancel{border-color:#ced3ec;}
+    body.light .overlay{background:rgba(0,0,0,.55);}
+    body.light .modal{background:#fff;}
+    body.light .country-card{background:#fff;}
+    body.light .cc-partial{background:rgba(23,168,74,.08) !important;border-color:rgba(23,168,74,.3) !important;}
+    body.light .cc-complete{background:rgba(23,168,74,.15) !important;border-color:rgba(23,168,74,.5) !important;}
+    body.light .exch-panel{background:#fff;}
+    body.light .match-row{background:#f0f2fb;}
+    body.light .sum-card{background:#fff;}
+    body.light .player-card{background:#fff;}
+    body.light .setting-card{background:#fff;}
+    body.light .profile-indicator{background:#e6e9f8;}
+
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;transition:background .25s,color .25s;}
 
     /* HEADER */
     header{background:linear-gradient(135deg,#141621,#0b0d14);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
@@ -513,6 +551,7 @@
   <div class="profile-indicator" id="profile-indicator" style="display:none">
     <div class="pi-avatar" id="pi-avatar"></div>
     <span class="pi-name" id="pi-name"></span>
+    <button class="pi-lock" id="theme-toggle" title="Mode clair / sombre">🌙</button>
     <button class="pi-lock" onclick="lockProfile()" title="Changer de profil">🔒</button>
   </div>
   <div class="stats-bar">
@@ -2501,9 +2540,29 @@ function switchTab(tab) {
 }
 
 // ─────────────────────────────────────────────────────────────────────
+// THEME
+// ─────────────────────────────────────────────────────────────────────
+const THEME_KEY = 'wc2026_theme';
+
+function applyTheme(light) {
+  document.body.classList.toggle('light', light);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = light ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+  const isLight = !document.body.classList.contains('light');
+  localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+  applyTheme(isLight);
+}
+
+// ─────────────────────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+  // Apply saved theme immediately
+  applyTheme(localStorage.getItem(THEME_KEY) === 'light');
+  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
   // Wiring up profile screen buttons
   document.getElementById('ps-pad').addEventListener('click', e => {
     const k = e.target.closest('.ps-key');
