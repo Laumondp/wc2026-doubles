@@ -42,6 +42,8 @@
     body.light .tc-progress-meta{opacity:.55;}
     body.light .type-card::before{display:none;}
     body.light .hero-inner{background:linear-gradient(135deg,#eef0fb,#f5f7ff);}
+    body.light .field-bg{fill:#2e7d1a;}
+    body.light .goal-scene line,body.light .goal-scene ellipse[fill="none"]{ stroke:rgba(255,255,255,.25); }
     body.light #profile-screen{background:linear-gradient(145deg,#e8eaf8,#f5f7ff,#e8eaf8);}
     body.light .ps-profile-card,body.light .ps-pin-wrap,body.light .ps-create-wrap{background:#fff;}
     body.light .ps-key{background:#f0f2fb;border-color:#ced3ec;}
@@ -613,7 +615,7 @@
               </defs>
 
               <!-- Terrain -->
-              <rect width="580" height="78" fill="url(#goal-gp)" rx="10"/>
+              <rect class="field-bg" width="580" height="78" fill="url(#goal-gp)" rx="10"/>
               <rect x="0"   y="0" width="73" height="78" fill="rgba(0,0,0,.10)" rx="10 0 0 10"/>
               <rect x="146" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
               <rect x="292" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
