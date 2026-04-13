@@ -298,6 +298,65 @@
     .exp-anim-left {animation:slide-in-left  .3s ease both;}
     .exp-anim-right{animation:slide-in-right .3s ease both;}
 
+    /* HERO LAYOUT */
+    .hero-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:30px;max-width:900px;margin:0 auto;}
+    .hero-text{flex:1;}
+
+    /* BLISTER / COLLECTOR CARD */
+    .blister-wrapper{perspective:900px;animation:blister-float 4s ease-in-out infinite;}
+    @keyframes blister-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+    .blister-card{
+      width:172px;height:252px;border-radius:16px;
+      background:linear-gradient(155deg,#19102a 0%,#0c1f3e 55%,#1a1228 100%);
+      border:1px solid rgba(255,215,0,.4);
+      box-shadow:0 10px 40px rgba(0,0,0,.55),0 0 24px rgba(255,215,0,.12);
+      position:relative;overflow:hidden;
+      display:flex;flex-direction:column;align-items:center;padding:12px 10px 10px;
+      transition:transform .15s ease-out;
+    }
+    .blister-card:hover{animation-play-state:paused;}
+    .blister-foil{position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+      background:linear-gradient(125deg,transparent 20%,rgba(255,215,0,.06) 38%,rgba(255,100,200,.1) 50%,rgba(80,180,255,.06) 62%,transparent 80%);
+      background-size:250% 250%;animation:holo-rare 2.5s ease-in-out infinite alternate;}
+    .blister-bottom-glow{position:absolute;bottom:0;left:0;right:0;height:45%;
+      background:linear-gradient(to top,rgba(79,142,247,.1),transparent);pointer-events:none;}
+    .blister-top{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px;z-index:1;position:relative;}
+    .blister-badge{font-size:.48rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+      background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.35);color:var(--icon-c);border-radius:4px;padding:2px 5px;}
+    .blister-year{font-size:.6rem;color:var(--muted);font-weight:700;}
+    .blister-photo-wrap{position:relative;width:86px;height:86px;margin:2px 0 8px;z-index:1;}
+    .blister-photo{width:86px;height:86px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);}
+    .blister-photo-ring{
+      position:absolute;inset:-4px;border-radius:50%;
+      background:conic-gradient(#ffd700,#ff9f43,#ff4757,#b44fff,#4f8ef7,#2ed573,#ffd700);
+      -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#fff calc(100% - 3px));
+      mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#fff calc(100% - 3px));
+      animation:ring-spin 4s linear infinite;
+    }
+    @keyframes ring-spin{to{transform:rotate(360deg);}}
+    .blister-name{font-size:.82rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+      background:linear-gradient(90deg,#ffd700,#ff9f43);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      z-index:1;position:relative;margin-bottom:2px;}
+    .blister-title{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;z-index:1;position:relative;margin-bottom:10px;}
+    .blister-stats-mini{display:flex;gap:14px;z-index:1;position:relative;}
+    .blister-stats-mini>div{text-align:center;}
+    .blister-stats-mini span{font-size:.82rem;font-weight:700;color:var(--green);display:block;font-variant-numeric:tabular-nums;}
+    .blister-stats-mini small{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+    .blister-footer{position:absolute;bottom:7px;left:0;right:0;text-align:center;
+      font-size:.4rem;letter-spacing:1.2px;color:rgba(255,255,255,.2);font-weight:600;z-index:1;}
+
+    /* Avatar sur les cartes de type */
+    .tc-avatar{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;
+      object-fit:cover;object-position:top center;border:1.5px solid rgba(255,255,255,.2);
+      opacity:.5;transition:opacity .2s,transform .2s;}
+    .type-card:hover .tc-avatar{opacity:.85;transform:scale(1.1);}
+
+    @media(max-width:680px){
+      .hero-inner{flex-direction:column;align-items:center;}
+      .hero-text{text-align:center;}
+      .blister-card{width:148px;height:218px;}
+      .blister-photo-wrap,.blister-photo{width:72px;height:72px;}
+    }
     @media(max-width:600px){
       .type-grid{grid-template-columns:repeat(2,1fr);}
       .country-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
@@ -350,11 +409,36 @@
   <div class="tab-content active" id="tab-home">
     <div class="home-hero">
       <div class="hero-particles" id="hero-particles"></div>
-      <div class="hero-content">
-        <div class="hero-badge">⚽ Adrenalyn XL · FIFA World Cup 2026</div>
-        <h2 class="hero-title">Ma Collection</h2>
-        <p class="hero-sub">Gérez vos cartes, doubles &amp; échanges</p>
-        <div class="hero-stat-row" id="hero-stat-row"></div>
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-badge">⚽ Adrenalyn XL · FIFA World Cup 2026</div>
+          <h2 class="hero-title">Ma Collection</h2>
+          <p class="hero-sub">Gérez vos cartes, doubles &amp; échanges</p>
+          <div class="hero-stat-row" id="hero-stat-row"></div>
+        </div>
+        <div class="hero-blister">
+          <div class="blister-wrapper">
+            <div class="blister-card" id="blister-card">
+              <div class="blister-foil"></div>
+              <div class="blister-bottom-glow"></div>
+              <div class="blister-top">
+                <span class="blister-badge">⚽ Starter Pack</span>
+                <span class="blister-year">2026</span>
+              </div>
+              <div class="blister-photo-wrap">
+                <img src="CopyScreens/blister-Laumond.jpg" class="blister-photo" alt="Collector">
+                <div class="blister-photo-ring"></div>
+              </div>
+              <div class="blister-name">Laumond</div>
+              <div class="blister-title">Collector · WC 2026</div>
+              <div class="blister-stats-mini">
+                <div><span id="bc-pct">—</span><small>complété</small></div>
+                <div><span id="bc-dbl">—</span><small>doubles</small></div>
+              </div>
+              <div class="blister-footer">⚽ FIFA WORLD CUP 2026™</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="home-explorer">
@@ -1722,6 +1806,12 @@ function renderHomeHero() {
   const wish    = state.wishlist.length;
   const pct     = total > 0 ? Math.round(owned / total * 100) : 0;
 
+  // Update blister stats
+  const bPct = document.getElementById('bc-pct');
+  const bDbl = document.getElementById('bc-dbl');
+  if (bPct) bPct.textContent = pct + '%';
+  if (bDbl) bDbl.textContent = doubles;
+
   // If already rendered, just update values silently
   const existing = document.getElementById('hst-total');
   if (existing) {
@@ -1797,6 +1887,7 @@ function renderTypeCards(animate = false) {
     const div = document.createElement('div');
     div.className = `type-card tc-${t}`;
     div.innerHTML = `
+      <img src="CopyScreens/blister-Laumond.jpg" class="tc-avatar" alt="">
       <span class="tc-icon">${m.icon}</span>
       <div class="tc-label">${m.label}</div>
       <div class="tc-sublabel">${m.sub}</div>
@@ -1922,6 +2013,23 @@ function switchTab(tab) {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   createParticles();
+
+  // 3D tilt on blister card
+  const blisterCard = document.getElementById('blister-card');
+  if (blisterCard) {
+    const wrapper = blisterCard.closest('.blister-wrapper');
+    blisterCard.addEventListener('mousemove', e => {
+      const r = blisterCard.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - .5) * 22;
+      const y = ((e.clientY - r.top)  / r.height - .5) * -22;
+      blisterCard.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${y}deg) scale(1.04)`;
+      if (wrapper) wrapper.style.animationPlayState = 'paused';
+    });
+    blisterCard.addEventListener('mouseleave', () => {
+      blisterCard.style.transform = '';
+      if (wrapper) wrapper.style.animationPlayState = 'running';
+    });
+  }
 
   // Tabs
   document.querySelectorAll('.tab-btn').forEach(b => {
