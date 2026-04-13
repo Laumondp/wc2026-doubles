@@ -2598,6 +2598,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       activeProfile = p;
       loadProfileData(p);
       document.getElementById('profile-screen').style.display = 'none';
+      document.body.classList.remove('ps-open');
       updateProfileIndicator();
     } else {
       showProfileScreen();
