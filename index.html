@@ -87,7 +87,8 @@
     .c-wish{position:absolute;top:5px;left:5px;background:var(--accent);color:#fff;font-size:.58rem;font-weight:700;padding:2px 5px;border-radius:4px;}
 
     .c-num{font-size:.6rem;color:var(--muted);margin-bottom:3px;}
-    .c-flag{font-size:1.6rem;line-height:1;margin-bottom:4px;}
+    .c-flag{line-height:1;margin-bottom:4px;height:30px;display:flex;align-items:center;justify-content:flex-start;}
+    .c-flag img{width:30px;height:auto;border-radius:2px;display:block;}
     .c-name{font-size:.72rem;font-weight:600;line-height:1.2;margin-bottom:4px;}
     .c-val{font-size:.68rem;color:var(--or-c);font-weight:600;}
 
@@ -285,7 +286,8 @@
     .country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
     .country-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px 12px;cursor:pointer;text-align:center;transition:transform .2s,box-shadow .2s,border-color .2s;animation:card-pop .38s cubic-bezier(.34,1.2,.64,1) both;}
     .country-card:hover{transform:translateY(-3px) scale(1.02);border-color:var(--accent);box-shadow:0 6px 20px rgba(79,142,247,.18);}
-    .cc-flag{font-size:1.9rem;margin-bottom:6px;line-height:1;}
+    .cc-flag{margin-bottom:6px;line-height:1;display:flex;align-items:center;justify-content:center;}
+    .cc-flag img{width:44px;height:auto;border-radius:3px;display:block;}
     .cc-name{font-size:.72rem;font-weight:600;margin-bottom:8px;line-height:1.2;}
     .cc-bar-wrap{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:5px;}
     .cc-bar-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .85s cubic-bezier(.22,1,.36,1);}
@@ -308,33 +310,10 @@
     .hero-goal-banner{width:100%;max-width:580px;margin-bottom:8px;}
     .goal-scene{width:100%;height:auto;display:block;border-radius:10px;}
 
-    .plyr-kick-leg{transform-box:fill-box;transform-origin:0% 0%;animation:svgKick 3s ease-in-out infinite;}
-    .plyr-kick-arm{transform-box:fill-box;transform-origin:0% 0%;animation:svgArm  3s ease-in-out infinite;}
-    .plyr-shadow  {transform-box:fill-box;transform-origin:50% 50%;animation:svgShad 3s ease-in-out infinite;}
+    /* SVG footballer animations now handled via native animateTransform */
 
-    @keyframes svgKick{
-      0%   {transform:rotate(0deg);}
-      5%   {transform:rotate(-28deg);}
-      8%   {transform:rotate(58deg);}
-      18%  {transform:rotate(8deg);}
-      28%  {transform:rotate(0deg);}
-      100% {transform:rotate(0deg);}
-    }
-    @keyframes svgArm{
-      0%   {transform:rotate(0deg);}
-      5%   {transform:rotate(22deg);}
-      8%   {transform:rotate(-28deg);}
-      18%  {transform:rotate(0deg);}
-      100% {transform:rotate(0deg);}
-    }
-    @keyframes svgShad{
-      0%   {transform:scaleX(1);}
-      8%   {transform:scaleX(1.35);}
-      18%  {transform:scaleX(1);}
-      100% {transform:scaleX(1);}
-    }
 
-    /* Slide transitions */
+/* Slide transitions */
     @keyframes slide-in-left {from{transform:translateX(36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
     @keyframes slide-in-right{from{transform:translateX(-36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
     .exp-anim-left {animation:slide-in-left  .3s ease both;}
@@ -508,16 +487,22 @@
               </text>
 
               <!-- Ombre sol -->
-              <ellipse cx="91" cy="72" rx="13" ry="3.5" fill="rgba(0,0,0,.35)" class="plyr-shadow"/>
+              <ellipse cx="91" cy="72" rx="13" ry="3.5" fill="rgba(0,0,0,.35)">
+                <animate attributeName="rx" keyTimes="0;0.08;0.18;1" values="13;17.5;13;13" dur="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0 0 1 1"/>
+              </ellipse>
 
               <!-- Jambe gauche (appui) + chaussure -->
               <line x1="91" y1="53" x2="83" y2="70" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
               <ellipse cx="81" cy="71.5" rx="5.5" ry="2.8" fill="#111"/>
 
               <!-- Jambe droite (tir) — pivote autour de la hanche (91,53) -->
-              <g class="plyr-kick-leg" transform="translate(91,53)">
-                <line x1="0" y1="0" x2="19" y2="11" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
-                <ellipse cx="23" cy="13" rx="6" ry="3" fill="#e74c3c" transform="rotate(-5,23,13)"/>
+              <g transform="translate(91,53)">
+                <animateTransform attributeName="transform" type="rotate"
+                  keyTimes="0;0.05;0.08;0.28;1"
+                  values="0 0 0;-28 0 0;58 0 0;0 0 0;0 0 0"
+                  dur="3s" repeatCount="indefinite" additive="sum"/>
+                <line x1="0" y1="0" x2="8" y2="17" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
+                <ellipse cx="10" cy="21" rx="5.5" ry="2.8" fill="#e74c3c" transform="rotate(-5,10,21)"/>
               </g>
 
               <!-- Maillot + numéro 10 -->
@@ -527,7 +512,11 @@
               <!-- Bras gauche (arrière) -->
               <line x1="84" y1="37" x2="73" y2="48" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
               <!-- Bras droit (tir) — pivote autour de l'épaule (98,37) -->
-              <g class="plyr-kick-arm" transform="translate(98,37)">
+              <g transform="translate(98,37)">
+                <animateTransform attributeName="transform" type="rotate"
+                  keyTimes="0;0.05;0.08;0.18;1"
+                  values="0 0 0;22 0 0;-28 0 0;0 0 0;0 0 0"
+                  dur="3s" repeatCount="indefinite" additive="sum"/>
                 <line x1="0" y1="0" x2="13" y2="8" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
               </g>
 
@@ -540,6 +529,13 @@
               <!-- Oreilles -->
               <circle cx="81.5" cy="18.5" r="2.8" fill="#e8a850"/>
               <circle cx="100.5" cy="18.5" r="2.8" fill="#e8a850"/>
+              <!-- Yeux -->
+              <circle cx="87.5" cy="16.5" r="1.8" fill="#333"/>
+              <circle cx="94.5" cy="16.5" r="1.8" fill="#333"/>
+              <circle cx="88.1" cy="16.0" r="0.6" fill="#fff"/>
+              <circle cx="95.1" cy="16.0" r="0.6" fill="#fff"/>
+              <!-- Bouche -->
+              <path d="M 88,21.5 Q 91,24.5 94,21.5" fill="none" stroke="#7a3b1e" stroke-width="1.3" stroke-linecap="round"/>
 
               <!-- BALLON -->
               <g class="plyr-ball">
@@ -1375,7 +1371,20 @@ const DEFAULT_CARDS = [
 {id:'C630',num:'630',name:'ETERNOS 22 - FORWARDS',team:'FIFA',cc:'FIFA',type:'BASE'},
 ];
 
-DEFAULT_CARDS.forEach(c => { c.flag = FLAG_MAP[c.cc] || String.fromCodePoint(0x1F30D); });
+// ISO2 codes for flagcdn.com
+const CC_TO_ISO2 = {
+  ALG:'dz',ARG:'ar',AUS:'au',AUT:'at',BEL:'be',BRA:'br',CAN:'ca',CIV:'ci',
+  COL:'co',CPV:'cv',CRO:'hr',CUW:'cw',DEN:'dk',ECU:'ec',EGY:'eg',ENG:'gb-eng',
+  ESP:'es',FRA:'fr',GER:'de',GHA:'gh',HAI:'ht',IRN:'ir',ITA:'it',JAM:'jm',
+  JOR:'jo',JPN:'jp',KOR:'kr',KSA:'sa',MAR:'ma',MEX:'mx',NED:'nl',NOR:'no',
+  NZL:'nz',PAN:'pa',PAR:'py',POL:'pl',POR:'pt',QAT:'qa',RSA:'za',SCO:'gb-sct',
+  SEN:'sn',SUI:'ch',SWE:'se',TUN:'tn',TUR:'tr',URU:'uy',USA:'us',UZB:'uz',
+};
+function getFlagImg(cc, w=30){
+  const iso2 = CC_TO_ISO2[cc];
+  if(!iso2) return '<span style="font-size:1.4rem">🌍</span>';
+  return `<img src="https://flagcdn.com/w40/${iso2}.png" width="${w}" alt="${cc}" loading="lazy" onerror="this.style.display='none'">`;
+}
 
 // ─────────────────────────────────────────────────────────────────────
 // STATE
@@ -1478,7 +1487,7 @@ function renderCard(card, options = {}) {
   div.innerHTML = `
     ${badges}
     <div class="c-num">${card.num}</div>
-    <div class="c-flag" title="${card.team}">${card.flag || '🌍'}</div>
+    <div class="c-flag" title="${card.team}">${getFlagImg(card.cc)}</div>
     <div class="c-name">${card.name}</div>
     ${showVal ? `<div class="c-val">Valeur ${val} pt${val>1?'s':''}</div>` : ''}
     ${readOnly ? '' : `
@@ -2087,7 +2096,7 @@ function renderCountryCards(type, slideIn = false) {
     if (pct === 100)             div.classList.add('cc-complete');
     div.style.animationDelay = `${i * 0.03}s`;
     div.innerHTML = `
-      <div class="cc-flag">${flag || '🌍'}</div>
+      <div class="cc-flag">${getFlagImg(cc, 44)}</div>
       <div class="cc-name">${team}</div>
       <div class="cc-bar-wrap"><div class="cc-bar-fill" data-pct="${pct}"></div></div>
       <div class="cc-info">${owned}/${total} · ${pct}%</div>
