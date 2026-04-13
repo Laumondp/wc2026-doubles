@@ -540,6 +540,7 @@
           ✅ Collection existante détectée — elle sera importée dans ce profil
         </div>
         <input class="ps-input" id="ps-create-name" placeholder="Votre prénom ou pseudo" maxlength="20" autocomplete="off"/>
+        <input class="ps-input" id="ps-create-email" type="email" placeholder="Email (optionnel — pour les échanges)" autocomplete="email"/>
         <input class="ps-input ps-pin-row" id="ps-create-pin" type="password" placeholder="PIN (4 chiffres)" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
         <input class="ps-input ps-pin-row" id="ps-create-pin2" type="password" placeholder="Confirmer PIN" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
         <button class="ps-create-btn" id="ps-create-submit">Créer le profil</button>
@@ -809,6 +810,12 @@
       <span class="sec-info">Doubles ↔ Recherchées automatiquement</span>
     </div>
     <div id="exchanges-container"></div>
+
+    <div class="sec-hdr" style="margin-top:24px;">
+      <span class="sec-title">👥 Doubles disponibles chez les autres joueurs</span>
+      <span class="sec-info">Lecture seule · ⭐ = cartes que tu recherches</span>
+    </div>
+    <div id="community-container"></div>
   </div>
 
   <!-- SETTINGS TAB -->
@@ -1647,12 +1654,12 @@ async function doLogin(profileId, pin) {
   return true;
 }
 
-async function doCreateProfile(name, pin) {
+async function doCreateProfile(name, pin, email='') {
   const profiles = getProfiles();
   if (profiles.find(p => p.name.toLowerCase() === name.toLowerCase())) return 'duplicate';
   const id = uid();
   const pinHash = await sha256(pin);
-  const newProfile = { id, name, pinHash, collection:{}, wishlist:[], players:[], values:{LIMITED:15,ICON:10,HERO:5,BASE:1} };
+  const newProfile = { id, name, email, pinHash, collection:{}, wishlist:[], players:[], values:{LIMITED:15,ICON:10,HERO:5,BASE:1} };
   // Migration : si données legacy présentes et premier profil
   if (profiles.length === 0) {
     const legacy = localStorage.getItem('wc2026');
@@ -1785,9 +1792,10 @@ function showCreateForm() {
   document.getElementById('ps-list').style.display   = 'none';
   document.getElementById('ps-pin').style.display    = 'none';
   document.getElementById('ps-create').style.display = 'flex';
-  document.getElementById('ps-create-name').value = '';
-  document.getElementById('ps-create-pin').value  = '';
-  document.getElementById('ps-create-pin2').value = '';
+  document.getElementById('ps-create-name').value  = '';
+  document.getElementById('ps-create-email').value = '';
+  document.getElementById('ps-create-pin').value   = '';
+  document.getElementById('ps-create-pin2').value  = '';
   document.getElementById('ps-create-err').textContent = '';
   // Afficher notice de migration si données legacy présentes et aucun profil
   const hasLegacy = !!localStorage.getItem('wc2026');
@@ -1797,15 +1805,16 @@ function showCreateForm() {
 }
 
 async function submitCreateProfile() {
-  const name = document.getElementById('ps-create-name').value.trim();
-  const pin  = document.getElementById('ps-create-pin').value.trim();
-  const pin2 = document.getElementById('ps-create-pin2').value.trim();
+  const name  = document.getElementById('ps-create-name').value.trim();
+  const email = document.getElementById('ps-create-email').value.trim();
+  const pin   = document.getElementById('ps-create-pin').value.trim();
+  const pin2  = document.getElementById('ps-create-pin2').value.trim();
   const errEl = document.getElementById('ps-create-err');
   errEl.textContent = '';
   if (!name) { errEl.textContent = 'Entrez un prénom ou pseudo'; return; }
   if (!/^\d{4}$/.test(pin)) { errEl.textContent = 'Le PIN doit contenir exactement 4 chiffres'; return; }
   if (pin !== pin2) { errEl.textContent = 'Les deux PIN ne correspondent pas'; return; }
-  const result = await doCreateProfile(name, pin);
+  const result = await doCreateProfile(name, pin, email);
   if (result === 'duplicate') { errEl.textContent = 'Ce nom est déjà utilisé'; return; }
   hideProfileScreen();
   updateProfileIndicator();
@@ -2088,6 +2097,100 @@ function renderExchanges() {
 
   if (!hasAny) {
     container.innerHTML = '<div class="empty"><div class="e-icon">🔄</div><p>Pas encore de correspondance.<br>Renseignez les doubles et recherches de vos joueurs.</p></div>';
+  }
+
+  renderCommunityDoubles();
+}
+
+function renderCommunityDoubles() {
+  const container = document.getElementById('community-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const profiles = getProfiles();
+  const others = profiles.filter(p => p.id !== activeProfile.id);
+
+  if (!others.length) {
+    container.innerHTML = '<div class="empty"><div class="e-icon">👥</div><p>Aucun autre profil sur cet appareil pour l\'instant.</p></div>';
+    return;
+  }
+
+  let hasAny = false;
+
+  others.forEach(profile => {
+    // Cartes avec qty >= 2 → doubles disponibles à l'échange
+    const doubles = [];
+    Object.entries(profile.collection || {}).forEach(([cardId, qty]) => {
+      if (qty >= 2) {
+        const card = state.cards.find(c => c.id === cardId);
+        if (card) doubles.push({ card, qty, available: qty - 1 });
+      }
+    });
+    if (!doubles.length) return;
+    hasAny = true;
+
+    // Tri : cartes recherchées par le joueur connecté en premier
+    doubles.sort((a, b) => {
+      const aw = state.wishlist.includes(a.card.id) ? 0 : 1;
+      const bw = state.wishlist.includes(b.card.id) ? 0 : 1;
+      if (aw !== bw) return aw - bw;
+      return parseInt(a.card.num) - parseInt(b.card.num);
+    });
+
+    const wanted = doubles.filter(d => state.wishlist.includes(d.card.id));
+    const others2 = doubles.filter(d => !state.wishlist.includes(d.card.id));
+
+    const emailBtn = profile.email
+      ? `<a href="mailto:${profile.email}" style="font-size:.7rem;color:var(--accent);text-decoration:none;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);border-radius:5px;padding:2px 9px;">✉️ ${profile.email}</a>`
+      : '';
+
+    const panel = document.createElement('div');
+    panel.className = 'exch-panel';
+    let html = `
+      <div class="exch-panel-head">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:${avatarColor(profile.name)};display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0;">${avatarInitials(profile.name)}</div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <span style="font-size:.88rem;font-weight:700;">${profile.name}</span>
+            ${emailBtn}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+          ${wanted.length ? `<span style="background:rgba(46,213,115,.15);color:var(--green);border:1px solid rgba(46,213,115,.3);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700;">⭐ ${wanted.length} tu cherches !</span>` : ''}
+          <span style="font-size:.7rem;color:var(--muted)">${doubles.length} double${doubles.length>1?'s':''} dispo</span>
+        </div>
+      </div>`;
+
+    // Cartes recherchées par le joueur connecté
+    if (wanted.length) {
+      html += `<div style="font-size:.74rem;color:var(--green);font-weight:600;margin-bottom:6px;">⭐ Cartes que tu recherches (${wanted.length})</div>`;
+      wanted.forEach(({ card, available }) => {
+        const subject = encodeURIComponent(`Échange WC2026 — carte n°${card.num} ${card.name}`);
+        const mailto = profile.email ? `href="mailto:${profile.email}?subject=${subject}"` : '';
+        html += `<div class="match-row">
+          <span class="match-card-tag ct-${card.type}" style="padding:3px 8px;border-radius:5px;font-size:.7rem;font-weight:600;">${getFlagImg(card.cc)} ${card.num} — ${card.name}</span>
+          <span style="font-size:.68rem;background:rgba(46,213,115,.12);color:var(--green);border:1px solid rgba(46,213,115,.25);border-radius:4px;padding:1px 7px;">×${available} dispo</span>
+          ${profile.email ? `<a ${mailto} style="margin-left:auto;font-size:.7rem;color:var(--accent);text-decoration:none;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);border-radius:5px;padding:2px 8px;white-space:nowrap;">✉️ Contacter</a>` : ''}
+        </div>`;
+      });
+    }
+
+    // Autres doubles (compact)
+    if (others2.length) {
+      if (wanted.length) html += `<div style="font-size:.72rem;color:var(--muted);margin:8px 0 5px;">Autres doubles disponibles (${others2.length})</div>`;
+      html += `<div class="tags" style="gap:5px;">`;
+      others2.forEach(({ card, available }) => {
+        html += `<span class="tag tag-${card.type}" title="${card.name} — ${card.team}">${card.num}${available > 1 ? ` ×${available}` : ''}</span>`;
+      });
+      html += `</div>`;
+    }
+
+    panel.innerHTML = html;
+    container.appendChild(panel);
+  });
+
+  if (!hasAny) {
+    container.innerHTML = '<div class="empty"><div class="e-icon">📦</div><p>Aucun autre joueur n\'a de doubles disponibles pour l\'instant.</p></div>';
   }
 }
 
