@@ -304,6 +304,36 @@
     .cc-check{display:none;font-size:.65rem;margin-top:2px;}
     .country-card.cc-complete .cc-check{display:block;color:var(--green);}
 
+    /* ── GOAL BANNER ── */
+    .hero-goal-banner{width:100%;max-width:580px;margin-bottom:8px;}
+    .goal-scene{width:100%;height:auto;display:block;border-radius:10px;}
+
+    .plyr-kick-leg{transform-box:fill-box;transform-origin:0% 0%;animation:svgKick 3s ease-in-out infinite;}
+    .plyr-kick-arm{transform-box:fill-box;transform-origin:0% 0%;animation:svgArm  3s ease-in-out infinite;}
+    .plyr-shadow  {transform-box:fill-box;transform-origin:50% 50%;animation:svgShad 3s ease-in-out infinite;}
+
+    @keyframes svgKick{
+      0%   {transform:rotate(0deg);}
+      5%   {transform:rotate(-28deg);}
+      8%   {transform:rotate(58deg);}
+      18%  {transform:rotate(8deg);}
+      28%  {transform:rotate(0deg);}
+      100% {transform:rotate(0deg);}
+    }
+    @keyframes svgArm{
+      0%   {transform:rotate(0deg);}
+      5%   {transform:rotate(22deg);}
+      8%   {transform:rotate(-28deg);}
+      18%  {transform:rotate(0deg);}
+      100% {transform:rotate(0deg);}
+    }
+    @keyframes svgShad{
+      0%   {transform:scaleX(1);}
+      8%   {transform:scaleX(1.35);}
+      18%  {transform:scaleX(1);}
+      100% {transform:scaleX(1);}
+    }
+
     /* Slide transitions */
     @keyframes slide-in-left {from{transform:translateX(36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
     @keyframes slide-in-right{from{transform:translateX(-36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
@@ -424,7 +454,121 @@
       <div class="hero-inner">
         <div class="hero-text">
           <div class="hero-badge">⚽ Adrenalyn XL · FIFA World Cup 2026</div>
-          <h2 class="hero-title">Ma Collection</h2>
+          <div class="hero-goal-banner">
+            <svg class="goal-scene" viewBox="0 0 580 78" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="goal-gp" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#1e4e0e"/><stop offset="100%" stop-color="#0e2808"/>
+                </linearGradient>
+                <linearGradient id="goal-gt" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#e8eeff"/><stop offset="40%" stop-color="#a0b8ff"/>
+                  <stop offset="75%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ff9f43"/>
+                </linearGradient>
+                <filter id="goal-gb" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="goal-gt2" x="-5%" y="-20%" width="110%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <path id="goal-bt" d="M 110,64 C 220,5 390,5 510,28"/>
+              </defs>
+
+              <!-- Terrain -->
+              <rect width="580" height="78" fill="url(#goal-gp)" rx="10"/>
+              <rect x="0"   y="0" width="73" height="78" fill="rgba(0,0,0,.10)" rx="10 0 0 10"/>
+              <rect x="146" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
+              <rect x="292" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
+              <rect x="438" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
+              <line x1="290" y1="4"  x2="290" y2="74" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+              <ellipse cx="290" cy="39" rx="30" ry="22" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/>
+              <circle cx="290" cy="39" r="2" fill="rgba(255,255,255,.12)"/>
+              <rect x="3"   y="12" width="68" height="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+              <rect x="509" y="12" width="68" height="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+
+              <!-- Cages (droite) -->
+              <line x1="565" y1="20" x2="565" y2="66" stroke="rgba(255,255,255,.45)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="510" y1="16" x2="565" y2="20" stroke="rgba(255,255,255,.45)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="510" y1="16" x2="510" y2="66" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="510" y1="16" x2="565" y2="20" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+              <line x1="510" y1="66" x2="565" y2="66" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+              <line x1="520" y1="20" x2="520" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="530" y1="21" x2="530" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="540" y1="21" x2="540" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="550" y1="22" x2="550" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="560" y1="22" x2="560" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="510" y1="28" x2="565" y2="30" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="510" y1="40" x2="565" y2="41" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+              <line x1="510" y1="52" x2="565" y2="53" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+
+              <!-- Flash GOAL -->
+              <rect x="511" y="17" width="53" height="48" fill="#ffd700" rx="2">
+                <animate attributeName="opacity" keyTimes="0;0.63;0.66;0.70;0.73;1" values="0;0;0.28;0.1;0;0" dur="3s" repeatCount="indefinite" calcMode="linear"/>
+              </rect>
+              <text x="538" y="42" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-weight="900" font-size="13" fill="#ffd700" filter="url(#goal-gb)">GOAL!
+                <animate attributeName="opacity" keyTimes="0;0.65;0.67;0.71;0.73;1" values="0;0;1;0.55;0;0" dur="3s" repeatCount="indefinite" calcMode="linear"/>
+              </text>
+
+              <!-- Titre MA COLLECTION -->
+              <text x="295" y="46" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="22" font-weight="900" letter-spacing="2" fill="url(#goal-gt)" filter="url(#goal-gt2)">MA COLLECTION
+                <animate attributeName="opacity" values="1;0.88;1" dur="2.5s" repeatCount="indefinite"/>
+              </text>
+
+              <!-- Ombre sol -->
+              <ellipse cx="91" cy="72" rx="13" ry="3.5" fill="rgba(0,0,0,.35)" class="plyr-shadow"/>
+
+              <!-- Jambe gauche (appui) + chaussure -->
+              <line x1="91" y1="53" x2="83" y2="70" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
+              <ellipse cx="81" cy="71.5" rx="5.5" ry="2.8" fill="#111"/>
+
+              <!-- Jambe droite (tir) — pivote autour de la hanche (91,53) -->
+              <g class="plyr-kick-leg" transform="translate(91,53)">
+                <line x1="0" y1="0" x2="19" y2="11" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
+                <ellipse cx="23" cy="13" rx="6" ry="3" fill="#e74c3c" transform="rotate(-5,23,13)"/>
+              </g>
+
+              <!-- Maillot + numéro 10 -->
+              <rect x="84" y="32" width="14" height="21" fill="#3b82f6" rx="4"/>
+              <text x="91" y="46" text-anchor="middle" font-family="system-ui" font-size="7" font-weight="900" fill="rgba(255,255,255,.85)">10</text>
+
+              <!-- Bras gauche (arrière) -->
+              <line x1="84" y1="37" x2="73" y2="48" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+              <!-- Bras droit (tir) — pivote autour de l'épaule (98,37) -->
+              <g class="plyr-kick-arm" transform="translate(98,37)">
+                <line x1="0" y1="0" x2="13" y2="8" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+              </g>
+
+              <!-- Cou -->
+              <line x1="91" y1="24" x2="91" y2="32" stroke="#f5c070" stroke-width="5" stroke-linecap="round"/>
+              <!-- Tête -->
+              <circle cx="91" cy="18" r="9.5" fill="#f5c070"/>
+              <!-- Cheveux -->
+              <path d="M 82,14 Q 91,8 100,14 Q 97.5,9.5 91,8 Q 84.5,9.5 82,14Z" fill="#2a1208"/>
+              <!-- Oreilles -->
+              <circle cx="81.5" cy="18.5" r="2.8" fill="#e8a850"/>
+              <circle cx="100.5" cy="18.5" r="2.8" fill="#e8a850"/>
+
+              <!-- BALLON -->
+              <g class="plyr-ball">
+                <animateMotion dur="3s" repeatCount="indefinite"
+                  keyTimes="0;0.07;0.65;0.720;0.721;1"
+                  keyPoints="0;0;1;1;0;0"
+                  calcMode="linear">
+                  <mpath href="#goal-bt"/>
+                </animateMotion>
+                <!-- Lueur -->
+                <circle r="10" fill="rgba(255,255,255,.12)" filter="url(#goal-gb)"/>
+                <!-- Corps du ballon -->
+                <circle r="7.5" fill="white" stroke="#ddd" stroke-width="0.5"/>
+                <!-- Pentagones (rotation) -->
+                <g>
+                  <animateTransform attributeName="transform" type="rotate" from="0" to="720" dur="1.86s" repeatCount="indefinite"/>
+                  <path d="M 0,-5 L 3,-1.8 L 1.8,2.5 L -1.8,2.5 L -3,-1.8Z" fill="#222" opacity=".65"/>
+                  <path d="M 5,2.5 L 3,-1.8 L 7,1 L 7,5 L 4,6Z" fill="#222" opacity=".35"/>
+                  <path d="M -5,2.5 L -3,-1.8 L -7,1 L -7,5 L -4,6Z" fill="#222" opacity=".35"/>
+                </g>
+              </g>
+            </svg>
+          </div>
           <p class="hero-sub">Gérez vos cartes, doubles &amp; échanges</p>
           <div class="hero-stat-row" id="hero-stat-row"></div>
         </div>
