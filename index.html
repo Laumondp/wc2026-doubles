@@ -202,6 +202,108 @@
       .cards-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));}
       .dbl-summary{grid-template-columns:repeat(2,1fr);}
     }
+
+    /* ═══════════════════════════════════════════════════
+       HOME PAGE
+    ═══════════════════════════════════════════════════ */
+
+    /* Hero */
+    .home-hero{position:relative;overflow:hidden;padding:36px 24px 28px;background:linear-gradient(160deg,#07090f 0%,#0d1228 55%,#07090f 100%);border-bottom:1px solid var(--border);}
+    .home-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 50%,rgba(79,142,247,.07) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 50%,rgba(255,215,0,.05) 0%,transparent 70%);pointer-events:none;}
+
+    /* Floating particles */
+    .hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+    .particle{position:absolute;bottom:-5%;opacity:0;pointer-events:none;animation:particle-rise var(--dur,9s) var(--delay,0s) linear infinite;}
+    @keyframes particle-rise{
+      0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}
+      8%{opacity:.2;}85%{opacity:.08;}
+      100%{transform:translateY(-105vh) translateX(var(--drift,20px)) rotate(540deg);opacity:0;}
+    }
+
+    /* Hero content */
+    .hero-content{position:relative;z-index:1;text-align:center;max-width:680px;margin:0 auto;}
+    .hero-badge{display:inline-block;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.25);border-radius:20px;padding:4px 16px;font-size:.7rem;color:var(--accent);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px;}
+    .hero-title{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:900;line-height:1;background:linear-gradient(100deg,#e8eeff 0%,#a0b8ff 40%,#ffd700 80%,#ff9f43 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:title-shimmer 5s linear infinite;margin-bottom:6px;}
+    @keyframes title-shimmer{0%{background-position:0% center;}100%{background-position:200% center;}}
+    .hero-sub{font-size:.8rem;color:var(--muted);margin-bottom:22px;}
+    .hero-stat-row{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
+    .h-stat{text-align:center;}
+    .h-stat-val{font-size:1.55rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;}
+    .h-stat-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+
+    /* Explorer wrapper */
+    .home-explorer{padding:18px 20px;max-width:1800px;margin:0 auto;}
+    .exp-section-title{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+
+    /* Breadcrumb */
+    .exp-breadcrumb{display:flex;align-items:center;gap:7px;margin-bottom:14px;font-size:.78rem;min-height:26px;flex-wrap:wrap;}
+    .bc-sep{color:var(--border);}
+    .bc-link{cursor:pointer;color:var(--accent);transition:opacity .15s;}
+    .bc-link:hover{opacity:.7;}
+    .bc-current{color:var(--text);font-weight:600;}
+
+    /* TYPE CARDS */
+    .type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:14px;}
+    .type-card{position:relative;border-radius:16px;padding:22px 18px 18px;cursor:pointer;overflow:hidden;border:1px solid transparent;transition:transform .25s cubic-bezier(.34,1.4,.64,1),box-shadow .25s,border-color .25s;will-change:transform;animation:card-pop .45s cubic-bezier(.34,1.2,.64,1) both;}
+    .type-card:nth-child(1){animation-delay:.05s}.type-card:nth-child(2){animation-delay:.1s}.type-card:nth-child(3){animation-delay:.15s}.type-card:nth-child(4){animation-delay:.2s}
+    @keyframes card-pop{from{transform:scale(.86) translateY(20px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+
+    /* Holographic shimmer */
+    .type-card::before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(125deg,transparent 25%,rgba(255,255,255,.05) 45%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.05) 55%,transparent 75%);background-size:250% 250%;animation:holo-base 3s ease-in-out infinite alternate;pointer-events:none;}
+    .tc-ICON::before,.tc-LIMITED::before{background:linear-gradient(125deg,transparent 20%,rgba(255,220,0,.07) 38%,rgba(255,100,200,.1) 50%,rgba(80,180,255,.07) 62%,transparent 80%);background-size:250% 250%;animation:holo-rare 2.2s ease-in-out infinite alternate;}
+    @keyframes holo-base{0%{background-position:0% 0%;}100%{background-position:100% 100%;}}
+    @keyframes holo-rare{0%{background-position:0% 0%;opacity:.8;}50%{opacity:1;}100%{background-position:100% 100%;opacity:.8;}}
+
+    /* Type themes */
+    .tc-LIMITED{background:linear-gradient(145deg,#1c0812 0%,#300a18 100%);border-color:rgba(255,71,87,.25);box-shadow:0 2px 16px rgba(255,71,87,.1);}
+    .tc-ICON   {background:linear-gradient(145deg,#1a1400 0%,#2c2200 100%);border-color:rgba(255,215,0,.25);box-shadow:0 2px 16px rgba(255,215,0,.08);}
+    .tc-HERO   {background:linear-gradient(145deg,#140b20 0%,#200e34 100%);border-color:rgba(180,79,255,.25);box-shadow:0 2px 16px rgba(180,79,255,.08);}
+    .tc-BASE   {background:linear-gradient(145deg,#081018 0%,#0e1a28 100%);border-color:rgba(79,142,247,.25);box-shadow:0 2px 16px rgba(79,142,247,.08);}
+    .tc-LIMITED:hover{box-shadow:0 8px 36px rgba(255,71,87,.3); border-color:rgba(255,71,87,.6);}
+    .tc-ICON:hover   {box-shadow:0 8px 36px rgba(255,215,0,.3); border-color:rgba(255,215,0,.6);}
+    .tc-HERO:hover   {box-shadow:0 8px 36px rgba(180,79,255,.3);border-color:rgba(180,79,255,.6);}
+    .tc-BASE:hover   {box-shadow:0 8px 36px rgba(79,142,247,.3); border-color:rgba(79,142,247,.6);}
+
+    .tc-icon   {font-size:2rem;display:block;margin-bottom:10px;}
+    .tc-label  {font-size:.95rem;font-weight:800;letter-spacing:.4px;margin-bottom:3px;}
+    .tc-sublabel{font-size:.68rem;opacity:.55;margin-bottom:14px;}
+    .tc-LIMITED .tc-label{color:var(--limited-c)}.tc-ICON .tc-label{color:var(--icon-c)}.tc-HERO .tc-label{color:var(--hero-c)}.tc-BASE .tc-label{color:var(--base-c)}
+
+    .tc-progress-wrap{margin-bottom:10px;}
+    .tc-progress-meta{display:flex;justify-content:space-between;font-size:.63rem;opacity:.6;margin-bottom:5px;}
+    .tc-progress-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
+    .tc-progress-fill{height:100%;border-radius:2px;width:0%;transition:width 1.1s cubic-bezier(.22,1,.36,1);}
+    .tc-LIMITED .tc-progress-fill{background:linear-gradient(90deg,var(--limited-c),#ff8a96);}
+    .tc-ICON    .tc-progress-fill{background:linear-gradient(90deg,var(--icon-c),#ffe980);}
+    .tc-HERO    .tc-progress-fill{background:linear-gradient(90deg,var(--hero-c),#d08aff);}
+    .tc-BASE    .tc-progress-fill{background:linear-gradient(90deg,var(--base-c),#80b4ff);}
+
+    .tc-stat-row{display:flex;gap:12px;font-size:.7rem;opacity:.65;margin-bottom:4px;}
+    .tc-cta{position:absolute;bottom:14px;right:14px;font-size:.68rem;opacity:.35;transition:opacity .2s,transform .2s;}
+    .type-card:hover .tc-cta{opacity:1;transform:translateX(5px);}
+
+    /* COUNTRY GRID */
+    .country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+    .country-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px 12px;cursor:pointer;text-align:center;transition:transform .2s,box-shadow .2s,border-color .2s;animation:card-pop .38s cubic-bezier(.34,1.2,.64,1) both;}
+    .country-card:hover{transform:translateY(-3px) scale(1.02);border-color:var(--accent);box-shadow:0 6px 20px rgba(79,142,247,.18);}
+    .cc-flag{font-size:1.9rem;margin-bottom:6px;line-height:1;}
+    .cc-name{font-size:.72rem;font-weight:600;margin-bottom:8px;line-height:1.2;}
+    .cc-bar-wrap{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:5px;}
+    .cc-bar-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .85s cubic-bezier(.22,1,.36,1);}
+    .cc-info{font-size:.6rem;color:var(--muted);}
+
+    /* Slide transitions */
+    @keyframes slide-in-left {from{transform:translateX(36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    @keyframes slide-in-right{from{transform:translateX(-36px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+    .exp-anim-left {animation:slide-in-left  .3s ease both;}
+    .exp-anim-right{animation:slide-in-right .3s ease both;}
+
+    @media(max-width:600px){
+      .type-grid{grid-template-columns:repeat(2,1fr);}
+      .country-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+      .hero-title{font-size:1.7rem;}
+      .hero-stat-row{gap:14px;}
+    }
   </style>
 </head>
 <body>
@@ -223,7 +325,8 @@
 </header>
 
 <nav>
-  <button class="tab-btn active" data-tab="collection">📋 Collection</button>
+  <button class="tab-btn active" data-tab="home">🏠 Accueil</button>
+  <button class="tab-btn" data-tab="collection">📋 Collection</button>
   <button class="tab-btn" data-tab="doubles">✌️ Mes Doubles</button>
   <button class="tab-btn" data-tab="wishlist">⭐ Recherchées</button>
   <button class="tab-btn" data-tab="players">👥 Joueurs</button>
@@ -243,8 +346,26 @@
 
 <main>
 
+  <!-- HOME TAB -->
+  <div class="tab-content active" id="tab-home">
+    <div class="home-hero">
+      <div class="hero-particles" id="hero-particles"></div>
+      <div class="hero-content">
+        <div class="hero-badge">⚽ Adrenalyn XL · FIFA World Cup 2026</div>
+        <h2 class="hero-title">Ma Collection</h2>
+        <p class="hero-sub">Gérez vos cartes, doubles &amp; échanges</p>
+        <div class="hero-stat-row" id="hero-stat-row"></div>
+      </div>
+    </div>
+    <div class="home-explorer">
+      <div class="exp-breadcrumb" id="exp-breadcrumb"></div>
+      <p class="exp-section-title" id="exp-section-title">Choisissez un type de carte</p>
+      <div id="exp-grid" class="exp-grid type-grid"></div>
+    </div>
+  </div>
+
   <!-- COLLECTION TAB -->
-  <div class="tab-content active" id="tab-collection">
+  <div class="tab-content" id="tab-collection">
     <div class="sec-hdr">
       <span class="sec-title">Toutes les cartes</span>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -1358,12 +1479,13 @@ function updateStats() {
 function renderAll() {
   updateStats();
   const active = document.querySelector('.tab-content.active').id.replace('tab-','');
-  if (active === 'collection') renderCollection();
-  else if (active === 'doubles') renderDoubles();
-  else if (active === 'wishlist') renderWishlist();
-  else if (active === 'players') renderPlayers();
-  else if (active === 'exchanges') renderExchanges();
-  else if (active === 'settings') renderSettings();
+  if      (active === 'home')      renderHome();
+  else if (active === 'collection') renderCollection();
+  else if (active === 'doubles')    renderDoubles();
+  else if (active === 'wishlist')   renderWishlist();
+  else if (active === 'players')    renderPlayers();
+  else if (active === 'exchanges')  renderExchanges();
+  else if (active === 'settings')   renderSettings();
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -1547,6 +1669,242 @@ function importData(file) {
 }
 
 // ─────────────────────────────────────────────────────────────────────
+// HOME / EXPLORER
+// ─────────────────────────────────────────────────────────────────────
+let navLevel = 0; // 0=types, 1=countries, 2=cards
+let navType  = null;
+let navCC    = null;
+
+const TYPE_META = {
+  LIMITED:{ icon:'⭐', label:'Golden Ballers',  sub:'Les 9 superstars mondiales',     color:'var(--limited-c)' },
+  ICON:   { icon:'💎', label:'ICON',             sub:'Icônes nationales rares',         color:'var(--icon-c)' },
+  HERO:   { icon:'🌟', label:'Fan Favourite',    sub:'Les chouchous des supporters',    color:'var(--hero-c)' },
+  BASE:   { icon:'🃏', label:'Base',              sub:'Joueurs, équipes & cartes spéc.', color:'var(--base-c)' },
+};
+
+function animateCount(el, target, dur = 900, suffix = '') {
+  if (!el) return;
+  let cur = 0;
+  const step = target / Math.max(1, dur / 16);
+  const tick = () => {
+    cur = Math.min(cur + step, target);
+    el.textContent = Math.round(cur) + suffix;
+    if (cur < target) requestAnimationFrame(tick);
+    else el.textContent = target + suffix;
+  };
+  requestAnimationFrame(tick);
+}
+
+function createParticles() {
+  const c = document.getElementById('hero-particles');
+  if (!c) return;
+  c.innerHTML = '';
+  const pool = ['⚽','⭐','💎','🌟','🏆','⚽','⭐','⚽','💎','⚽'];
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('span');
+    p.className = 'particle';
+    p.textContent = pool[i % pool.length];
+    p.style.left = (3 + Math.random() * 94) + '%';
+    p.style.setProperty('--dur',   (7  + Math.random() * 9)  + 's');
+    p.style.setProperty('--delay', (-Math.random() * 14)     + 's');
+    p.style.setProperty('--drift', ((Math.random() - .5) * 80) + 'px');
+    p.style.fontSize = (.55 + Math.random() * .65) + 'rem';
+    c.appendChild(p);
+  }
+}
+
+function renderHomeHero() {
+  const row = document.getElementById('hero-stat-row');
+  if (!row) return;
+  const total   = state.cards.length;
+  const owned   = state.cards.filter(c => getQty(c.id) > 0).length;
+  const doubles = state.cards.filter(c => getDoubles(c.id) > 0).length;
+  const wish    = state.wishlist.length;
+  const pct     = total > 0 ? Math.round(owned / total * 100) : 0;
+
+  // If already rendered, just update values silently
+  const existing = document.getElementById('hst-total');
+  if (existing) {
+    existing.textContent = total;
+    document.getElementById('hst-owned').textContent   = owned;
+    document.getElementById('hst-doubles').textContent = doubles;
+    document.getElementById('hst-wish').textContent    = wish;
+    document.getElementById('hst-pct').textContent     = pct + '%';
+    return;
+  }
+
+  row.innerHTML = `
+    <div class="h-stat"><div class="h-stat-val sv-blue"   id="hst-total">0</div><div class="h-stat-lbl">Cartes total</div></div>
+    <div class="h-stat"><div class="h-stat-val sv-green"  id="hst-owned">0</div><div class="h-stat-lbl">Possédées</div></div>
+    <div class="h-stat"><div class="h-stat-val sv-gold"   id="hst-doubles">0</div><div class="h-stat-lbl">Doubles</div></div>
+    <div class="h-stat"><div class="h-stat-val sv-purple" id="hst-wish">0</div><div class="h-stat-lbl">Recherchées</div></div>
+    <div class="h-stat"><div class="h-stat-val" style="color:var(--green)" id="hst-pct">0%</div><div class="h-stat-lbl">Complété</div></div>
+  `;
+  setTimeout(() => {
+    animateCount(document.getElementById('hst-total'),   total);
+    animateCount(document.getElementById('hst-owned'),   owned);
+    animateCount(document.getElementById('hst-doubles'), doubles);
+    animateCount(document.getElementById('hst-wish'),    wish);
+    animateCount(document.getElementById('hst-pct'),     pct, 900, '%');
+  }, 100);
+}
+
+function getTypeStats(type) {
+  const cards = state.cards.filter(c => c.type === type);
+  return {
+    total:   cards.length,
+    owned:   cards.filter(c => getQty(c.id) > 0).length,
+    doubles: cards.filter(c => getDoubles(c.id) > 0).length,
+  };
+}
+
+function getCountriesForType(type) {
+  const seen = new Set();
+  return state.cards
+    .filter(c => c.type === type)
+    .filter(c => { if (seen.has(c.cc)) return false; seen.add(c.cc); return true; })
+    .map(c => ({ cc: c.cc, team: c.team, flag: c.flag }));
+}
+
+function expAnimate(dir) {
+  const g = document.getElementById('exp-grid');
+  if (!g) return;
+  g.classList.remove('exp-anim-left', 'exp-anim-right');
+  void g.offsetWidth;
+  g.classList.add(dir === 'left' ? 'exp-anim-left' : 'exp-anim-right');
+  setTimeout(() => g.classList.remove('exp-anim-left', 'exp-anim-right'), 400);
+}
+
+function setSectionTitle(txt) {
+  const el = document.getElementById('exp-section-title');
+  if (el) { el.textContent = txt; el.style.display = txt ? '' : 'none'; }
+}
+
+function renderTypeCards(animate = false) {
+  navLevel = 0; navType = null; navCC = null;
+  const grid = document.getElementById('exp-grid');
+  if (!grid) return;
+  if (animate) expAnimate('right');
+  updateBreadcrumb();
+  setSectionTitle('Choisissez un type de carte');
+  grid.className = 'exp-grid type-grid';
+  grid.innerHTML = '';
+
+  ['LIMITED','ICON','HERO','BASE'].forEach(t => {
+    const m = TYPE_META[t];
+    const {total, owned, doubles} = getTypeStats(t);
+    const pct = total > 0 ? Math.round(owned / total * 100) : 0;
+    const div = document.createElement('div');
+    div.className = `type-card tc-${t}`;
+    div.innerHTML = `
+      <span class="tc-icon">${m.icon}</span>
+      <div class="tc-label">${m.label}</div>
+      <div class="tc-sublabel">${m.sub}</div>
+      <div class="tc-progress-wrap">
+        <div class="tc-progress-meta"><span>${owned}/${total} possédées</span><span>${pct}%</span></div>
+        <div class="tc-progress-bar"><div class="tc-progress-fill" data-pct="${pct}"></div></div>
+      </div>
+      <div class="tc-stat-row"><span>✌️ ${doubles} double${doubles>1?'s':''}</span></div>
+      <span class="tc-cta">Explorer →</span>
+    `;
+    // 3D tilt on hover
+    div.addEventListener('mousemove', e => {
+      const r = div.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - .5) * 18;
+      const y = ((e.clientY - r.top)  / r.height - .5) * -18;
+      div.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${y}deg) scale(1.05)`;
+    });
+    div.addEventListener('mouseleave', () => { div.style.transform = ''; });
+    div.addEventListener('click', () => renderCountryCards(t, true));
+    grid.appendChild(div);
+    // Animate progress bar after render
+    setTimeout(() => {
+      const f = div.querySelector('.tc-progress-fill');
+      if (f) f.style.width = f.dataset.pct + '%';
+    }, 300);
+  });
+}
+
+function renderCountryCards(type, slideIn = false) {
+  navLevel = 1; navType = type; navCC = null;
+  const grid = document.getElementById('exp-grid');
+  if (!grid) return;
+  if (slideIn) expAnimate('left');
+  updateBreadcrumb();
+  setSectionTitle('');
+  grid.className = 'exp-grid country-grid';
+  grid.innerHTML = '';
+
+  const countries = getCountriesForType(type);
+  countries.forEach(({cc, team, flag}, i) => {
+    const cards = state.cards.filter(c => c.type === type && c.cc === cc);
+    const total = cards.length;
+    const owned = cards.filter(c => getQty(c.id) > 0).length;
+    const pct   = total > 0 ? Math.round(owned / total * 100) : 0;
+    const div   = document.createElement('div');
+    div.className = 'country-card';
+    div.style.animationDelay = `${i * 0.03}s`;
+    div.innerHTML = `
+      <div class="cc-flag">${flag || '🌍'}</div>
+      <div class="cc-name">${team}</div>
+      <div class="cc-bar-wrap"><div class="cc-bar-fill" data-pct="${pct}"></div></div>
+      <div class="cc-info">${owned}/${total} · ${pct}%</div>
+    `;
+    div.addEventListener('click', () => renderCardLevel(type, cc, true));
+    grid.appendChild(div);
+    setTimeout(() => {
+      const f = div.querySelector('.cc-bar-fill');
+      if (f) f.style.width = f.dataset.pct + '%';
+    }, 80 + i * 22);
+  });
+}
+
+function renderCardLevel(type, cc, slideIn = false) {
+  navLevel = 2; navType = type; navCC = cc;
+  const grid = document.getElementById('exp-grid');
+  if (!grid) return;
+  if (slideIn) expAnimate('left');
+  updateBreadcrumb();
+  setSectionTitle('');
+  grid.className = 'exp-grid cards-grid';
+  grid.innerHTML = '';
+  const cards = state.cards.filter(c => c.type === type && c.cc === cc);
+  cards.forEach((c, i) => {
+    const el = renderCard(c);
+    el.style.animation = `card-pop .35s cubic-bezier(.34,1.2,.64,1) ${i * 0.04}s both`;
+    grid.appendChild(el);
+  });
+}
+
+function updateBreadcrumb() {
+  const bc = document.getElementById('exp-breadcrumb');
+  if (!bc) return;
+  if (navLevel === 0) { bc.innerHTML = ''; return; }
+  let html = `<span class="bc-link" id="bc-home">🏠 Accueil</span>`;
+  if (navLevel >= 1) {
+    html += `<span class="bc-sep">›</span>`;
+    const lbl = TYPE_META[navType]?.label || navType;
+    html += navLevel === 1
+      ? `<span class="bc-current">${TYPE_META[navType]?.icon || ''} ${lbl}</span>`
+      : `<span class="bc-link" id="bc-type">${TYPE_META[navType]?.icon || ''} ${lbl}</span>`;
+  }
+  if (navLevel === 2) {
+    const c = state.cards.find(x => x.cc === navCC && x.type === navType);
+    html += `<span class="bc-sep">›</span><span class="bc-current">${c?.flag || ''} ${c?.team || navCC}</span>`;
+  }
+  bc.innerHTML = html;
+  bc.querySelector('#bc-home')?.addEventListener('click', () => renderTypeCards(true));
+  bc.querySelector('#bc-type')?.addEventListener('click', () => renderCountryCards(navType, true));
+}
+
+function renderHome() {
+  renderHomeHero();
+  if      (navLevel === 0) renderTypeCards(false);
+  else if (navLevel === 1) renderCountryCards(navType, false);
+  else if (navLevel === 2) renderCardLevel(navType, navCC, false);
+}
+
+// ─────────────────────────────────────────────────────────────────────
 // TABS & FILTERS
 // ─────────────────────────────────────────────────────────────────────
 function switchTab(tab) {
@@ -1554,6 +1912,7 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.toggle('active', t.id === `tab-${tab}`));
   const showFilters = ['collection','doubles','wishlist'].includes(tab);
   document.getElementById('filters-bar').style.display = showFilters ? '' : 'none';
+  if (tab === 'home') { navLevel = 0; }
   renderAll();
 }
 
@@ -1562,6 +1921,7 @@ function switchTab(tab) {
 // ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
+  createParticles();
 
   // Tabs
   document.querySelectorAll('.tab-btn').forEach(b => {
