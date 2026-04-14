@@ -59,6 +59,8 @@
     body.light .player-card{background:#fff;}
     body.light .setting-card{background:#fff;}
     body.light .profile-indicator{background:#e6e9f8;}
+    body.light .cloud-ind{color:#17a84a;}
+    body.light .cloud-ind.err{color:#e53935;}
 
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;transition:background .25s,color .25s;}
@@ -114,6 +116,10 @@
     .card[data-type="OR"]{border-color:var(--or-c);box-shadow:0 0 10px rgba(255,159,67,.15);}
     .card.owned{opacity:1;}
     .card.not-owned{opacity:.45;}
+    #tab-collection .card.owned{background:rgba(80,210,30,.28) !important;border-color:rgba(80,210,30,.7) !important;}
+    #tab-collection .card.owned:hover{border-color:rgba(80,210,30,1) !important;}
+    body.light #tab-collection .card.owned{background:rgba(50,170,10,.18) !important;border-color:rgba(50,170,10,.6) !important;}
+    body.light #tab-collection .card.owned:hover{border-color:rgba(50,170,10,.9) !important;}
     .card.in-wishlist{outline:2px solid var(--accent);outline-offset:1px;}
 
     .c-type{position:absolute;top:5px;right:5px;padding:2px 5px;border-radius:4px;font-size:.58rem;font-weight:700;letter-spacing:.4px;}
@@ -497,6 +503,22 @@
     .pi-name{font-size:.7rem;font-weight:600;color:var(--text);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .pi-lock{background:transparent;border:none;cursor:pointer;font-size:.78rem;opacity:.45;padding:2px;line-height:1;transition:opacity .2s;}
     .pi-lock:hover{opacity:1;}
+    .cloud-ind{font-size:.75rem;font-weight:700;letter-spacing:-.5px;transition:color .3s;cursor:default;user-select:none;}
+    .cloud-ind.ok{color:var(--green);}
+    .cloud-ind.syncing{color:var(--accent);animation:cloud-blink .8s ease-in-out infinite;}
+    .cloud-ind.err{color:var(--limited-c);}
+    .cloud-ind.off{color:var(--muted);}
+    @keyframes cloud-blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .setting-card .cloud-key-row{display:flex;gap:6px;align-items:center;}
+    .setting-card .cloud-key-row input{flex:1;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.78rem;outline:none;}
+    .setting-card .cloud-key-row input:focus{border-color:var(--accent);}
+    .setting-card .cloud-status-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:.75rem;}
+    .setting-card .cloud-bin-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:monospace;font-size:.75rem;color:var(--accent);word-break:break-all;}
+    .setting-card .cloud-sep{border:none;border-top:1px solid var(--border);margin:10px 0;}
+    .setting-card .cloud-restore-row{display:flex;gap:6px;}
+    .setting-card .cloud-restore-row input{flex:1;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.78rem;font-family:monospace;outline:none;}
+    .setting-card .cloud-restore-row input:focus{border-color:var(--accent);}
+    .cloud-label{font-size:.73rem;color:var(--muted);display:block;margin-bottom:4px;}
   </style>
 </head>
 <body>
@@ -555,12 +577,13 @@
   <div class="header-left">
     <div>
       <h1>🏆 COUPE DU MONDE DE FOOTBALL 2026</h1>
-      <span>Doubles &amp; Échanges · Adrenalyn XL Panini</span>
+      <span>Doubles &amp; Échanges · Adrenalyn XL Panini <span style="font-size:.6rem;opacity:.45;margin-left:4px;">v1.2</span></span>
     </div>
   </div>
   <div class="profile-indicator" id="profile-indicator" style="display:none">
     <div class="pi-avatar" id="pi-avatar"></div>
     <span class="pi-name" id="pi-name"></span>
+    <span class="cloud-ind off" id="cloud-ind" title="Sync cloud">☁</span>
     <button class="pi-lock" id="theme-toggle" title="Mode clair / sombre">🌙</button>
     <button class="pi-lock" onclick="lockProfile()" title="Changer de profil">🔒</button>
   </div>
@@ -840,6 +863,39 @@
           <button class="btn btn-danger btn-sm" id="btn-reset-all">🗑️ Tout effacer</button>
         </div>
       </div>
+      <div class="setting-card" id="cloud-settings-card">
+        <h4>☁️ Sync Cloud</h4>
+        <p style="font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Sauvegardez vos données sur <strong>JSONBin.io</strong> (gratuit) pour y accéder depuis n'importe quel appareil. <a href="https://jsonbin.io" target="_blank" rel="noopener" style="color:var(--accent)">Créer un compte gratuit →</a></p>
+
+        <label class="cloud-label">Clé API Master Key</label>
+        <div class="cloud-key-row">
+          <input type="password" id="cloud-api-key" placeholder="$2b$10$XXXXXXXXXXXXXXXXXX…" autocomplete="off">
+          <button class="btn btn-primary btn-sm" id="btn-save-binkey">Sauver</button>
+        </div>
+
+        <div class="cloud-status-row">
+          <span style="color:var(--muted)">Statut :</span>
+          <span id="cloud-status-text" style="font-weight:600;color:var(--muted)">Non configuré</span>
+        </div>
+
+        <div id="cloud-binid-section" style="display:none;">
+          <hr class="cloud-sep">
+          <label class="cloud-label">Code de synchronisation <span style="color:var(--muted)">(à noter — permet de restaurer sur un autre appareil)</span></label>
+          <div class="cloud-bin-box" id="cloud-binid-display">—</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-copy-binid">📋 Copier le code</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-force-sync">🔄 Synchroniser</button>
+          </div>
+        </div>
+
+        <hr class="cloud-sep">
+        <label class="cloud-label">Restaurer depuis un autre appareil</label>
+        <div class="cloud-restore-row">
+          <input type="text" id="cloud-restore-id" placeholder="Coller le code de sync ici…">
+          <button class="btn btn-primary btn-sm" id="btn-restore-cloud">Restaurer</button>
+        </div>
+      </div>
+
       <div class="setting-card">
         <h4>Légende des types</h4>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:.78rem;">
@@ -1640,6 +1696,7 @@ function saveState() {
   profiles[idx].values     = state.values;
   saveProfiles(profiles);
   activeProfile = profiles[idx];
+  cloudPush();
 }
 
 async function doLogin(profileId, pin) {
@@ -1651,6 +1708,7 @@ async function doLogin(profileId, pin) {
   sessionStorage.setItem(SESSION_KEY, profileId);
   activeProfile = profile;
   loadProfileData(profile);
+  setTimeout(cloudPullOnLogin, 200); // pull cloud data after login (non-bloquant)
   return true;
 }
 
@@ -2199,6 +2257,7 @@ function renderSettings() {
     const el = document.getElementById(`val-${t}`);
     if (el) el.value = state.values[t] || 1;
   });
+  renderCloudCard();
 }
 
 function updateStats() {
@@ -2668,6 +2727,142 @@ function switchTab(tab) {
 }
 
 // ─────────────────────────────────────────────────────────────────────
+// CLOUD SYNC (JSONBin.io)
+// ─────────────────────────────────────────────────────────────────────
+const BINKEY_STORE = 'wc2026_binkey';
+const JSONBIN_URL  = 'https://api.jsonbin.io/v3/b';
+
+let cloudTimer = null;
+
+function getBinKey()        { return localStorage.getItem(BINKEY_STORE) || ''; }
+function setBinKey(k)       { localStorage.setItem(BINKEY_STORE, k.trim()); }
+
+function cloudPayload() {
+  return { collection: state.collection, wishlist: state.wishlist, players: state.players, values: state.values, syncedAt: new Date().toISOString() };
+}
+
+function setCloudUI(status) {
+  // status: 'off' | 'syncing' | 'ok' | 'err'
+  const ind = document.getElementById('cloud-ind');
+  const txt = document.getElementById('cloud-status-text');
+  if (!ind) return;
+  ind.className = `cloud-ind ${status}`;
+  const icons = { off:'☁', syncing:'↻', ok:'☁✓', err:'☁✗' };
+  const labels = { off:'Non configuré', syncing:'Synchronisation…', ok:'Synchronisé ✓', err:'Erreur de sync' };
+  const colors = { off:'var(--muted)', syncing:'var(--accent)', ok:'var(--green)', err:'var(--limited-c)' };
+  ind.textContent = icons[status] || '☁';
+  ind.title = labels[status] || '';
+  if (txt) { txt.textContent = labels[status] || ''; txt.style.color = colors[status] || 'var(--muted)'; }
+}
+
+async function cloudPushNow() {
+  if (!activeProfile) return;
+  const key = getBinKey();
+  if (!key) { setCloudUI('off'); return; }
+  setCloudUI('syncing');
+  try {
+    const body = JSON.stringify(cloudPayload());
+    let binId = activeProfile.binId;
+    if (!binId) {
+      const r = await fetch(JSONBIN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'X-Master-Key': key, 'X-Bin-Name': `wc2026-${activeProfile.name}`, 'X-Bin-Private':'true' },
+        body
+      });
+      if (!r.ok) throw new Error(r.status);
+      const d = await r.json();
+      binId = d.metadata.id;
+      const profiles = getProfiles();
+      const idx = profiles.findIndex(p => p.id === activeProfile.id);
+      if (idx !== -1) { profiles[idx].binId = binId; saveProfiles(profiles); activeProfile = profiles[idx]; }
+      renderCloudCard();
+    } else {
+      const r = await fetch(`${JSONBIN_URL}/${binId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type':'application/json', 'X-Master-Key': key },
+        body
+      });
+      if (!r.ok) throw new Error(r.status);
+    }
+    setCloudUI('ok');
+  } catch(e) {
+    console.warn('Cloud sync error:', e);
+    setCloudUI('err');
+  }
+}
+
+function cloudPush() {
+  if (cloudTimer) clearTimeout(cloudTimer);
+  cloudTimer = setTimeout(cloudPushNow, 3000);
+}
+
+async function cloudFetch(binId) {
+  const key = getBinKey();
+  if (!key || !binId) return null;
+  try {
+    const r = await fetch(`${JSONBIN_URL}/${binId}/latest`, { headers: { 'X-Master-Key': key } });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.record || null;
+  } catch { return null; }
+}
+
+async function cloudPullOnLogin() {
+  if (!activeProfile || !activeProfile.binId || !getBinKey()) return;
+  setCloudUI('syncing');
+  const data = await cloudFetch(activeProfile.binId);
+  if (!data) { setCloudUI('err'); return; }
+  if (data.collection) state.collection = data.collection;
+  if (data.wishlist)   state.wishlist   = data.wishlist;
+  if (data.players)    state.players    = data.players;
+  if (data.values)     state.values     = Object.assign(state.values, data.values);
+  setCloudUI('ok');
+  renderAll();
+}
+
+async function cloudRestore() {
+  const binId = document.getElementById('cloud-restore-id').value.trim();
+  if (!binId) { toast('Entrez un code de synchronisation', 'err'); return; }
+  if (!getBinKey()) { toast('Entrez d\'abord votre clé API cloud dans ce panneau', 'err'); return; }
+  if (!activeProfile) { toast('Connectez-vous d\'abord à un profil', 'err'); return; }
+  setCloudUI('syncing');
+  const data = await cloudFetch(binId);
+  if (!data) { setCloudUI('err'); toast('Code invalide ou clé API incorrecte', 'err'); return; }
+  if (data.collection) state.collection = data.collection;
+  if (data.wishlist)   state.wishlist   = data.wishlist;
+  if (data.players)    state.players    = data.players;
+  if (data.values)     state.values     = Object.assign(state.values, data.values);
+  const profiles = getProfiles();
+  const idx = profiles.findIndex(p => p.id === activeProfile.id);
+  if (idx !== -1) {
+    profiles[idx].binId = binId;
+    profiles[idx].collection = state.collection;
+    profiles[idx].wishlist   = state.wishlist;
+    profiles[idx].players    = state.players;
+    profiles[idx].values     = state.values;
+    saveProfiles(profiles);
+    activeProfile = profiles[idx];
+  }
+  document.getElementById('cloud-restore-id').value = '';
+  renderCloudCard();
+  renderAll();
+  setCloudUI('ok');
+  toast('Données restaurées depuis le cloud ✓');
+}
+
+function renderCloudCard() {
+  const keyInput = document.getElementById('cloud-api-key');
+  if (keyInput && !keyInput.value) keyInput.placeholder = getBinKey() ? '••••••••••••••••••• (clé enregistrée)' : '$2b$10$XXXXXXXXXXXXXXXXXX…';
+  const binId = activeProfile ? activeProfile.binId : null;
+  const section = document.getElementById('cloud-binid-section');
+  const display = document.getElementById('cloud-binid-display');
+  if (section) section.style.display = binId ? '' : 'none';
+  if (display) display.textContent = binId || '—';
+  if (getBinKey()) setCloudUI(binId ? 'ok' : 'off');
+  else setCloudUI('off');
+}
+
+// ─────────────────────────────────────────────────────────────────────
 // THEME
 // ─────────────────────────────────────────────────────────────────────
 const THEME_KEY = 'wc2026_theme';
@@ -2714,6 +2909,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('profile-screen').style.display = 'none';
       document.body.classList.remove('ps-open');
       updateProfileIndicator();
+      setTimeout(cloudPullOnLogin, 300);
     } else {
       showProfileScreen();
     }
@@ -2773,6 +2969,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Player search filters
   document.getElementById('search-player-doubles').addEventListener('input', () => buildPicker('picker-doubles', tempPlayerDoubles, 'search-player-doubles'));
   document.getElementById('search-player-wish').addEventListener('input', () => buildPicker('picker-wish', tempPlayerWish, 'search-player-wish'));
+
+  // Cloud sync
+  document.getElementById('btn-save-binkey').addEventListener('click', () => {
+    const v = document.getElementById('cloud-api-key').value.trim();
+    if (!v) { toast('Entrez une clé API', 'err'); return; }
+    setBinKey(v);
+    document.getElementById('cloud-api-key').value = '';
+    renderCloudCard();
+    toast('Clé API enregistrée');
+    if (activeProfile && !activeProfile.binId) cloudPushNow();
+  });
+  document.getElementById('btn-copy-binid').addEventListener('click', () => {
+    const id = activeProfile && activeProfile.binId;
+    if (!id) return;
+    navigator.clipboard.writeText(id).then(() => toast('Code copié ✓')).catch(() => toast('Copie impossible', 'err'));
+  });
+  document.getElementById('btn-force-sync').addEventListener('click', cloudPushNow);
+  document.getElementById('btn-restore-cloud').addEventListener('click', cloudRestore);
 
   // Settings
   document.getElementById('btn-save-values').addEventListener('click', saveValues);
