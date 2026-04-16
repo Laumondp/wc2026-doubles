@@ -852,6 +852,7 @@
         <div class="setting-row"><label>🌟 Fan Favourite</label><input type="number" id="val-HERO" min="1" max="100"></div>
         <div class="setting-row"><label>🃏 Base</label><input type="number" id="val-BASE" min="1" max="100"></div>
         <button class="btn btn-primary btn-sm" style="margin-top:8px;width:100%;" id="btn-save-values">Enregistrer</button>
+        <p id="card-values-admin-note" style="display:none;margin-top:8px;font-size:.75rem;color:var(--muted);text-align:center;">🔒 Modifiable par l'administrateur uniquement</p>
       </div>
       <div class="setting-card">
         <h4>Données</h4>
@@ -1699,12 +1700,20 @@ function saveState() {
   cloudPush();
 }
 
+const ADMIN_NAME = 'Philippe';
+
 async function doLogin(profileId, pin) {
   const profiles = getProfiles();
   const profile = profiles.find(p => p.id === profileId);
   if (!profile) return false;
   const hash = await sha256(pin);
   if (hash !== profile.pinHash) return false;
+  // Auto-marquer le profil admin si c'est Philippe
+  if (profile.name === ADMIN_NAME && !profile.isAdmin) {
+    profile.isAdmin = true;
+    profiles[profiles.findIndex(p => p.id === profileId)] = profile;
+    saveProfiles(profiles);
+  }
   sessionStorage.setItem(SESSION_KEY, profileId);
   activeProfile = profile;
   loadProfileData(profile);
@@ -2253,10 +2262,21 @@ function renderCommunityDoubles() {
 }
 
 function renderSettings() {
+  const isAdmin = activeProfile && activeProfile.isAdmin;
   ['LIMITED','ICON','HERO','BASE'].forEach(t => {
     const el = document.getElementById(`val-${t}`);
-    if (el) el.value = state.values[t] || 1;
+    if (!el) return;
+    el.value = state.values[t] || 1;
+    el.disabled = !isAdmin;
+    el.title = isAdmin ? '' : 'Réservé à l\'administrateur';
   });
+  const saveBtn = document.getElementById('btn-save-values');
+  if (saveBtn) {
+    saveBtn.style.display = isAdmin ? '' : 'none';
+  }
+  // Affiche un badge "admin only" si non-admin
+  const card = document.getElementById('card-values-admin-note');
+  if (card) card.style.display = isAdmin ? 'none' : '';
   renderCloudCard();
 }
 
@@ -2988,7 +3008,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-force-sync').addEventListener('click', cloudPushNow);
   document.getElementById('btn-restore-cloud').addEventListener('click', cloudRestore);
 
-  // Settings
   document.getElementById('btn-save-values').addEventListener('click', saveValues);
   document.getElementById('btn-export').addEventListener('click', exportData);
   document.getElementById('btn-import-trigger').addEventListener('click', () => document.getElementById('import-file').click());
