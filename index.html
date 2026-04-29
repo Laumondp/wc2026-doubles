@@ -138,6 +138,26 @@
     .c-name{font-size:.72rem;font-weight:600;line-height:1.2;margin-bottom:4px;}
     .c-val{font-size:.68rem;color:var(--or-c);font-weight:600;}
 
+    /* ── PHOTO TOOLTIP AU SURVOL ─────────────────────────────────── */
+    .card{overflow:visible;}
+    .c-photo-tip{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);z-index:300;width:190px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.65);pointer-events:none;}
+    .c-photo-tip img{width:100%;height:auto;display:block;}
+    .c-photo-tip::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:var(--border);border-bottom:none;}
+    .card.owned:hover .c-photo-tip{display:block;}
+
+    /* ── MODAL DECK JOUEUR ────────────────────────────────────────── */
+    #modal-deck .modal{max-width:980px;max-height:88vh;overflow-y:auto;display:flex;flex-direction:column;}
+    .deck-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap;}
+    .deck-hdr h2{font-size:1rem;font-weight:700;}
+    .deck-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+    .deck-pill{padding:4px 14px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;border-radius:20px;font-size:.76rem;transition:all .2s;}
+    .deck-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .deck-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;font-size:.75rem;color:var(--muted);}
+    .deck-stat strong{color:var(--text);}
+    .deck-import-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+    .deck-import-row input{flex:1;min-width:200px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.76rem;outline:none;font-family:monospace;}
+    .deck-import-row input:focus{border-color:var(--accent);}
+
     /* QTY CONTROLS */
     .qty-wrap{position:absolute;bottom:6px;left:6px;right:6px;display:flex;align-items:center;gap:5px;}
     .qty-btn{width:22px;height:22px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:5px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;}
@@ -533,6 +553,9 @@
     <div id="ps-list">
       <div class="ps-section-title" id="ps-section-lbl">Choisissez votre profil</div>
       <div class="ps-profiles-grid" id="ps-profiles-grid"></div>
+      <div style="margin-top:14px;text-align:center;">
+        <button class="ps-pin-cancel" id="ps-join-link" style="font-size:.72rem;">☁️ Rejoindre un groupe existant</button>
+      </div>
     </div>
 
     <!-- Saisie PIN -->
@@ -570,6 +593,19 @@
         <button class="ps-pin-cancel" id="ps-create-back">← Retour</button>
       </div>
     </div>
+
+    <!-- Rejoindre un groupe (autre navigateur) -->
+    <div id="ps-join" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;">
+      <div class="ps-create-wrap">
+        <div class="ps-create-title">☁️ Rejoindre un groupe</div>
+        <p style="font-size:.72rem;color:var(--muted);text-align:center;margin:0 0 4px;">Entrez la clé API et le code groupe pour importer tous les profils existants.</p>
+        <input class="ps-input" id="ps-join-key" type="password" placeholder="Clé API JSONBin (Master Key)" autocomplete="off"/>
+        <input class="ps-input" id="ps-join-group" placeholder="Code groupe" autocomplete="off"/>
+        <button class="ps-create-btn" id="ps-join-submit">Importer les profils</button>
+        <div class="ps-create-err" id="ps-join-err"></div>
+        <button class="ps-pin-cancel" id="ps-join-back">← Retour</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -580,6 +616,7 @@
       <span>Doubles &amp; Échanges · Adrenalyn XL Panini <span style="font-size:.6rem;opacity:.45;margin-left:4px;">v1.2</span></span>
     </div>
   </div>
+  <a href="https://wc2026-doubles.vercel.app" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="text-decoration:none;white-space:nowrap;">🌐 Site en ligne</a>
   <div class="profile-indicator" id="profile-indicator" style="display:none">
     <div class="pi-avatar" id="pi-avatar"></div>
     <span class="pi-name" id="pi-name"></span>
@@ -889,6 +926,16 @@
           </div>
         </div>
 
+        <div id="cloud-group-section" style="display:none;">
+          <hr class="cloud-sep">
+          <label class="cloud-label">Code de groupe <span style="color:var(--muted)">(à partager — permet à un autre navigateur de voir tous les profils)</span></label>
+          <div class="cloud-bin-box" id="cloud-group-display">—</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-copy-groupid">📋 Copier le code groupe</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-push-group">🔄 Mettre à jour le groupe</button>
+          </div>
+        </div>
+
         <hr class="cloud-sep">
         <label class="cloud-label">Restaurer depuis un autre appareil</label>
         <div class="cloud-restore-row">
@@ -961,6 +1008,30 @@
       <button class="btn btn-ghost" id="modal-player-cancel">Annuler</button>
       <button class="btn btn-primary" id="modal-player-save">Enregistrer</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: Deck d'un joueur -->
+<div class="overlay" id="modal-deck">
+  <div class="modal">
+    <div class="deck-hdr">
+      <h2 id="deck-title">🃏 Jeu de cartes</h2>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-deck')">✕ Fermer</button>
+    </div>
+    <div class="deck-stats" id="deck-stats"></div>
+    <div class="deck-pills" id="deck-pills">
+      <button class="deck-pill active" data-deck-view="doubles">Doubles</button>
+      <button class="deck-pill" data-deck-view="wishlist">Recherche</button>
+      <button class="deck-pill" data-deck-view="collection">Collection complète</button>
+    </div>
+    <div id="deck-import-zone" style="display:none;">
+      <div class="deck-import-row">
+        <input type="text" id="deck-import-input" placeholder="Coller ici le JSON exporté par ce joueur…">
+        <button class="btn btn-primary btn-sm" onclick="importDeckCollection()">Importer</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearDeckCollection()">Effacer</button>
+      </div>
+    </div>
+    <div class="cards-grid" id="deck-grid"></div>
   </div>
 </div>
 
@@ -1613,6 +1684,117 @@ const CC_TO_ISO2 = {
   NZL:'nz',PAN:'pa',PAR:'py',POL:'pl',POR:'pt',QAT:'qa',RSA:'za',SCO:'gb-sct',
   SEN:'sn',SUI:'ch',SWE:'se',TUN:'tn',TUR:'tr',URU:'uy',USA:'us',UZB:'uz',
 };
+// ── SYSTÈME PHOTO JOUEURS ─────────────────────────────────────────────
+const PHOTO_CACHE_KEY = 'wc2026_photos';
+let PHOTO_CACHE = {};
+try { PHOTO_CACHE = JSON.parse(localStorage.getItem(PHOTO_CACHE_KEY)) || {}; } catch {}
+function savePhotoCache() { try { localStorage.setItem(PHOTO_CACHE_KEY, JSON.stringify(PHOTO_CACHE)); } catch {} }
+
+// CDN Panini (collectosk) — essai prioritaire
+const PANINI_CDN = 'https://www.collectosk.com/wp-content/uploads/soccer/2026/panini-fifa-world-cup-2026-adrenalyn-xl/panini-fifa-world-cup-2026-adrenalyn-xl-trading-card-game-';
+const PANINI_TYPE = { LIMITED: 'golden-baller', ICON: 'icon', HERO: 'fan-favourite' };
+
+function paniniUrl(card) {
+  const prefix = PANINI_TYPE[card.type];
+  if (!prefix) return null;
+  const slug = card.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z\s]/g,' ').trim().toLowerCase().split(/\s+/).pop();
+  return `${PANINI_CDN}${prefix}-${slug}.avif`;
+}
+
+function buildPhotoHTML(card) {
+  const cached = PHOTO_CACHE[card.id];
+  // Fichier local confirmé → afficher directement
+  if (typeof cached === 'string' && cached.startsWith('CopyScreens/')) {
+    return `<img src="${cached}" alt="${card.name}" loading="lazy" onerror="this.remove()">`;
+  }
+  // Priorité 1 : CopyScreens/{num}.jpg (vraie carte)
+  const local1 = `CopyScreens/${card.num}.jpg`;
+  // Priorité 2 : CopyScreens/Tous les joueurs/screen_{num padded}.jpg
+  const padded = String(parseInt(card.num, 10)).padStart(2, '0');
+  const local2 = `CopyScreens/Tous les joueurs/screen_${padded}.jpg`;
+  const remote = (typeof cached === 'string') ? cached : (paniniUrl(card) || '');
+  return `<img src="${local1}" alt="${card.name}" loading="lazy"
+    data-l2="${local2}" data-remote="${remote}"
+    onload="onPhotoLoad('${card.id}','${local1}')"
+    onerror="onLocalPhotoError(this,'${card.id}',1)">`;
+}
+
+// URL confirmée → mise en cache
+function onPhotoLoad(cardId, url) {
+  if (PHOTO_CACHE[cardId] === url) return;
+  PHOTO_CACHE[cardId] = url;
+  savePhotoCache();
+}
+
+// Cascade : local1 → local2 → remote (CDN/TSDB)
+function onLocalPhotoError(img, cardId, step) {
+  img.removeAttribute('onerror');
+  img.removeAttribute('onload');
+  if (step === 1) {
+    const l2 = img.getAttribute('data-l2');
+    img.onload = () => onPhotoLoad(cardId, l2);
+    img.onerror = () => onLocalPhotoError(img, cardId, 2);
+    img.src = l2;
+  } else {
+    const remote = img.getAttribute('data-remote');
+    if (remote) {
+      img.onload = () => onPhotoLoad(cardId, remote);
+      img.onerror = () => { img.remove(); onPhotoError(cardId); };
+      img.src = remote;
+    } else {
+      img.remove();
+      onPhotoError(cardId);
+    }
+  }
+}
+
+// URL distante échoue → fallback TheSportsDB
+const _photoFetching = new Set();
+function onPhotoError(cardId) {
+  if (_photoFetching.has(cardId) || (cardId in PHOTO_CACHE && PHOTO_CACHE[cardId] !== undefined)) return;
+  _photoFetching.add(cardId);
+  const card = state.cards.find(c => c.id === cardId);
+  if (!card) { PHOTO_CACHE[cardId] = null; return; }
+  queueTsdbFetch(card);
+}
+
+// File TheSportsDB (fallback)
+const tsdbQueue = [];
+let tsdbActive = 0;
+
+function queueTsdbFetch(card) {
+  if (tsdbQueue.find(c => c.id === card.id)) return;
+  tsdbQueue.push(card);
+  setTimeout(processTsdbQueue, 0);
+}
+
+async function processTsdbQueue() {
+  while (tsdbQueue.length > 0 && tsdbActive < 3) {
+    const card = tsdbQueue.shift();
+    tsdbActive++;
+    let url = null;
+    try {
+      const norm = card.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z\s]/g,' ').trim();
+      const lastName = norm.split(/\s+/).pop();
+      const r = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(lastName)}`);
+      const data = await r.json();
+      const players = (data.player||[]).filter(p => p.strSport==='Soccer' && p.strThumb);
+      if (players.length) {
+        const lc = lastName.toLowerCase();
+        const hit = players.find(p => p.strPlayer.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(lc));
+        url = (hit || players[0]).strThumb || null;
+      }
+    } catch {}
+    PHOTO_CACHE[card.id] = url;
+    savePhotoCache();
+    document.querySelectorAll(`[data-card-photo="${card.id}"]`).forEach(el => {
+      el.innerHTML = url ? `<img src="${url}" alt="${card.name}" loading="lazy" onerror="this.remove()">` : '';
+    });
+    tsdbActive--;
+    processTsdbQueue();
+  }
+}
+
 function getFlagImg(cc, w=30){
   const iso2 = CC_TO_ISO2[cc];
   if(!iso2) return '<span style="font-size:1.4rem">🌍</span>';
@@ -1929,11 +2111,11 @@ function toast(msg, type='ok') {
 // RENDER CARD
 // ─────────────────────────────────────────────────────────────────────
 function renderCard(card, options = {}) {
-  const qty = getQty(card.id);
-  const dbl = getDoubles(card.id);
-  const wished = isWished(card.id);
-  const val = cardValue(card);
-  const {showDoubleCount, readOnly} = options;
+  const qty    = options.qty    !== undefined ? options.qty    : getQty(card.id);
+  const dbl    = options.qty    !== undefined ? Math.max(0, qty - 1) : getDoubles(card.id);
+  const wished = options.wished !== undefined ? options.wished : isWished(card.id);
+  const val    = cardValue(card);
+  const {readOnly} = options;
 
   const div = document.createElement('div');
   div.className = 'card' + (qty > 0 ? ' owned' : ' not-owned') + (wished ? ' in-wishlist' : '');
@@ -1943,15 +2125,21 @@ function renderCard(card, options = {}) {
   let badges = `<span class="c-type ct-${card.type}">${card.type}</span>`;
   if (dbl > 0) badges += `<span class="c-dbl">+${dbl}</span>`;
   else if (wished && !readOnly) badges += `<span class="c-wish">★</span>`;
+  else if (wished && readOnly)  badges += `<span class="c-wish">🔍</span>`;
 
   const showVal = card.type !== 'BASE';
+  const isImportant = ['LIMITED','ICON','HERO'].includes(card.type);
+  const photoSection = isImportant
+    ? `<div class="c-photo-tip" data-card-photo="${card.id}">${qty > 0 ? buildPhotoHTML(card) : ''}</div>`
+    : '';
 
   div.innerHTML = `
+    ${photoSection}
     ${badges}
     <div class="c-num">${card.num}</div>
     <div class="c-flag" title="${card.team}">${getFlagImg(card.cc)}</div>
     <div class="c-name">${card.name}</div>
-    ${showVal ? `<div class="c-val">Valeur ${val} pt${val>1?'s':''}</div>` : ''}
+    ${showVal ? `<div class="c-val">⭐ ${val} pt${val>1?'s':''}</div>` : ''}
     ${readOnly ? '' : `
     <div class="qty-wrap">
       <button class="qty-btn" data-action="dec" data-id="${card.id}">−</button>
@@ -2070,8 +2258,9 @@ function renderPlayers() {
           ${p.contact ? `<div class="pc-contact">${p.contact}</div>` : ''}
           ${!p.email && !p.contact ? `<div class="pc-contact" style="opacity:.45">Pas de contact</div>` : ''}
         </div>
-        <div style="display:flex;gap:6px;align-items:center;">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           ${matches.canGive.length || matches.canReceive.length ? `<span class="pc-match">⚡ Match !</span>` : ''}
+          <button class="btn btn-ghost btn-sm" data-deck="${p.id}">🃏 Voir le jeu</button>
           <button class="btn btn-ghost btn-sm btn-icon" data-edit="${p.id}">✏️</button>
           <button class="btn btn-danger btn-sm btn-icon" data-del="${p.id}">✕</button>
         </div>
@@ -2095,6 +2284,7 @@ function renderPlayers() {
         }).join('')||'<span style="font-size:.7rem;color:var(--muted)">Aucune recherche renseignée</span>'}</div>
       </div>
     `;
+    div.querySelector('[data-deck]').addEventListener('click', () => openPlayerDeck(p));
     div.querySelector('[data-edit]').addEventListener('click', () => openEditPlayer(p));
     div.querySelector('[data-del]').addEventListener('click', () => deletePlayer(p.id));
     grid.appendChild(div);
@@ -2106,6 +2296,113 @@ function findMatches(player) {
   const canGive = myDoubles.filter(id => player.wishlist.includes(id));
   const canReceive = state.wishlist.filter(id => player.doubles.includes(id));
   return { canGive, canReceive };
+}
+
+// ── DECK JOUEUR ───────────────────────────────────────────────────────
+let deckPlayer = null;
+let deckView = 'doubles';
+
+function openPlayerDeck(player) {
+  deckPlayer = player;
+  deckView = 'doubles';
+  document.getElementById('deck-title').textContent = `🃏 Jeu de ${player.name}`;
+  document.querySelectorAll('.deck-pill').forEach(b => {
+    b.classList.toggle('active', b.dataset.deckView === 'doubles');
+  });
+  renderDeckView();
+  document.getElementById('modal-deck').classList.add('open');
+}
+
+function renderDeckView() {
+  if (!deckPlayer) return;
+  const p = deckPlayer;
+  const collection = p.collection || {};
+  const hasCollection = Object.keys(collection).length > 0;
+
+  // Stats
+  document.getElementById('deck-stats').innerHTML = `
+    <span><strong>${p.doubles.length}</strong> doubles</span>
+    <span><strong>${p.wishlist.length}</strong> recherches</span>
+    ${hasCollection ? `<span><strong>${Object.values(collection).filter(q=>q>0).length}</strong> cartes possédées</span>` : ''}
+    ${p.contact ? `<span>📞 ${p.contact}</span>` : ''}
+  `;
+
+  // Import zone visible seulement en vue "collection"
+  document.getElementById('deck-import-zone').style.display = deckView === 'collection' ? '' : 'none';
+
+  // Mise à jour des pills
+  document.querySelectorAll('.deck-pill').forEach(b => {
+    b.classList.toggle('active', b.dataset.deckView === deckView);
+  });
+
+  const grid = document.getElementById('deck-grid');
+  grid.innerHTML = '';
+
+  let cards = [];
+
+  if (deckView === 'doubles') {
+    if (!p.doubles.length) {
+      grid.innerHTML = '<div class="empty"><div class="e-icon">📭</div><p>Aucun double renseigné</p></div>';
+      return;
+    }
+    cards = p.doubles.map(id => ({ card: state.cards.find(c => c.id === id), qty: 2, wished: false })).filter(x => x.card);
+  } else if (deckView === 'wishlist') {
+    if (!p.wishlist.length) {
+      grid.innerHTML = '<div class="empty"><div class="e-icon">⭐</div><p>Aucune carte recherchée</p></div>';
+      return;
+    }
+    cards = p.wishlist.map(id => ({ card: state.cards.find(c => c.id === id), qty: 0, wished: true })).filter(x => x.card);
+  } else if (deckView === 'collection') {
+    if (!hasCollection) {
+      grid.innerHTML = '<div class="empty"><div class="e-icon">📦</div><p>Collection non importée.<br>Collez le JSON exporté par ce joueur ci-dessus.</p></div>';
+      return;
+    }
+    state.cards.forEach(card => {
+      const qty = collection[card.id] || 0;
+      const wished = p.wishlist.includes(card.id);
+      if (qty > 0 || wished) cards.push({ card, qty, wished });
+    });
+  }
+
+  cards.forEach(({ card, qty, wished }) => {
+    grid.appendChild(renderCard(card, { readOnly: true, qty, wished }));
+  });
+}
+
+function importDeckCollection() {
+  const raw = document.getElementById('deck-import-input').value.trim();
+  if (!raw || !deckPlayer) return;
+  try {
+    const data = JSON.parse(raw);
+    const col = data.collection || data;
+    if (typeof col !== 'object') throw new Error();
+    deckPlayer.collection = col;
+    // Persist dans le state.players
+    const idx = state.players.findIndex(p => p.id === deckPlayer.id);
+    if (idx !== -1) state.players[idx].collection = col;
+    saveState();
+    document.getElementById('deck-import-input').value = '';
+    deckView = 'collection';
+    renderDeckView();
+    toast('Collection importée ✓');
+  } catch {
+    toast('JSON invalide — copiez l\'export complet du joueur', 'err');
+  }
+}
+
+function clearDeckCollection() {
+  if (!deckPlayer) return;
+  delete deckPlayer.collection;
+  const idx = state.players.findIndex(p => p.id === deckPlayer.id);
+  if (idx !== -1) delete state.players[idx].collection;
+  saveState();
+  deckView = 'doubles';
+  renderDeckView();
+  toast('Collection effacée');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
 }
 
 function renderExchanges() {
@@ -2757,6 +3054,98 @@ let cloudTimer = null;
 function getBinKey()        { return localStorage.getItem(BINKEY_STORE) || ''; }
 function setBinKey(k)       { localStorage.setItem(BINKEY_STORE, k.trim()); }
 
+const GROUP_STORE = 'wc2026_group';
+function getGroupId() { return localStorage.getItem(GROUP_STORE) || ''; }
+function setGroupId(id) { localStorage.setItem(GROUP_STORE, id); }
+
+function groupPayload() {
+  return {
+    profiles: getProfiles().map(({ id, name, email, pinHash, binId }) =>
+      ({ id, name, email: email||'', pinHash, binId: binId||null })),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+async function pushGroupList() {
+  const key = getBinKey();
+  if (!key) return;
+  let groupId = getGroupId();
+  const body = JSON.stringify(groupPayload());
+  try {
+    if (!groupId) {
+      const r = await fetch(JSONBIN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'X-Master-Key':key, 'X-Bin-Name':'wc2026-group', 'X-Bin-Private':'true' },
+        body
+      });
+      if (!r.ok) return;
+      const d = await r.json();
+      setGroupId(d.metadata.id);
+    } else {
+      const r = await fetch(`${JSONBIN_URL}/${groupId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type':'application/json', 'X-Master-Key':key },
+        body
+      });
+      if (!r.ok) return;
+    }
+    renderCloudCard();
+  } catch(e) { console.warn('Group push error:', e); }
+}
+
+async function importGroupProfiles(groupId, apiKey) {
+  try {
+    const r = await fetch(`${JSONBIN_URL}/${groupId}/latest`, { headers: { 'X-Master-Key': apiKey } });
+    if (!r.ok) return false;
+    const d = await r.json();
+    const remoteProfiles = d.record?.profiles || [];
+    const local = getProfiles();
+    let changed = false;
+    for (const rp of remoteProfiles) {
+      const existing = local.find(p => p.name.toLowerCase() === rp.name.toLowerCase());
+      if (!existing) {
+        local.push({ id: rp.id||uid(), name:rp.name, email:rp.email||'', pinHash:rp.pinHash,
+          binId:rp.binId||null, collection:{}, wishlist:[], players:[],
+          values:{ LIMITED:15, ICON:10, HERO:5, BASE:1 } });
+        changed = true;
+      } else {
+        if (rp.binId && !existing.binId) { existing.binId = rp.binId; changed = true; }
+        if (rp.pinHash && !existing.pinHash) { existing.pinHash = rp.pinHash; changed = true; }
+      }
+    }
+    if (changed) saveProfiles(local);
+    return true;
+  } catch(e) { console.warn('Group import error:', e); return false; }
+}
+
+function showJoinForm() {
+  document.getElementById('ps-list').style.display   = 'none';
+  document.getElementById('ps-pin').style.display    = 'none';
+  document.getElementById('ps-create').style.display = 'none';
+  document.getElementById('ps-join').style.display   = 'flex';
+  document.getElementById('ps-join-key').value   = getBinKey() ? '' : '';
+  document.getElementById('ps-join-group').value = getGroupId();
+  document.getElementById('ps-join-err').textContent = '';
+  if (getBinKey()) document.getElementById('ps-join-key').placeholder = '••••••••• (clé déjà enregistrée — laisser vide pour garder)';
+}
+
+async function submitJoinForm() {
+  const keyInput  = document.getElementById('ps-join-key').value.trim();
+  const groupId   = document.getElementById('ps-join-group').value.trim();
+  const errEl     = document.getElementById('ps-join-err');
+  errEl.textContent = '';
+  const apiKey = keyInput || getBinKey();
+  if (!apiKey) { errEl.textContent = 'Entrez votre clé API JSONBin'; return; }
+  if (!groupId) { errEl.textContent = 'Entrez le code groupe'; return; }
+  errEl.textContent = 'Importation en cours…';
+  if (keyInput) setBinKey(keyInput);
+  setGroupId(groupId);
+  const ok = await importGroupProfiles(groupId, apiKey);
+  if (!ok) { errEl.textContent = 'Code invalide ou clé API incorrecte'; return; }
+  toast('Profils importés avec succès !', 'ok');
+  renderProfileList();
+}
+
 function cloudPayload() {
   return { collection: state.collection, wishlist: state.wishlist, players: state.players, values: state.values, syncedAt: new Date().toISOString() };
 }
@@ -2805,6 +3194,7 @@ async function cloudPushNow() {
       if (!r.ok) throw new Error(r.status);
     }
     setCloudUI('ok');
+    pushGroupList();
   } catch(e) {
     console.warn('Cloud sync error:', e);
     setCloudUI('err');
@@ -2878,6 +3268,11 @@ function renderCloudCard() {
   const display = document.getElementById('cloud-binid-display');
   if (section) section.style.display = binId ? '' : 'none';
   if (display) display.textContent = binId || '—';
+  const groupId = getGroupId();
+  const groupSection = document.getElementById('cloud-group-section');
+  const groupDisplay = document.getElementById('cloud-group-display');
+  if (groupSection) groupSection.style.display = groupId ? '' : 'none';
+  if (groupDisplay) groupDisplay.textContent = groupId || '—';
   if (getBinKey()) setCloudUI(binId ? 'ok' : 'off');
   else setCloudUI('off');
 }
@@ -2917,6 +3312,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('ps-create-back').addEventListener('click', renderProfileList);
   document.getElementById('ps-create-pin').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ps-create-pin2').focus(); });
   document.getElementById('ps-create-pin2').addEventListener('keydown', e => { if (e.key === 'Enter') submitCreateProfile(); });
+  document.getElementById('ps-join-link').addEventListener('click', showJoinForm);
+  document.getElementById('ps-join-submit').addEventListener('click', submitJoinForm);
+  document.getElementById('ps-join-back').addEventListener('click', renderProfileList);
+  document.getElementById('ps-join-group').addEventListener('keydown', e => { if (e.key === 'Enter') submitJoinForm(); });
 
   // Check for active session
   const sessionId = sessionStorage.getItem(SESSION_KEY);
@@ -3007,6 +3406,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   document.getElementById('btn-force-sync').addEventListener('click', cloudPushNow);
   document.getElementById('btn-restore-cloud').addEventListener('click', cloudRestore);
+  document.getElementById('btn-copy-groupid').addEventListener('click', () => {
+    const id = getGroupId();
+    if (!id) return;
+    navigator.clipboard.writeText(id).then(() => toast('Code groupe copié ✓')).catch(() => toast('Copie impossible', 'err'));
+  });
+  document.getElementById('btn-push-group').addEventListener('click', pushGroupList);
 
   document.getElementById('btn-save-values').addEventListener('click', saveValues);
   document.getElementById('btn-export').addEventListener('click', exportData);
@@ -3029,6 +3434,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     saveState();
     renderAll();
     toast('Données effacées');
+  });
+
+  // Deck pills
+  document.querySelectorAll('.deck-pill').forEach(b => {
+    b.addEventListener('click', () => { deckView = b.dataset.deckView; renderDeckView(); });
   });
 
   // Close modals on overlay click
