@@ -502,6 +502,20 @@
     .ps-photo-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0;}
     .ps-photo-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);display:none;}
     .ps-photo-btn{font-size:.75rem;color:var(--accent);cursor:pointer;background:none;border:none;text-decoration:underline;padding:0;}
+    /* Quick-add zone */
+    .quick-add-zone{padding:14px 24px;border-top:1px solid var(--border);background:linear-gradient(160deg,#07090f 0%,#0d1228 100%);}
+    .qa-inner{max-width:520px;margin:0 auto;}
+    .qa-title{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;}
+    .qa-row{display:flex;gap:8px;align-items:center;}
+    .qa-input{flex:1;padding:9px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:1rem;font-weight:700;outline:none;min-width:0;-moz-appearance:textfield;}
+    .qa-input::-webkit-outer-spin-button,.qa-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+    .qa-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,.15);}
+    .qa-btn{padding:9px 20px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;flex-shrink:0;}
+    .qa-btn:hover{background:#3a7ce8;}.qa-btn:active{transform:scale(.95);}
+    .qa-feedback{font-size:.78rem;min-height:1.4em;margin-top:8px;}
+    .qa-feedback.ok{color:var(--green);}.qa-feedback.err{color:var(--limited-c);}
+    .qa-history{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+    .qa-hist-chip{font-size:.68rem;background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.2);color:var(--green);border-radius:8px;padding:2px 8px;}
     /* Other collectors row */
     .other-collectors{display:none;flex-wrap:wrap;gap:16px;justify-content:center;padding:16px 24px 24px;border-top:1px solid var(--border);background:linear-gradient(160deg,#07090f 0%,#0d1228 100%);}
     .oc-card{cursor:pointer;transition:transform .25s cubic-bezier(.34,1.4,.64,1),box-shadow .25s;border-radius:14px;background:linear-gradient(145deg,#141621,#0d1024);border:1px solid rgba(255,255,255,.08);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;width:130px;flex-shrink:0;}
@@ -703,6 +717,17 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="quick-add-zone" id="quick-add-zone" style="display:none">
+      <div class="qa-inner">
+        <div class="qa-title">Saisie rapide · ajouter par numéro de carte</div>
+        <div class="qa-row">
+          <input type="number" id="qa-input" class="qa-input" placeholder="N° de carte (ex: 42)" min="1">
+          <button class="qa-btn" onclick="quickAddFromInput()">+1</button>
+        </div>
+        <div class="qa-feedback" id="qa-feedback"></div>
+        <div class="qa-history" id="qa-history"></div>
       </div>
     </div>
     <div class="other-collectors" id="other-collectors"></div>
@@ -2760,6 +2785,21 @@ function renderHomeHero() {
   if (bPct) bPct.textContent = pct + '%';
   if (bDbl) bDbl.textContent = doubles;
 
+  // Saisie rapide : visible si connecté
+  const qaZone = document.getElementById('quick-add-zone');
+  if (qaZone) {
+    if (activeProfile) {
+      qaZone.style.display = '';
+      const inp = document.getElementById('qa-input');
+      if (inp && !inp._qaWired) {
+        inp._qaWired = true;
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') quickAddFromInput(); });
+      }
+    } else {
+      qaZone.style.display = 'none';
+    }
+  }
+
   renderOtherCollectors();
 }
 
@@ -2827,6 +2867,45 @@ function showCollectorDoubles(profileId) {
     <div class="col-section-lbl">Doubles disponibles</div>
     <div class="col-cards-grid">${doublesHtml}</div>`;
   document.getElementById('col-doubles-overlay').style.display = 'flex';
+}
+
+function quickAddFromInput() {
+  const input = document.getElementById('qa-input');
+  const val = (input.value || '').trim();
+  if (!val) return;
+  quickAdd(val);
+  input.value = '';
+  input.focus();
+}
+
+let qaFeedbackTimer = null;
+function quickAdd(numStr) {
+  const n = String(parseInt(numStr, 10));
+  const card = state.cards.find(c => String(c.num) === n);
+  const fb = document.getElementById('qa-feedback');
+  if (!card) {
+    if (fb) { fb.className = 'qa-feedback err'; fb.textContent = `Carte #${n} introuvable`; }
+    return;
+  }
+  const newQty = getQty(card.id) + 1;
+  state.collection[card.id] = newQty;
+  saveState();
+  // Mise à jour légère : blister stats + type-grid sans re-render complet
+  renderHomeHero();
+  if (fb) {
+    fb.className = 'qa-feedback ok';
+    fb.textContent = `✓ #${card.num} · ${card.name} · ${card.team} — qté : ${newQty}`;
+    clearTimeout(qaFeedbackTimer);
+    qaFeedbackTimer = setTimeout(() => { if (fb) fb.textContent = ''; }, 4000);
+  }
+  const hist = document.getElementById('qa-history');
+  if (hist) {
+    const chip = document.createElement('span');
+    chip.className = 'qa-hist-chip';
+    chip.textContent = `#${card.num} ${card.name}`;
+    hist.insertBefore(chip, hist.firstChild);
+    if (hist.children.length > 10) hist.removeChild(hist.lastChild);
+  }
 }
 
 function getTypeStats(type) {
