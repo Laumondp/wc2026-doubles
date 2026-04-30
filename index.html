@@ -397,12 +397,85 @@
       box-shadow:0 10px 40px rgba(0,0,0,.55),0 0 24px rgba(255,215,0,.12);
       position:relative;overflow:hidden;
       display:flex;flex-direction:column;align-items:center;padding:12px 10px 10px;
-      transition:transform .15s ease-out;
+      transition:transform .12s ease-out,box-shadow .12s ease-out;
+      transform-style:preserve-3d;will-change:transform;
     }
     .blister-card:hover{animation-play-state:paused;}
-    .blister-foil{position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-      background:linear-gradient(125deg,transparent 20%,rgba(255,215,0,.06) 38%,rgba(255,100,200,.1) 50%,rgba(80,180,255,.06) 62%,transparent 80%);
-      background-size:250% 250%;animation:holo-rare 2.5s ease-in-out infinite alternate;}
+
+    /* === HOLOGRAPHIC LAYERS === */
+
+    /* Foil prismatique — toujours légèrement visible, pleine intensité au survol */
+    .blister-foil{
+      position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;
+      background:
+        repeating-linear-gradient(
+          130deg,
+          rgba(255,0,80,0)    0%,   rgba(255,0,80,0)    26%,
+          rgba(255,0,80,.5)   28%,
+          rgba(255,160,0,.5)  32%,
+          rgba(240,255,0,.5)  36%,
+          rgba(0,255,120,.5)  40%,
+          rgba(0,180,255,.5)  44%,
+          rgba(160,0,255,.5)  48%,
+          rgba(255,0,80,0)    50%,  rgba(255,0,80,0)    100%
+        ),
+        radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.1) 0%,transparent 60%),
+        repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.02) 3px,rgba(255,255,255,.02) 4px);
+      background-size:300% 300%,100% 100%,6px 6px;
+      mix-blend-mode:color-dodge;
+      opacity:.1;
+      animation:foil-idle 9s ease-in-out infinite alternate;
+      transition:opacity .5s ease;
+    }
+    @keyframes foil-idle{
+      0%  {background-position:0%   0%,   center,0 0;}
+      33% {background-position:80%  40%,  center,0 0;}
+      66% {background-position:20%  120%, center,0 0;}
+      100%{background-position:100% 200%, center,0 0;}
+    }
+
+    /* Paillettes / sparkles */
+    .blister-sparkle{
+      position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
+      background-image:
+        radial-gradient(circle,rgba(255,255,255,.95) 1px,transparent 1px),
+        radial-gradient(circle,rgba(255,255,255,.65) 1px,transparent 1px),
+        radial-gradient(circle,rgba(180,180,255,.8)  1px,transparent 1px);
+      background-size:22px 22px,13px 13px,31px 31px;
+      background-position:0 0,7px 7px,3px 14px;
+      mix-blend-mode:screen;
+      opacity:0;
+      transition:opacity .4s ease;
+    }
+
+    /* Rayon de lumière glissant */
+    .blister-glint{
+      position:absolute;
+      top:-10%;left:-60%;width:50%;height:120%;
+      pointer-events:none;z-index:5;
+      background:linear-gradient(
+        105deg,
+        transparent 25%,
+        rgba(255,255,255,.05) 38%,
+        rgba(255,255,255,.25) 47%,
+        rgba(255,255,255,.4)  50%,
+        rgba(255,255,255,.25) 53%,
+        rgba(255,255,255,.05) 62%,
+        transparent 75%
+      );
+      opacity:0;
+      transition:opacity .3s ease;
+    }
+
+    /* Scanlines subtiles (toujours visibles) */
+    .blister-scanlines{
+      position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:6;
+      background:repeating-linear-gradient(
+        0deg,transparent,transparent 2px,
+        rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px
+      );
+    }
+
     .blister-bottom-glow{position:absolute;bottom:0;left:0;right:0;height:45%;
       background:linear-gradient(to top,rgba(79,142,247,.1),transparent);pointer-events:none;}
     .blister-top{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px;z-index:1;position:relative;}
@@ -521,8 +594,10 @@
     .qa-hist-chip{font-size:.68rem;background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.2);color:var(--green);border-radius:8px;padding:2px 8px;}
     /* Other collectors row */
     .other-collectors{display:none;flex-wrap:wrap;gap:16px;justify-content:center;padding:16px 24px 24px;border-top:1px solid var(--border);background:linear-gradient(160deg,#07090f 0%,#0d1228 100%);}
-    .oc-card{cursor:pointer;transition:transform .25s cubic-bezier(.34,1.4,.64,1),box-shadow .25s;border-radius:14px;background:linear-gradient(145deg,#141621,#0d1024);border:1px solid rgba(255,255,255,.08);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;width:130px;flex-shrink:0;}
-    .oc-card:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(79,142,247,.2);border-color:rgba(79,142,247,.4);}
+    .oc-card{cursor:pointer;transition:transform .12s ease-out,box-shadow .12s ease-out;border-radius:14px;background:linear-gradient(145deg,#141621,#0d1024);border:1px solid rgba(255,255,255,.08);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;width:130px;flex-shrink:0;position:relative;overflow:hidden;transform-style:preserve-3d;will-change:transform;}
+    .oc-card .blister-foil{z-index:3;}
+    .oc-card .blister-sparkle{z-index:4;}
+    .oc-card .blister-glint{z-index:5;}
     .oc-photo{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);}
     .oc-initials{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);}
     .oc-name{font-size:.8rem;font-weight:700;text-align:center;color:var(--text);}
@@ -701,6 +776,9 @@
           <div class="blister-wrapper">
             <div class="blister-card" id="blister-card">
               <div class="blister-foil"></div>
+              <div class="blister-sparkle"></div>
+              <div class="blister-glint"></div>
+              <div class="blister-scanlines"></div>
               <div class="blister-bottom-glow"></div>
               <div class="blister-top">
                 <span class="blister-badge">⚽ Starter Pack</span>
@@ -2167,10 +2245,7 @@ function renderDoubles() {
     ${typeInfo.map(t => byType[t.t] ? `<div class="sum-card"><div class="sv" style="color:${t.c}">${byType[t.t]}</div><div class="sl">${t.l} en double</div></div>` : '').join('')}
   `;
 
-  if (!dblCards.length) {
-    grid.innerHTML = '<div class="empty"><div class="e-icon">✌️</div><p>Aucun double pour l\'instant.<br>Ajoutez des cartes dans Collection.</p></div>';
-    return;
-  }
+  if (!dblCards.length) { grid.innerHTML = ''; return; }
   dblCards.forEach(c => grid.appendChild(renderCard(c)));
 }
 
@@ -2825,11 +2900,16 @@ function renderOtherCollectors() {
       ? `<img class="oc-photo" src="${p.photo}" alt="${p.name}">`
       : `<div class="oc-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
     card.innerHTML = `
+      <div class="blister-foil"></div>
+      <div class="blister-sparkle"></div>
+      <div class="blister-glint"></div>
+      <div class="blister-scanlines"></div>
       ${avatarHtml}
       <div class="oc-name">${p.name}</div>
       <div class="oc-pct">${pct}% complété</div>
       <div class="oc-dbl-badge">${dblCount} double${dblCount !== 1 ? 's' : ''}</div>`;
     card.addEventListener('click', () => showCollectorDoubles(p.id));
+    initHoloCard(card);
     container.appendChild(card);
   });
 }
@@ -2870,6 +2950,68 @@ function showCollectorDoubles(profileId) {
     <div class="col-section-lbl">Doubles disponibles</div>
     <div class="col-cards-grid">${doublesHtml}</div>`;
   document.getElementById('col-doubles-overlay').style.display = 'flex';
+}
+
+function initHoloCard(card) {
+  const wrapper = card.closest('.blister-wrapper');
+  const foil    = card.querySelector('.blister-foil');
+  const sparkle = card.querySelector('.blister-sparkle');
+  const glint   = card.querySelector('.blister-glint');
+
+  card.addEventListener('mousemove', e => {
+    const r   = card.getBoundingClientRect();
+    const mx  = (e.clientX - r.left) / r.width;    // 0..1
+    const my  = (e.clientY - r.top)  / r.height;   // 0..1
+    const rx  = (my - .5) * -32;                   // rotateX
+    const ry  = (mx - .5) *  32;                   // rotateY
+    const tilt = (Math.abs(rx) + Math.abs(ry)) / 32; // 0..1
+
+    // 3D rotation
+    card.style.transform = `perspective(550px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.07)`;
+
+    // Dynamic rainbow border glow via box-shadow
+    const hue1 = Math.round(mx * 360);
+    const hue2 = (hue1 + 150) % 360;
+    card.style.boxShadow = [
+      `${(-ry * 1.4).toFixed(1)}px ${(rx * 1.4).toFixed(1)}px 55px rgba(0,0,0,.75)`,
+      `0 0 0 1.5px hsl(${hue1},100%,65%)`,
+      `0 0 35px hsl(${hue2},100%,50%,.4)`,
+      `0 0 70px hsl(${hue2},80%,45%,.15)`
+    ].join(',');
+
+    // Foil: pan les bandes prismatiques selon la souris
+    if (foil) {
+      foil.style.backgroundPosition = `${mx * 300}% ${my * 300}%, center, 0 0`;
+      foil.style.opacity = (.10 + tilt * .60).toFixed(2);
+      foil.style.animationPlayState = 'paused';
+    }
+
+    // Sparkles: apparaissent à fort angle de tilt
+    if (sparkle) {
+      sparkle.style.backgroundPosition =
+        `${(mx * 22).toFixed(1)}px ${(my * 22).toFixed(1)}px,`+
+        `${(mx * 13).toFixed(1)}px ${(my * 13).toFixed(1)}px,`+
+        `${(mx * 31).toFixed(1)}px ${(my * 31).toFixed(1)}px`;
+      sparkle.style.opacity = (tilt * .65).toFixed(2);
+    }
+
+    // Glint: le rayon suit la souris horizontalement
+    if (glint) {
+      glint.style.transform = `translateX(${(mx * 220 - 20).toFixed(1)}%)`;
+      glint.style.opacity   = (.25 + tilt * .55).toFixed(2);
+    }
+
+    if (wrapper) wrapper.style.animationPlayState = 'paused';
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.style.transform  = '';
+    card.style.boxShadow  = '';
+    if (foil)    { foil.style.opacity    = '';  foil.style.backgroundPosition    = ''; foil.style.animationPlayState = ''; }
+    if (sparkle) { sparkle.style.opacity = '';  sparkle.style.backgroundPosition = ''; }
+    if (glint)   { glint.style.opacity   = '0'; glint.style.transform = ''; }
+    if (wrapper) wrapper.style.animationPlayState = 'running';
+  });
 }
 
 function quickAddFromInput() {
@@ -3375,22 +3517,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   createParticles();
 
-  // 3D tilt on blister card
+  // Holographic 3D effect on blister card
   const blisterCard = document.getElementById('blister-card');
-  if (blisterCard) {
-    const wrapper = blisterCard.closest('.blister-wrapper');
-    blisterCard.addEventListener('mousemove', e => {
-      const r = blisterCard.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width  - .5) * 22;
-      const y = ((e.clientY - r.top)  / r.height - .5) * -22;
-      blisterCard.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${y}deg) scale(1.04)`;
-      if (wrapper) wrapper.style.animationPlayState = 'paused';
-    });
-    blisterCard.addEventListener('mouseleave', () => {
-      blisterCard.style.transform = '';
-      if (wrapper) wrapper.style.animationPlayState = 'running';
-    });
-  }
+  if (blisterCard) initHoloCard(blisterCard);
 
   // Tabs
   document.querySelectorAll('.tab-btn').forEach(b => {
