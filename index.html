@@ -630,9 +630,6 @@
     <div id="ps-list">
       <div class="ps-section-title" id="ps-section-lbl">Choisissez votre profil</div>
       <div class="ps-profiles-grid" id="ps-profiles-grid"></div>
-      <div style="margin-top:14px;text-align:center;">
-        <button class="ps-pin-cancel" id="ps-join-link" style="font-size:.72rem;">☁️ Rejoindre un groupe existant</button>
-      </div>
     </div>
 
     <!-- Saisie PIN -->
@@ -676,18 +673,6 @@
       </div>
     </div>
 
-    <!-- Rejoindre un groupe (autre navigateur) -->
-    <div id="ps-join" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;">
-      <div class="ps-create-wrap">
-        <div class="ps-create-title">☁️ Rejoindre un groupe</div>
-        <p style="font-size:.72rem;color:var(--muted);text-align:center;margin:0 0 4px;">Entrez la clé API et le code groupe pour importer tous les profils existants.</p>
-        <input class="ps-input" id="ps-join-key" type="password" placeholder="Clé API JSONBin (Master Key)" autocomplete="off"/>
-        <input class="ps-input" id="ps-join-group" placeholder="Code groupe" autocomplete="off"/>
-        <button class="ps-create-btn" id="ps-join-submit">Importer les profils</button>
-        <div class="ps-create-err" id="ps-join-err"></div>
-        <button class="ps-pin-cancel" id="ps-join-back">← Retour</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -3458,33 +3443,6 @@ async function importGroupProfiles(groupId, apiKey) {
   } catch(e) { console.warn('Group import error:', e); return false; }
 }
 
-function showJoinForm() {
-  document.getElementById('ps-list').style.display   = 'none';
-  document.getElementById('ps-pin').style.display    = 'none';
-  document.getElementById('ps-create').style.display = 'none';
-  document.getElementById('ps-join').style.display   = 'flex';
-  document.getElementById('ps-join-key').value   = getBinKey() ? '' : '';
-  document.getElementById('ps-join-group').value = getGroupId();
-  document.getElementById('ps-join-err').textContent = '';
-  if (getBinKey()) document.getElementById('ps-join-key').placeholder = '••••••••• (clé déjà enregistrée — laisser vide pour garder)';
-}
-
-async function submitJoinForm() {
-  const keyInput  = document.getElementById('ps-join-key').value.trim();
-  const groupId   = document.getElementById('ps-join-group').value.trim();
-  const errEl     = document.getElementById('ps-join-err');
-  errEl.textContent = '';
-  const apiKey = keyInput || getBinKey();
-  if (!apiKey) { errEl.textContent = 'Entrez votre clé API JSONBin'; return; }
-  if (!groupId) { errEl.textContent = 'Entrez le code groupe'; return; }
-  errEl.textContent = 'Importation en cours…';
-  if (keyInput) setBinKey(keyInput);
-  setGroupId(groupId);
-  const ok = await importGroupProfiles(groupId, apiKey);
-  if (!ok) { errEl.textContent = 'Code invalide ou clé API incorrecte'; return; }
-  toast('Profils importés avec succès !', 'ok');
-  renderProfileList();
-}
 
 function cloudPayload() {
   return { collection: state.collection, wishlist: state.wishlist, players: state.players, values: state.values, syncedAt: new Date().toISOString() };
@@ -3652,10 +3610,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('ps-create-back').addEventListener('click', renderProfileList);
   document.getElementById('ps-create-pin').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ps-create-pin2').focus(); });
   document.getElementById('ps-create-pin2').addEventListener('keydown', e => { if (e.key === 'Enter') submitCreateProfile(); });
-  document.getElementById('ps-join-link').addEventListener('click', showJoinForm);
-  document.getElementById('ps-join-submit').addEventListener('click', submitJoinForm);
-  document.getElementById('ps-join-back').addEventListener('click', renderProfileList);
-  document.getElementById('ps-join-group').addEventListener('keydown', e => { if (e.key === 'Enter') submitJoinForm(); });
   // Keyboard support for PIN pad
   document.addEventListener('keydown', e => {
     const ps = document.getElementById('profile-screen');
