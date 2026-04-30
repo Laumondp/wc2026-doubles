@@ -404,76 +404,41 @@
 
     /* === HOLOGRAPHIC LAYERS === */
 
-    /* Foil prismatique — toujours légèrement visible, pleine intensité au survol */
+    /* Foil idle (visible au repos, canvas prend le relais au survol) */
     .blister-foil{
       position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;
       background:
-        repeating-linear-gradient(
-          130deg,
-          rgba(255,0,80,0)    0%,   rgba(255,0,80,0)    26%,
-          rgba(255,0,80,.5)   28%,
-          rgba(255,160,0,.5)  32%,
-          rgba(240,255,0,.5)  36%,
-          rgba(0,255,120,.5)  40%,
-          rgba(0,180,255,.5)  44%,
-          rgba(160,0,255,.5)  48%,
-          rgba(255,0,80,0)    50%,  rgba(255,0,80,0)    100%
-        ),
-        radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.1) 0%,transparent 60%),
-        repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.02) 3px,rgba(255,255,255,.02) 4px);
-      background-size:300% 300%,100% 100%,6px 6px;
+        repeating-linear-gradient(130deg,
+          rgba(255,0,80,0) 0%,rgba(255,0,80,0) 26%,
+          rgba(255,0,80,.35) 28%,rgba(255,160,0,.35) 32%,
+          rgba(240,255,0,.35) 36%,rgba(0,255,120,.35) 40%,
+          rgba(0,180,255,.35) 44%,rgba(160,0,255,.35) 48%,
+          rgba(255,0,80,0) 50%,rgba(255,0,80,0) 100%),
+        radial-gradient(ellipse at 50% 30%,rgba(255,255,255,.08) 0%,transparent 60%);
+      background-size:300% 300%,100% 100%;
       mix-blend-mode:color-dodge;
-      opacity:.1;
+      opacity:.18;
       animation:foil-idle 9s ease-in-out infinite alternate;
-      transition:opacity .5s ease;
     }
     @keyframes foil-idle{
-      0%  {background-position:0%   0%,   center,0 0;}
-      33% {background-position:80%  40%,  center,0 0;}
-      66% {background-position:20%  120%, center,0 0;}
-      100%{background-position:100% 200%, center,0 0;}
+      0%  {background-position:0%   0%,  center;}
+      50% {background-position:100% 150%,center;}
+      100%{background-position:50%  300%,center;}
     }
 
-    /* Paillettes / sparkles */
-    .blister-sparkle{
-      position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
-      background-image:
-        radial-gradient(circle,rgba(255,255,255,.95) 1px,transparent 1px),
-        radial-gradient(circle,rgba(255,255,255,.65) 1px,transparent 1px),
-        radial-gradient(circle,rgba(180,180,255,.8)  1px,transparent 1px);
-      background-size:22px 22px,13px 13px,31px 31px;
-      background-position:0 0,7px 7px,3px 14px;
-      mix-blend-mode:screen;
-      opacity:0;
-      transition:opacity .4s ease;
-    }
-
-    /* Rayon de lumière glissant */
-    .blister-glint{
-      position:absolute;
-      top:-10%;left:-60%;width:50%;height:120%;
-      pointer-events:none;z-index:5;
-      background:linear-gradient(
-        105deg,
-        transparent 25%,
-        rgba(255,255,255,.05) 38%,
-        rgba(255,255,255,.25) 47%,
-        rgba(255,255,255,.4)  50%,
-        rgba(255,255,255,.25) 53%,
-        rgba(255,255,255,.05) 62%,
-        transparent 75%
-      );
-      opacity:0;
-      transition:opacity .3s ease;
-    }
-
-    /* Scanlines subtiles (toujours visibles) */
+    /* Scanlines (toujours visibles) */
     .blister-scanlines{
       position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:6;
       background:repeating-linear-gradient(
-        0deg,transparent,transparent 2px,
-        rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px
-      );
+        0deg,transparent,transparent 2px,rgba(0,0,0,.045) 2px,rgba(0,0,0,.045) 4px);
+    }
+
+    /* Canvas holographique (rendu JS au survol) */
+    .holo-canvas{
+      position:absolute;inset:0;width:100%;height:100%;
+      border-radius:inherit;pointer-events:none;z-index:7;
+      mix-blend-mode:screen;opacity:0;
+      transition:opacity .35s ease;
     }
 
     .blister-bottom-glow{position:absolute;bottom:0;left:0;right:0;height:45%;
@@ -776,8 +741,6 @@
           <div class="blister-wrapper">
             <div class="blister-card" id="blister-card">
               <div class="blister-foil"></div>
-              <div class="blister-sparkle"></div>
-              <div class="blister-glint"></div>
               <div class="blister-scanlines"></div>
               <div class="blister-bottom-glow"></div>
               <div class="blister-top">
@@ -2901,8 +2864,6 @@ function renderOtherCollectors() {
       : `<div class="oc-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
     card.innerHTML = `
       <div class="blister-foil"></div>
-      <div class="blister-sparkle"></div>
-      <div class="blister-glint"></div>
       <div class="blister-scanlines"></div>
       ${avatarHtml}
       <div class="oc-name">${p.name}</div>
@@ -2952,64 +2913,207 @@ function showCollectorDoubles(profileId) {
   document.getElementById('col-doubles-overlay').style.display = 'flex';
 }
 
+/* ══════════════════════════════════════════════════════════
+   HOLOGRAPHIC CANVAS ENGINE
+   ══════════════════════════════════════════════════════════ */
+let _holoSeed = 0;
+
+function _seededRand(seed) {
+  const s = Math.sin(seed) * 43758.5453123;
+  return s - Math.floor(s);
+}
+
+function _buildStars(w, h, seed) {
+  const crosses = [], dots = [];
+  for (let i = 0; i < 22; i++) {
+    crosses.push({
+      x: _seededRand(seed + i * 7.31) * w,
+      y: _seededRand(seed + i * 13.7) * h,
+      r: 2.5 + _seededRand(seed + i * 3.1) * 5,
+      hue: _seededRand(seed + i * 11.3) * 360
+    });
+  }
+  for (let i = 0; i < 80; i++) {
+    dots.push({
+      x: _seededRand(seed + i * 1.9 + 100) * w,
+      y: _seededRand(seed + i * 4.7 + 200) * h,
+      r: 0.5 + _seededRand(seed + i * 2.3 + 300) * 1.8,
+      hue: _seededRand(seed + i * 6.1 + 400) * 360
+    });
+  }
+  return { crosses, dots };
+}
+
+function _drawCross(ctx, x, y, r, alpha, hue) {
+  if (alpha < .02) return;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  // Centre brillant
+  const cg = ctx.createRadialGradient(x, y, 0, x, y, r * .7);
+  cg.addColorStop(0, `hsl(${hue},20%,100%)`);
+  cg.addColorStop(1, `hsla(${hue},100%,75%,0)`);
+  ctx.fillStyle = cg;
+  ctx.beginPath(); ctx.arc(x, y, r * .7, 0, Math.PI * 2); ctx.fill();
+  // Bras horizontal
+  const hg = ctx.createRadialGradient(x, y, 0, x, y, r * 3.5);
+  hg.addColorStop(0,   `hsla(${hue},100%,95%,1)`);
+  hg.addColorStop(.35, `hsla(${hue},100%,80%,.7)`);
+  hg.addColorStop(1,   `hsla(${hue},100%,60%,0)`);
+  ctx.fillStyle = hg;
+  ctx.save(); ctx.scale(3.5, .35); ctx.translate(x / 3.5 - x, y / .35 - y);
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  // Bras vertical
+  ctx.save(); ctx.scale(.35, 3.5); ctx.translate(x / .35 - x, y / 3.5 - y);
+  ctx.fillStyle = hg;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  ctx.restore();
+}
+
+function _drawHoloFrame(ctx, w, h, mx, my, stars) {
+  ctx.clearRect(0, 0, w, h);
+  const hb = mx * 300;
+  const tilt = Math.hypot(mx - .5, my - .5) * 2;
+
+  // ── 1. FOIL ARC-EN-CIEL INTENSE ───────────────────────────────────────
+  ctx.globalCompositeOperation = 'source-over';
+  const fg = ctx.createLinearGradient(w * (.5 - my * .9), 0, w * (.5 + my * .9), h);
+  const fw = 8;
+  for (let i = 0; i <= fw; i++) {
+    fg.addColorStop(i / fw, `hsla(${(hb + i / fw * 360) % 360},100%,62%,${.55 + tilt * .3})`);
+  }
+  ctx.fillStyle = fg;
+  ctx.fillRect(0, 0, w, h);
+
+  // ── 2. GRILLE HEXAGONALE ─────────────────────────────────────────────
+  ctx.globalCompositeOperation = 'screen';
+  const hr = 10, hh = hr * Math.sqrt(3);
+  const ox = (mx - .5) * hr * 3, oy = (my - .5) * hh * 3;
+  for (let row = -1; row < h / hh + 2; row++) {
+    for (let col = -1; col < w / (hr * 1.5) + 2; col++) {
+      const cx = col * hr * 3 + (row % 2 === 0 ? 0 : hr * 1.5) + ox;
+      const cy = row * hh + oy;
+      const d  = Math.hypot((cx - mx * w) / w, (cy - my * h) / h);
+      const a  = Math.max(0, (.7 - d * 1.1)) * (.35 + tilt * .5);
+      if (a < .02) continue;
+      const hue = (hb + cx / w * 180 + cy / h * 90) % 360;
+      ctx.beginPath();
+      for (let v = 0; v < 6; v++) {
+        const ang = Math.PI / 3 * v - Math.PI / 6;
+        const px = cx + hr * .85 * Math.cos(ang);
+        const py = cy + hr * .85 * Math.sin(ang);
+        v === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = `hsla(${hue},100%,80%,${a})`;
+      ctx.lineWidth = .9;
+      ctx.stroke();
+    }
+  }
+
+  // ── 3. ÉTOILES CRUCIFORMES ───────────────────────────────────────────
+  ctx.globalCompositeOperation = 'screen';
+  stars.crosses.forEach(s => {
+    const d = Math.hypot((s.x - mx * w) / w, (s.y - my * h) / h);
+    _drawCross(ctx, s.x, s.y, s.r, Math.max(0, (1 - d * 2.5)) * (.5 + tilt * .5), (s.hue + hb) % 360);
+  });
+  stars.dots.forEach(s => {
+    const d = Math.hypot((s.x - mx * w) / w, (s.y - my * h) / h);
+    const a = Math.max(0, (1 - d * 3.5)) * (.3 + tilt * .55);
+    if (a < .02) return;
+    ctx.globalAlpha = a;
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${(s.hue + hb) % 360},100%,92%)`;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  // ── 4. RAYON DE BALAYAGE ─────────────────────────────────────────────
+  ctx.globalCompositeOperation = 'screen';
+  const gx = ctx.createLinearGradient(mx * w - 60, 0, mx * w + 60, 0);
+  gx.addColorStop(0,   'rgba(255,255,255,0)');
+  gx.addColorStop(.35, 'rgba(255,255,255,.18)');
+  gx.addColorStop(.5,  'rgba(255,255,255,.55)');
+  gx.addColorStop(.65, 'rgba(255,255,255,.18)');
+  gx.addColorStop(1,   'rgba(255,255,255,0)');
+  ctx.fillStyle = gx; ctx.fillRect(0, 0, w, h);
+
+  // ── 5. CAUSTIC SPECULAIRE ────────────────────────────────────────────
+  ctx.globalCompositeOperation = 'screen';
+  const sg = ctx.createRadialGradient(mx * w, my * h, 0, mx * w, my * h, Math.max(w, h) * .45);
+  sg.addColorStop(0,   'rgba(255,255,255,.65)');
+  sg.addColorStop(.12, 'rgba(255,255,255,.35)');
+  sg.addColorStop(.4,  'rgba(255,255,255,.08)');
+  sg.addColorStop(1,   'rgba(255,255,255,0)');
+  ctx.fillStyle = sg; ctx.fillRect(0, 0, w, h);
+
+  // ── 6. LISERÉ DE BORD COLORÉ ─────────────────────────────────────────
+  ctx.globalCompositeOperation = 'overlay';
+  const eg = ctx.createRadialGradient(w/2, h/2, Math.min(w,h)*.25, w/2, h/2, Math.max(w,h)*.8);
+  eg.addColorStop(0, 'rgba(0,0,0,0)');
+  eg.addColorStop(1, `hsla(${(hb+200)%360},100%,65%,.4)`);
+  ctx.fillStyle = eg; ctx.fillRect(0, 0, w, h);
+
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+}
+
+let _holoIdleTick = null;
+
 function initHoloCard(card) {
+  const seed    = ++_holoSeed * 31337.9;
   const wrapper = card.closest('.blister-wrapper');
   const foil    = card.querySelector('.blister-foil');
-  const sparkle = card.querySelector('.blister-sparkle');
-  const glint   = card.querySelector('.blister-glint');
+
+  // Crée le canvas
+  const canvas = document.createElement('canvas');
+  canvas.className = 'holo-canvas';
+  card.insertBefore(canvas, card.firstChild);
+
+  let ctx = null, stars = null, dpr = 1, w = 0, h = 0;
+
+  function ensureReady() {
+    if (ctx) return;
+    const rect = card.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    stars = _buildStars(w, h, seed);
+  }
 
   card.addEventListener('mousemove', e => {
-    const r   = card.getBoundingClientRect();
-    const mx  = (e.clientX - r.left) / r.width;    // 0..1
-    const my  = (e.clientY - r.top)  / r.height;   // 0..1
-    const rx  = (my - .5) * -32;                   // rotateX
-    const ry  = (mx - .5) *  32;                   // rotateY
-    const tilt = (Math.abs(rx) + Math.abs(ry)) / 32; // 0..1
+    ensureReady();
+    const r  = card.getBoundingClientRect();
+    const mx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const my = Math.max(0, Math.min(1, (e.clientY - r.top)  / r.height));
+    const rx = (my - .5) * -34;
+    const ry = (mx - .5) *  34;
+    const tilt = (Math.abs(rx) + Math.abs(ry)) / 34;
 
-    // 3D rotation
-    card.style.transform = `perspective(550px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.07)`;
-
-    // Dynamic rainbow border glow via box-shadow
-    const hue1 = Math.round(mx * 360);
-    const hue2 = (hue1 + 150) % 360;
+    card.style.transform = `perspective(520px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.08)`;
+    const hue1 = Math.round(mx * 360), hue2 = (hue1 + 150) % 360;
     card.style.boxShadow = [
-      `${(-ry * 1.4).toFixed(1)}px ${(rx * 1.4).toFixed(1)}px 55px rgba(0,0,0,.75)`,
-      `0 0 0 1.5px hsl(${hue1},100%,65%)`,
-      `0 0 35px hsl(${hue2},100%,50%,.4)`,
-      `0 0 70px hsl(${hue2},80%,45%,.15)`
+      `${(-ry*1.5).toFixed(1)}px ${(rx*1.5).toFixed(1)}px 60px rgba(0,0,0,.8)`,
+      `0 0 0 2px hsl(${hue1},100%,68%)`,
+      `0 0 45px hsl(${hue2},100%,55%,.55)`,
+      `0 0 90px hsl(${hue2},80%,45%,.2)`
     ].join(',');
 
-    // Foil: pan les bandes prismatiques selon la souris
-    if (foil) {
-      foil.style.backgroundPosition = `${mx * 300}% ${my * 300}%, center, 0 0`;
-      foil.style.opacity = (.10 + tilt * .60).toFixed(2);
-      foil.style.animationPlayState = 'paused';
-    }
-
-    // Sparkles: apparaissent à fort angle de tilt
-    if (sparkle) {
-      sparkle.style.backgroundPosition =
-        `${(mx * 22).toFixed(1)}px ${(my * 22).toFixed(1)}px,`+
-        `${(mx * 13).toFixed(1)}px ${(my * 13).toFixed(1)}px,`+
-        `${(mx * 31).toFixed(1)}px ${(my * 31).toFixed(1)}px`;
-      sparkle.style.opacity = (tilt * .65).toFixed(2);
-    }
-
-    // Glint: le rayon suit la souris horizontalement
-    if (glint) {
-      glint.style.transform = `translateX(${(mx * 220 - 20).toFixed(1)}%)`;
-      glint.style.opacity   = (.25 + tilt * .55).toFixed(2);
-    }
-
+    if (foil) foil.style.animationPlayState = 'paused';
+    _drawHoloFrame(ctx, w, h, mx, my, stars);
+    canvas.style.opacity = '1';
     if (wrapper) wrapper.style.animationPlayState = 'paused';
   });
 
   card.addEventListener('mouseleave', () => {
-    card.style.transform  = '';
-    card.style.boxShadow  = '';
-    if (foil)    { foil.style.opacity    = '';  foil.style.backgroundPosition    = ''; foil.style.animationPlayState = ''; }
-    if (sparkle) { sparkle.style.opacity = '';  sparkle.style.backgroundPosition = ''; }
-    if (glint)   { glint.style.opacity   = '0'; glint.style.transform = ''; }
+    card.style.transform = '';
+    card.style.boxShadow = '';
+    canvas.style.opacity = '0';
+    if (foil) foil.style.animationPlayState = '';
     if (wrapper) wrapper.style.animationPlayState = 'running';
   });
 }
