@@ -68,7 +68,8 @@
     /* HEADER */
     header{background:linear-gradient(135deg,#141621,#0b0d14);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
     .header-left{display:flex;align-items:center;gap:14px;}
-    .header-left h1{font-size:clamp(.85rem,2vw,1.15rem);font-weight:800;background:linear-gradient(120deg,#ffd700,#ff9f43);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.3px;}
+    @keyframes rainbow-text{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .header-left h1{font-size:clamp(.85rem,2vw,1.15rem);font-weight:800;background:linear-gradient(120deg,#ff0000,#ff7700,#ffff00,#00ff00,#00ffff,#0000ff,#8800ff,#ff0000);background-size:400% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.3px;animation:rainbow-text 4s linear infinite;}
     .header-left span{font-size:0.75rem;color:var(--muted);}
     .stats-bar{display:flex;gap:16px;flex-wrap:wrap;}
     .stat{text-align:center;}
@@ -372,11 +373,6 @@
     .cc-check{display:none;font-size:.65rem;margin-top:2px;}
     .country-card.cc-complete .cc-check{display:block;color:var(--green);}
 
-    /* ── GOAL BANNER ── */
-    .hero-goal-banner{width:100%;max-width:580px;margin-bottom:8px;}
-    .goal-scene{width:100%;height:auto;display:block;border-radius:10px;}
-
-    /* SVG footballer animations now handled via native animateTransform */
 
 
 /* Slide transitions */
@@ -432,11 +428,6 @@
     .blister-footer{position:absolute;bottom:7px;left:0;right:0;text-align:center;
       font-size:.4rem;letter-spacing:1.2px;color:rgba(255,255,255,.2);font-weight:600;z-index:1;}
 
-    /* Avatar sur les cartes de type */
-    .tc-avatar{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;
-      object-fit:cover;object-position:top center;border:1.5px solid rgba(255,255,255,.2);
-      opacity:.5;transition:opacity .2s,transform .2s;}
-    .type-card:hover .tc-avatar{opacity:.85;transform:scale(1.1);}
 
     @media(max-width:680px){
       .hero-inner{flex-direction:column;align-items:center;}
@@ -612,11 +603,10 @@
   <div class="header-left">
     <div>
       <h1>🏆 COUPE DU MONDE DE FOOTBALL 2026</h1>
-      <span>Doubles &amp; Échanges · Adrenalyn XL Panini <span style="font-size:.6rem;opacity:.45;margin-left:4px;">v1.2</span></span>
+      <span>Adrenalyn XL Panini <span style="font-size:.6rem;opacity:.45;margin-left:4px;">v1.2</span></span>
     </div>
   </div>
-  <a href="https://wc2026-doubles.vercel.app" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none;white-space:nowrap;">🌐 Site en ligne</a>
-  <a href="https://worldcup-2026-predictor.vercel.app" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none;white-space:nowrap;background:#7c3aed;border-color:#7c3aed;">🏆 Predictor</a>
+<a href="https://worldcup-2026-predictor.vercel.app" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="text-decoration:none;white-space:nowrap;background:#7c3aed;border-color:#7c3aed;">🏆 Predictor</a>
   <div class="profile-indicator" id="profile-indicator" style="display:none">
     <div class="pi-avatar" id="pi-avatar"></div>
     <span class="pi-name" id="pi-name"></span>
@@ -656,139 +646,6 @@
       <div class="hero-inner">
         <div class="hero-text">
           <div class="hero-badge">⚽ Adrenalyn XL · FIFA World Cup 2026</div>
-          <div class="hero-goal-banner">
-            <svg class="goal-scene" viewBox="0 0 580 78" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="goal-gp" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#1e4e0e"/><stop offset="100%" stop-color="#0e2808"/>
-                </linearGradient>
-                <linearGradient id="goal-gt" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#e8eeff"/><stop offset="40%" stop-color="#a0b8ff"/>
-                  <stop offset="75%" stop-color="#ffd700"/><stop offset="100%" stop-color="#ff9f43"/>
-                </linearGradient>
-                <filter id="goal-gb" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-                <filter id="goal-gt2" x="-5%" y="-20%" width="110%" height="140%">
-                  <feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
-                <path id="goal-bt" d="M 110,64 C 220,5 390,5 510,28"/>
-              </defs>
-
-              <!-- Terrain -->
-              <rect class="field-bg" width="580" height="78" fill="url(#goal-gp)" rx="10"/>
-              <rect x="0"   y="0" width="73" height="78" fill="rgba(0,0,0,.10)" rx="10 0 0 10"/>
-              <rect x="146" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
-              <rect x="292" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
-              <rect x="438" y="0" width="73" height="78" fill="rgba(0,0,0,.07)"/>
-              <line x1="290" y1="4"  x2="290" y2="74" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
-              <ellipse cx="290" cy="39" rx="30" ry="22" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1.5"/>
-              <circle cx="290" cy="39" r="2" fill="rgba(255,255,255,.12)"/>
-              <rect x="3"   y="12" width="68" height="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-              <rect x="509" y="12" width="68" height="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-
-              <!-- Cages (droite) -->
-              <line x1="565" y1="20" x2="565" y2="66" stroke="rgba(255,255,255,.45)" stroke-width="2.5" stroke-linecap="round"/>
-              <line x1="510" y1="16" x2="565" y2="20" stroke="rgba(255,255,255,.45)" stroke-width="2.5" stroke-linecap="round"/>
-              <line x1="510" y1="16" x2="510" y2="66" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
-              <line x1="510" y1="16" x2="565" y2="20" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
-              <line x1="510" y1="66" x2="565" y2="66" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
-              <line x1="520" y1="20" x2="520" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="530" y1="21" x2="530" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="540" y1="21" x2="540" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="550" y1="22" x2="550" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="560" y1="22" x2="560" y2="66" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="510" y1="28" x2="565" y2="30" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="510" y1="40" x2="565" y2="41" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-              <line x1="510" y1="52" x2="565" y2="53" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
-
-              <!-- Flash GOAL -->
-              <rect x="511" y="17" width="53" height="48" fill="#ffd700" rx="2">
-                <animate attributeName="opacity" keyTimes="0;0.63;0.66;0.70;0.73;1" values="0;0;0.28;0.1;0;0" dur="3s" repeatCount="indefinite" calcMode="linear"/>
-              </rect>
-              <text x="538" y="42" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-weight="900" font-size="13" fill="#ffd700" filter="url(#goal-gb)">GOAL!
-                <animate attributeName="opacity" keyTimes="0;0.65;0.67;0.71;0.73;1" values="0;0;1;0.55;0;0" dur="3s" repeatCount="indefinite" calcMode="linear"/>
-              </text>
-
-              <!-- Titre MA COLLECTION -->
-              <text x="295" y="46" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-size="22" font-weight="900" letter-spacing="2" fill="url(#goal-gt)" filter="url(#goal-gt2)">MA COLLECTION
-                <animate attributeName="opacity" values="1;0.88;1" dur="2.5s" repeatCount="indefinite"/>
-              </text>
-
-              <!-- Ombre sol -->
-              <ellipse cx="91" cy="72" rx="13" ry="3.5" fill="rgba(0,0,0,.35)">
-                <animate attributeName="rx" keyTimes="0;0.08;0.18;1" values="13;17.5;13;13" dur="3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0 0 1 1"/>
-              </ellipse>
-
-              <!-- Jambe gauche (appui) + chaussure -->
-              <line x1="91" y1="53" x2="83" y2="70" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
-              <ellipse cx="81" cy="71.5" rx="5.5" ry="2.8" fill="#111"/>
-
-              <!-- Jambe droite (tir) — pivote autour de la hanche (91,53) -->
-              <g transform="translate(91,53)">
-                <animateTransform attributeName="transform" type="rotate"
-                  keyTimes="0;0.05;0.08;0.28;1"
-                  values="0 0 0;-28 0 0;58 0 0;0 0 0;0 0 0"
-                  dur="3s" repeatCount="indefinite" additive="sum"/>
-                <line x1="0" y1="0" x2="8" y2="17" stroke="#fbbf24" stroke-width="4.5" stroke-linecap="round"/>
-                <ellipse cx="10" cy="21" rx="5.5" ry="2.8" fill="#e74c3c" transform="rotate(-5,10,21)"/>
-              </g>
-
-              <!-- Maillot + numéro 10 -->
-              <rect x="84" y="32" width="14" height="21" fill="#3b82f6" rx="4"/>
-              <text x="91" y="46" text-anchor="middle" font-family="system-ui" font-size="7" font-weight="900" fill="rgba(255,255,255,.85)">10</text>
-
-              <!-- Bras gauche (arrière) -->
-              <line x1="84" y1="37" x2="73" y2="48" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
-              <!-- Bras droit (tir) — pivote autour de l'épaule (98,37) -->
-              <g transform="translate(98,37)">
-                <animateTransform attributeName="transform" type="rotate"
-                  keyTimes="0;0.05;0.08;0.18;1"
-                  values="0 0 0;22 0 0;-28 0 0;0 0 0;0 0 0"
-                  dur="3s" repeatCount="indefinite" additive="sum"/>
-                <line x1="0" y1="0" x2="13" y2="8" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
-              </g>
-
-              <!-- Cou -->
-              <line x1="91" y1="24" x2="91" y2="32" stroke="#f5c070" stroke-width="5" stroke-linecap="round"/>
-              <!-- Tête -->
-              <circle cx="91" cy="18" r="9.5" fill="#f5c070"/>
-              <!-- Cheveux -->
-              <path d="M 82,14 Q 91,8 100,14 Q 97.5,9.5 91,8 Q 84.5,9.5 82,14Z" fill="#2a1208"/>
-              <!-- Oreilles -->
-              <circle cx="81.5" cy="18.5" r="2.8" fill="#e8a850"/>
-              <circle cx="100.5" cy="18.5" r="2.8" fill="#e8a850"/>
-              <!-- Yeux -->
-              <circle cx="87.5" cy="16.5" r="1.8" fill="#333"/>
-              <circle cx="94.5" cy="16.5" r="1.8" fill="#333"/>
-              <circle cx="88.1" cy="16.0" r="0.6" fill="#fff"/>
-              <circle cx="95.1" cy="16.0" r="0.6" fill="#fff"/>
-              <!-- Bouche -->
-              <path d="M 88,21.5 Q 91,24.5 94,21.5" fill="none" stroke="#7a3b1e" stroke-width="1.3" stroke-linecap="round"/>
-
-              <!-- BALLON -->
-              <g class="plyr-ball">
-                <animateMotion dur="3s" repeatCount="indefinite"
-                  keyTimes="0;0.07;0.65;0.720;0.721;1"
-                  keyPoints="0;0;1;1;0;0"
-                  calcMode="linear">
-                  <mpath href="#goal-bt"/>
-                </animateMotion>
-                <!-- Lueur -->
-                <circle r="10" fill="rgba(255,255,255,.12)" filter="url(#goal-gb)"/>
-                <!-- Corps du ballon -->
-                <circle r="7.5" fill="white" stroke="#ddd" stroke-width="0.5"/>
-                <!-- Pentagones (rotation) -->
-                <g>
-                  <animateTransform attributeName="transform" type="rotate" from="0" to="720" dur="1.86s" repeatCount="indefinite"/>
-                  <path d="M 0,-5 L 3,-1.8 L 1.8,2.5 L -1.8,2.5 L -3,-1.8Z" fill="#222" opacity=".65"/>
-                  <path d="M 5,2.5 L 3,-1.8 L 7,1 L 7,5 L 4,6Z" fill="#222" opacity=".35"/>
-                  <path d="M -5,2.5 L -3,-1.8 L -7,1 L -7,5 L -4,6Z" fill="#222" opacity=".35"/>
-                </g>
-              </g>
-            </svg>
-          </div>
-          <p class="hero-sub">Gérez vos cartes, doubles &amp; échanges</p>
           <div class="hero-stat-row" id="hero-stat-row"></div>
         </div>
         <div class="hero-blister">
@@ -884,7 +741,7 @@
     <div class="settings-grid">
       <div class="setting-card">
         <h4>Valeurs des cartes</h4>
-        <div class="setting-row"><label>⭐ Golden Ballers</label><input type="number" id="val-LIMITED" min="1" max="100"></div>
+        <div class="setting-row"><label>⭐ Ballon d'or</label><input type="number" id="val-LIMITED" min="1" max="100"></div>
         <div class="setting-row"><label>💎 ICON</label><input type="number" id="val-ICON" min="1" max="100"></div>
         <div class="setting-row"><label>🌟 Fan Favourite</label><input type="number" id="val-HERO" min="1" max="100"></div>
         <div class="setting-row"><label>🃏 Base</label><input type="number" id="val-BASE" min="1" max="100"></div>
@@ -947,7 +804,7 @@
       <div class="setting-card">
         <h4>Légende des types</h4>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:.78rem;">
-          <div><span class="tag tag-LIMITED" style="display:inline-block;margin-right:6px;">LIMITED</span> Golden Ballers · top 9 superstars</div>
+          <div><span class="tag tag-LIMITED" style="display:inline-block;margin-right:6px;">LIMITED</span> Ballon d'or · top 9 superstars</div>
           <div><span class="tag tag-ICON" style="display:inline-block;margin-right:6px;">ICON</span> Icône nationale · carte spéciale rare</div>
           <div><span class="tag tag-HERO" style="display:inline-block;margin-right:6px;">HERO</span> Fan Favourite · populaire &amp; rare</div>
           <div><span class="tag tag-BASE" style="display:inline-block;margin-right:6px;">BASE</span> Carte standard / Team Crest</div>
@@ -2793,7 +2650,7 @@ let navType  = null;
 let navCC    = null;
 
 const TYPE_META = {
-  LIMITED:{ icon:'⭐', label:'Golden Ballers',  sub:'Les 9 superstars mondiales',     color:'var(--limited-c)' },
+  LIMITED:{ icon:'⭐', label:'Ballon d\'or',     sub:'Les 9 superstars mondiales',     color:'var(--limited-c)' },
   ICON:   { icon:'💎', label:'ICON',             sub:'Icônes nationales rares',         color:'var(--icon-c)' },
   HERO:   { icon:'🌟', label:'Fan Favourite',    sub:'Les chouchous des supporters',    color:'var(--hero-c)' },
   BASE:   { icon:'🃏', label:'Base',              sub:'Joueurs, équipes & cartes spéc.', color:'var(--base-c)' },
@@ -2920,8 +2777,7 @@ function renderTypeCards(animate = false) {
     const div = document.createElement('div');
     div.className = `type-card tc-${t}`;
     div.innerHTML = `
-      <img src="CopyScreens/blister-Laumond.jpg" class="tc-avatar" alt="">
-      <span class="tc-icon">${m.icon}</span>
+<span class="tc-icon">${m.icon}</span>
       <div class="tc-label">${m.label}</div>
       <div class="tc-sublabel">${m.sub}</div>
       <div class="tc-progress-wrap">
