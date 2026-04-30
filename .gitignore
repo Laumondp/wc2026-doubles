@@ -9,3 +9,5 @@ $RECYCLE.BIN/
 # Sauvegardes locales
 *.bak
 *.tmp
+
+.vercel

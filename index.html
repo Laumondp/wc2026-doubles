@@ -48,7 +48,7 @@
     body.light .field-bg{fill:#2e7d1a;}
     body.light .goal-scene line,body.light .goal-scene ellipse[fill="none"]{ stroke:rgba(255,255,255,.25); }
     body.light #profile-screen{background:linear-gradient(145deg,#e8eaf8,#f5f7ff,#e8eaf8);}
-    body.light .ps-profile-card,body.light .ps-pin-wrap,body.light .ps-create-wrap{background:#fff;}
+    body.light .ps-profile-card,body.light .ps-pin-wrap,body.light .ps-create-wrap{background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
     body.light .ps-key{background:#f0f2fb;border-color:#ced3ec;}
     body.light .ps-pin-cancel{border-color:#ced3ec;}
     body.light .overlay{background:rgba(0,0,0,.55);}
@@ -491,28 +491,32 @@
     #profile-screen.ps-hidden{opacity:0;pointer-events:none;}
     .ps-inner{width:100%;max-width:540px;display:flex;flex-direction:column;align-items:center;gap:20px;}
     .ps-logo{font-size:clamp(1.1rem,4vw,2rem);font-weight:900;letter-spacing:1px;white-space:nowrap;
-      background:linear-gradient(120deg,#ffd700,#ff9f43);
+      background:linear-gradient(120deg,#a8c8ff,#ffffff,#4f8ef7);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-      filter:drop-shadow(0 0 18px rgba(255,215,0,.3));}
+      filter:drop-shadow(0 0 22px rgba(79,142,247,.5));}
     .ps-tagline{font-size:.75rem;color:var(--muted);margin-top:-14px;text-align:center;}
     .ps-section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);align-self:flex-start;}
-    .ps-profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;width:100%;}
+    .ps-profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;width:100%;}
     .ps-profile-card{
-      background:var(--surface);border:1px solid var(--border);border-radius:14px;
-      padding:16px 10px;cursor:pointer;text-align:center;
-      transition:transform .2s,box-shadow .2s,border-color .2s;
+      background:rgba(20,22,35,0.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      border:1px solid rgba(79,142,247,.2);border-radius:18px;
+      padding:20px 12px;cursor:pointer;text-align:center;
+      transition:transform .12s ease-out,box-shadow .12s ease-out,border-color .2s;
       display:flex;flex-direction:column;align-items:center;gap:9px;
+      position:relative;overflow:hidden;
+      transform-style:preserve-3d;will-change:transform;
+      box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);
     }
-    .ps-profile-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 8px 22px rgba(79,142,247,.22);}
-    .ps-profile-card.ps-new{border-style:dashed;border-color:var(--border);}
-    .ps-profile-card.ps-new:hover{border-color:var(--green);box-shadow:0 8px 22px rgba(46,213,115,.15);}
+    .ps-profile-card:hover{border-color:rgba(79,142,247,.55);}
+    .ps-profile-card.ps-new{border-style:dashed;border-color:rgba(46,213,115,.25);background:rgba(20,22,35,0.55);}
+    .ps-profile-card.ps-new:hover{border-color:rgba(46,213,115,.6);box-shadow:0 8px 28px rgba(46,213,115,.15);}
     .ps-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff;flex-shrink:0;}
     .ps-pname{font-size:.8rem;font-weight:700;color:var(--text);}
     .ps-new-icon{font-size:1.6rem;color:var(--muted);}
     .ps-new-label{font-size:.74rem;color:var(--muted);}
 
     /* PIN pad */
-    .ps-pin-wrap{width:100%;max-width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+    .ps-pin-wrap{width:100%;max-width:300px;background:rgba(14,16,26,0.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(79,142,247,.22);border-radius:22px;padding:26px 20px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 16px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07);}
     .ps-pin-title{font-size:.88rem;font-weight:700;}
     .ps-pin-who{font-size:.72rem;color:var(--muted);}
     .ps-pin-dots{display:flex;gap:12px;margin:2px 0;}
@@ -529,7 +533,7 @@
     .ps-pin-err{font-size:.72rem;color:var(--limited-c);min-height:1em;text-align:center;}
 
     /* Create form */
-    .ps-create-wrap{width:100%;max-width:300px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 18px;display:flex;flex-direction:column;gap:12px;}
+    .ps-create-wrap{width:100%;max-width:300px;background:rgba(14,16,26,0.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(79,142,247,.22);border-radius:22px;padding:26px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 16px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07);}
     .ps-create-title{font-size:.9rem;font-weight:700;text-align:center;}
     .ps-input{padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.83rem;outline:none;width:100%;}
     .ps-input:focus{border-color:var(--accent);}
@@ -541,7 +545,7 @@
     .ps-migrate-notice{font-size:.71rem;color:var(--green);background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.18);border-radius:7px;padding:7px 10px;text-align:center;}
     /* Photo upload in create form */
     .ps-photo-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0;}
-    .ps-photo-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);display:none;}
+    .ps-photo-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(79,142,247,.55);display:none;}
     .ps-photo-btn{font-size:.75rem;color:var(--accent);cursor:pointer;background:none;border:none;text-decoration:underline;padding:0;}
     /* Quick-add zone */
     .quick-add-zone{padding:14px 24px;border-top:1px solid var(--border);background:linear-gradient(160deg,#07090f 0%,#0d1228 100%);}
@@ -1847,6 +1851,12 @@ async function doLogin(profileId, pin) {
   const profiles = getProfiles();
   const profile = profiles.find(p => p.id === profileId);
   if (!profile) return false;
+  if (!profile.pinHash) {
+    // Profil sans PIN (migration) : accepte le premier code saisi et le définit
+    profile.pinHash = await sha256(pin);
+    profiles[profiles.findIndex(p => p.id === profileId)] = profile;
+    saveProfiles(profiles);
+  }
   const hash = await sha256(pin);
   if (hash !== profile.pinHash) return false;
   // Auto-marquer le profil admin si c'est Philippe
@@ -1944,11 +1954,12 @@ function renderProfileList() {
     const card = document.createElement('div');
     card.className = 'ps-profile-card';
     const avatarHtml = p.photo
-      ? `<img src="${p.photo}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);" alt="${p.name}">`
+      ? `<img src="${p.photo}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(79,142,247,.55);" alt="${p.name}">`
       : `<div class="ps-avatar" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
     card.innerHTML = `${avatarHtml}<div class="ps-pname">${p.name}</div>`;
     card.addEventListener('click', () => showPinEntry(p.id));
     grid.appendChild(card);
+    initProfileCardHolo(card);
   });
 
   // "+" card
@@ -3118,6 +3129,52 @@ function initHoloCard(card) {
   });
 }
 
+function initProfileCardHolo(card) {
+  const seed = ++_holoSeed * 31337.9;
+  const canvas = document.createElement('canvas');
+  canvas.className = 'holo-canvas';
+  card.insertBefore(canvas, card.firstChild);
+
+  let ctx = null, stars = null, dpr = 1, w = 0, h = 0;
+
+  function ensureReady() {
+    if (ctx) return;
+    const rect = card.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    stars = _buildStars(w, h, seed);
+  }
+
+  card.addEventListener('mousemove', e => {
+    ensureReady();
+    const r  = card.getBoundingClientRect();
+    const mx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    const my = Math.max(0, Math.min(1, (e.clientY - r.top)  / r.height));
+    const rx = (my - .5) * -22;
+    const ry = (mx - .5) *  22;
+    const hue1 = Math.round(mx * 360), hue2 = (hue1 + 150) % 360;
+    card.style.transform = `perspective(520px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.06)`;
+    card.style.boxShadow = [
+      `${(-ry * 1.2).toFixed(1)}px ${(rx * 1.2).toFixed(1)}px 40px rgba(0,0,0,.7)`,
+      `0 0 0 1.5px hsl(${hue1},100%,68%)`,
+      `0 0 30px hsl(${hue2},100%,55%,.45)`,
+      `0 0 60px hsl(${hue2},80%,45%,.18)`
+    ].join(',');
+    _drawHoloFrame(ctx, w, h, mx, my, stars);
+    canvas.style.opacity = '1';
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+    card.style.boxShadow = '';
+    canvas.style.opacity = '0';
+  });
+}
+
 function quickAddFromInput() {
   const input = document.getElementById('qa-input');
   const val = (input.value || '').trim();
@@ -3599,6 +3656,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('ps-join-submit').addEventListener('click', submitJoinForm);
   document.getElementById('ps-join-back').addEventListener('click', renderProfileList);
   document.getElementById('ps-join-group').addEventListener('keydown', e => { if (e.key === 'Enter') submitJoinForm(); });
+  // Keyboard support for PIN pad
+  document.addEventListener('keydown', e => {
+    const ps = document.getElementById('profile-screen');
+    if (!ps || ps.classList.contains('ps-hidden') || ps.style.display === 'none') return;
+    const pinEl = document.getElementById('ps-pin');
+    if (!pinEl || pinEl.style.display === 'none') return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pinKeyPress(e.key); }
+    else if (e.key === 'Backspace') { e.preventDefault(); pinKeyPress('del'); }
+    else if (e.key === 'Escape') { e.preventDefault(); pinKeyPress('cancel'); }
+  });
 
   // Check for active session
   const sessionId = sessionStorage.getItem(SESSION_KEY);
