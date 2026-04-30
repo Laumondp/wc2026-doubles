@@ -498,6 +498,34 @@
     .ps-create-btn:hover{background:#3a7ce8;}
     .ps-create-err{font-size:.72rem;color:var(--limited-c);text-align:center;min-height:1em;}
     .ps-migrate-notice{font-size:.71rem;color:var(--green);background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.18);border-radius:7px;padding:7px 10px;text-align:center;}
+    /* Photo upload in create form */
+    .ps-photo-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0;}
+    .ps-photo-preview{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);display:none;}
+    .ps-photo-btn{font-size:.75rem;color:var(--accent);cursor:pointer;background:none;border:none;text-decoration:underline;padding:0;}
+    /* Other collectors row */
+    .other-collectors{display:none;flex-wrap:wrap;gap:16px;justify-content:center;padding:16px 24px 24px;border-top:1px solid var(--border);background:linear-gradient(160deg,#07090f 0%,#0d1228 100%);}
+    .oc-card{cursor:pointer;transition:transform .25s cubic-bezier(.34,1.4,.64,1),box-shadow .25s;border-radius:14px;background:linear-gradient(145deg,#141621,#0d1024);border:1px solid rgba(255,255,255,.08);padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;width:130px;flex-shrink:0;}
+    .oc-card:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(79,142,247,.2);border-color:rgba(79,142,247,.4);}
+    .oc-photo{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);}
+    .oc-initials{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);}
+    .oc-name{font-size:.8rem;font-weight:700;text-align:center;color:var(--text);}
+    .oc-pct{font-size:.65rem;color:var(--muted);text-align:center;}
+    .oc-dbl-badge{font-size:.65rem;background:rgba(79,142,247,.15);color:var(--accent);border:1px solid rgba(79,142,247,.3);border-radius:10px;padding:2px 8px;}
+    /* Collector doubles overlay */
+    .col-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:20px;}
+    .col-panel{background:var(--surface);border-radius:16px;padding:24px;max-width:680px;width:100%;max-height:82vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
+    .col-panel-header{display:flex;align-items:center;gap:14px;}
+    .col-panel-photo{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);}
+    .col-panel-initials{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff;}
+    .col-panel-name{font-size:1rem;font-weight:800;}
+    .col-panel-sub{font-size:.72rem;color:var(--muted);}
+    .col-close{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;cursor:pointer;font-size:.78rem;transition:color .2s,border-color .2s;flex-shrink:0;}
+    .col-close:hover{color:var(--text);border-color:var(--muted);}
+    .col-section-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--border);}
+    .col-cards-grid{display:flex;flex-wrap:wrap;gap:8px;}
+    .col-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:.74rem;}
+    .col-chip-qty{background:var(--accent);color:#fff;border-radius:5px;padding:1px 6px;font-size:.67rem;font-weight:700;flex-shrink:0;}
+    .col-empty{font-size:.82rem;color:var(--muted);text-align:center;padding:24px 0;}
 
     /* Masquer l'UI quand l'écran profil est actif */
     body.ps-open header,
@@ -573,6 +601,11 @@
           ✅ Collection existante détectée — elle sera importée dans ce profil
         </div>
         <input class="ps-input" id="ps-create-name" placeholder="Votre prénom ou pseudo" maxlength="20" autocomplete="off"/>
+        <div class="ps-photo-zone">
+          <img id="ps-photo-preview" class="ps-photo-preview" alt="aperçu">
+          <button type="button" class="ps-photo-btn" onclick="document.getElementById('ps-create-photo').click()">📷 Ajouter une photo (optionnel)</button>
+          <input type="file" id="ps-create-photo" accept="image/*" style="display:none">
+        </div>
         <input class="ps-input" id="ps-create-email" type="email" placeholder="Email (optionnel — pour les échanges)" autocomplete="email"/>
         <input class="ps-input ps-pin-row" id="ps-create-pin" type="password" placeholder="PIN (4 chiffres)" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
         <input class="ps-input ps-pin-row" id="ps-create-pin2" type="password" placeholder="Confirmer PIN" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
@@ -672,6 +705,12 @@
         </div>
       </div>
     </div>
+    <div class="other-collectors" id="other-collectors"></div>
+  </div>
+
+  <!-- Overlay doubles d'un collectionneur (lecture seule) -->
+  <div class="col-overlay" id="col-doubles-overlay" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+    <div class="col-panel" id="col-doubles-panel"></div>
   </div>
 
   <!-- COLLECTION TAB -->
@@ -1754,12 +1793,12 @@ async function doLogin(profileId, pin) {
   return true;
 }
 
-async function doCreateProfile(name, pin, email='') {
+async function doCreateProfile(name, pin, email='', photo='') {
   const profiles = getProfiles();
   if (profiles.find(p => p.name.toLowerCase() === name.toLowerCase())) return 'duplicate';
   const id = uid();
   const pinHash = await sha256(pin);
-  const newProfile = { id, name, email, pinHash, collection:{}, wishlist:[], players:[], values:{LIMITED:15,ICON:10,HERO:5,BASE:1} };
+  const newProfile = { id, name, email, photo, pinHash, collection:{}, wishlist:[], players:[], values:{LIMITED:15,ICON:10,HERO:5,BASE:1} };
   // Migration : si données legacy présentes et premier profil
   if (profiles.length === 0) {
     const legacy = localStorage.getItem('wc2026');
@@ -1793,8 +1832,13 @@ function updateProfileIndicator() {
   const ind = document.getElementById('profile-indicator');
   const av  = document.getElementById('pi-avatar');
   const nm  = document.getElementById('pi-name');
-  av.style.background = avatarColor(activeProfile.name);
-  av.textContent = avatarInitials(activeProfile.name);
+  if (activeProfile.photo) {
+    av.style.background = 'transparent';
+    av.innerHTML = `<img src="${activeProfile.photo}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;object-position:top center;display:block;">`;
+  } else {
+    av.style.background = avatarColor(activeProfile.name);
+    av.textContent = avatarInitials(activeProfile.name);
+  }
   nm.textContent  = activeProfile.name;
   ind.style.display = 'flex';
 }
@@ -1830,9 +1874,10 @@ function renderProfileList() {
   profiles.forEach(p => {
     const card = document.createElement('div');
     card.className = 'ps-profile-card';
-    card.innerHTML = `
-      <div class="ps-avatar" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>
-      <div class="ps-pname">${p.name}</div>`;
+    const avatarHtml = p.photo
+      ? `<img src="${p.photo}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);" alt="${p.name}">`
+      : `<div class="ps-avatar" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
+    card.innerHTML = `${avatarHtml}<div class="ps-pname">${p.name}</div>`;
     card.addEventListener('click', () => showPinEntry(p.id));
     grid.appendChild(card);
   });
@@ -1897,12 +1942,35 @@ function showCreateForm() {
   document.getElementById('ps-create-pin').value   = '';
   document.getElementById('ps-create-pin2').value  = '';
   document.getElementById('ps-create-err').textContent = '';
+  psCreatePhotoData = '';
+  const prev = document.getElementById('ps-photo-preview');
+  if (prev) { prev.src = ''; prev.style.display = 'none'; }
+  const photoBtn = document.querySelector('.ps-photo-btn');
+  if (photoBtn) photoBtn.textContent = '📷 Ajouter une photo (optionnel)';
+  // Wire photo input
+  const photoInput = document.getElementById('ps-create-photo');
+  if (photoInput) {
+    photoInput.value = '';
+    photoInput.onchange = function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        psCreatePhotoData = e.target.result;
+        if (prev) { prev.src = psCreatePhotoData; prev.style.display = 'block'; }
+        if (photoBtn) photoBtn.textContent = '📷 Changer la photo';
+      };
+      reader.readAsDataURL(file);
+    };
+  }
   // Afficher notice de migration si données legacy présentes et aucun profil
   const hasLegacy = !!localStorage.getItem('wc2026');
   const noProfiles = getProfiles().length === 0;
   document.getElementById('ps-migrate-notice').style.display = (hasLegacy && noProfiles) ? '' : 'none';
   setTimeout(() => document.getElementById('ps-create-name').focus(), 50);
 }
+
+let psCreatePhotoData = '';
 
 async function submitCreateProfile() {
   const name  = document.getElementById('ps-create-name').value.trim();
@@ -1914,7 +1982,7 @@ async function submitCreateProfile() {
   if (!name) { errEl.textContent = 'Entrez un prénom ou pseudo'; return; }
   if (!/^\d{4}$/.test(pin)) { errEl.textContent = 'Le PIN doit contenir exactement 4 chiffres'; return; }
   if (pin !== pin2) { errEl.textContent = 'Les deux PIN ne correspondent pas'; return; }
-  const result = await doCreateProfile(name, pin, email);
+  const result = await doCreateProfile(name, pin, email, psCreatePhotoData);
   if (result === 'duplicate') { errEl.textContent = 'Ce nom est déjà utilisé'; return; }
   hideProfileScreen();
   updateProfileIndicator();
@@ -2682,45 +2750,83 @@ function createParticles() {
 }
 
 function renderHomeHero() {
-  const row = document.getElementById('hero-stat-row');
-  if (!row) return;
   const total   = state.cards.length;
   const owned   = state.cards.filter(c => getQty(c.id) > 0).length;
   const doubles = state.cards.filter(c => getDoubles(c.id) > 0).length;
-  const wish    = state.wishlist.length;
   const pct     = total > 0 ? Math.round(owned / total * 100) : 0;
 
-  // Update blister stats
   const bPct = document.getElementById('bc-pct');
   const bDbl = document.getElementById('bc-dbl');
   if (bPct) bPct.textContent = pct + '%';
   if (bDbl) bDbl.textContent = doubles;
 
-  // If already rendered, just update values silently
-  const existing = document.getElementById('hst-total');
-  if (existing) {
-    existing.textContent = total;
-    document.getElementById('hst-owned').textContent   = owned;
-    document.getElementById('hst-doubles').textContent = doubles;
-    document.getElementById('hst-wish').textContent    = wish;
-    document.getElementById('hst-pct').textContent     = pct + '%';
-    return;
-  }
+  renderOtherCollectors();
+}
 
-  row.innerHTML = `
-    <div class="h-stat"><div class="h-stat-val sv-blue"   id="hst-total">0</div><div class="h-stat-lbl">Cartes total</div></div>
-    <div class="h-stat"><div class="h-stat-val sv-green"  id="hst-owned">0</div><div class="h-stat-lbl">Possédées</div></div>
-    <div class="h-stat"><div class="h-stat-val sv-gold"   id="hst-doubles">0</div><div class="h-stat-lbl">Doubles</div></div>
-    <div class="h-stat"><div class="h-stat-val sv-purple" id="hst-wish">0</div><div class="h-stat-lbl">Recherchées</div></div>
-    <div class="h-stat"><div class="h-stat-val" style="color:var(--green)" id="hst-pct">0%</div><div class="h-stat-lbl">Complété</div></div>
-  `;
-  setTimeout(() => {
-    animateCount(document.getElementById('hst-total'),   total);
-    animateCount(document.getElementById('hst-owned'),   owned);
-    animateCount(document.getElementById('hst-doubles'), doubles);
-    animateCount(document.getElementById('hst-wish'),    wish);
-    animateCount(document.getElementById('hst-pct'),     pct, 900, '%');
-  }, 100);
+function renderOtherCollectors() {
+  const container = document.getElementById('other-collectors');
+  if (!container) return;
+  const profiles = getProfiles();
+  const others = profiles.filter(p => !activeProfile || p.id !== activeProfile.id);
+  if (others.length === 0) { container.style.display = 'none'; return; }
+  container.style.display = 'flex';
+  container.innerHTML = '';
+  others.forEach(p => {
+    const totalCards = state.cards.length;
+    const ownedCards = Object.values(p.collection || {}).filter(q => q > 0).length;
+    const dblCount   = Object.values(p.collection || {}).filter(q => q >= 2).length;
+    const pct        = totalCards > 0 ? Math.round(ownedCards / totalCards * 100) : 0;
+    const card = document.createElement('div');
+    card.className = 'oc-card';
+    const avatarHtml = p.photo
+      ? `<img class="oc-photo" src="${p.photo}" alt="${p.name}">`
+      : `<div class="oc-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
+    card.innerHTML = `
+      ${avatarHtml}
+      <div class="oc-name">${p.name}</div>
+      <div class="oc-pct">${pct}% complété</div>
+      <div class="oc-dbl-badge">${dblCount} double${dblCount !== 1 ? 's' : ''}</div>`;
+    card.addEventListener('click', () => showCollectorDoubles(p.id));
+    container.appendChild(card);
+  });
+}
+
+function showCollectorDoubles(profileId) {
+  const profiles = getProfiles();
+  const p = profiles.find(x => x.id === profileId);
+  if (!p) return;
+  const doubles = [];
+  Object.entries(p.collection || {}).forEach(([cardId, qty]) => {
+    if (qty >= 2) {
+      const card = state.cards.find(c => c.id === cardId);
+      if (card) doubles.push({ card, available: qty - 1 });
+    }
+  });
+  doubles.sort((a, b) => a.card.num - b.card.num);
+  const avatarHtml = p.photo
+    ? `<img class="col-panel-photo" src="${p.photo}" alt="${p.name}">`
+    : `<div class="col-panel-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
+  const doublesHtml = doubles.length === 0
+    ? `<div class="col-empty">Aucun double disponible pour l'instant</div>`
+    : doubles.map(({card, available}) =>
+        `<div class="col-chip">
+          <span class="tag tag-${card.type}" style="font-size:.6rem;padding:1px 5px">${card.type}</span>
+          <span>#${card.num} ${card.name} · ${card.team}</span>
+          <span class="col-chip-qty">×${available}</span>
+        </div>`).join('');
+  const panel = document.getElementById('col-doubles-panel');
+  panel.innerHTML = `
+    <div class="col-panel-header">
+      ${avatarHtml}
+      <div>
+        <div class="col-panel-name">${p.name}</div>
+        <div class="col-panel-sub">${doubles.length} double${doubles.length !== 1 ? 's' : ''} disponible${doubles.length !== 1 ? 's' : ''}</div>
+      </div>
+      <button class="col-close" onclick="document.getElementById('col-doubles-overlay').style.display='none'">✕ Fermer</button>
+    </div>
+    <div class="col-section-lbl">Doubles disponibles</div>
+    <div class="col-cards-grid">${doublesHtml}</div>`;
+  document.getElementById('col-doubles-overlay').style.display = 'flex';
 }
 
 function getTypeStats(type) {
