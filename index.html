@@ -443,11 +443,11 @@
 
     .blister-bottom-glow{position:absolute;bottom:0;left:0;right:0;height:45%;
       background:linear-gradient(to top,rgba(79,142,247,.1),transparent);pointer-events:none;}
-    .blister-top{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px;z-index:1;position:relative;}
+    .blister-top{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:8px;z-index:9;position:relative;}
     .blister-badge{font-size:.48rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
       background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.35);color:var(--icon-c);border-radius:4px;padding:2px 5px;}
     .blister-year{font-size:.6rem;color:var(--muted);font-weight:700;}
-    .blister-photo-wrap{position:relative;width:86px;height:86px;margin:2px 0 8px;z-index:1;}
+    .blister-photo-wrap{position:relative;width:86px;height:86px;margin:2px 0 8px;z-index:9;}
     .blister-photo{width:86px;height:86px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);}
     .blister-photo-ring{
       position:absolute;inset:-4px;border-radius:50%;
@@ -459,14 +459,14 @@
     @keyframes ring-spin{to{transform:rotate(360deg);}}
     .blister-name{font-size:.82rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;
       background:linear-gradient(90deg,#ffd700,#ff9f43);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-      z-index:1;position:relative;margin-bottom:2px;}
-    .blister-title{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;z-index:1;position:relative;margin-bottom:10px;}
-    .blister-stats-mini{display:flex;gap:14px;z-index:1;position:relative;}
+      z-index:9;position:relative;margin-bottom:2px;}
+    .blister-title{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;z-index:9;position:relative;margin-bottom:10px;}
+    .blister-stats-mini{display:flex;gap:14px;z-index:9;position:relative;}
     .blister-stats-mini>div{text-align:center;}
     .blister-stats-mini span{font-size:.82rem;font-weight:700;color:var(--green);display:block;font-variant-numeric:tabular-nums;}
     .blister-stats-mini small{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
     .blister-footer{position:absolute;bottom:7px;left:0;right:0;text-align:center;
-      font-size:.4rem;letter-spacing:1.2px;color:rgba(255,255,255,.2);font-weight:600;z-index:1;}
+      font-size:.4rem;letter-spacing:1.2px;color:rgba(255,255,255,.2);font-weight:600;z-index:9;}
 
 
     @media(max-width:680px){
@@ -563,11 +563,11 @@
     .oc-card .blister-foil{z-index:3;}
     .oc-card .blister-sparkle{z-index:4;}
     .oc-card .blister-glint{z-index:5;}
-    .oc-photo{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);}
-    .oc-initials{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);}
-    .oc-name{font-size:.8rem;font-weight:700;text-align:center;color:var(--text);}
-    .oc-pct{font-size:.65rem;color:var(--muted);text-align:center;}
-    .oc-dbl-badge{font-size:.65rem;background:rgba(79,142,247,.15);color:var(--accent);border:1px solid rgba(79,142,247,.3);border-radius:10px;padding:2px 8px;}
+    .oc-photo{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(255,215,0,.4);position:relative;z-index:9;}
+    .oc-initials{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff;border:2px solid rgba(255,255,255,.15);position:relative;z-index:9;}
+    .oc-name{font-size:.8rem;font-weight:700;text-align:center;color:var(--text);position:relative;z-index:9;}
+    .oc-pct{font-size:.65rem;color:var(--muted);text-align:center;position:relative;z-index:9;}
+    .oc-dbl-badge{font-size:.65rem;background:rgba(79,142,247,.15);color:var(--accent);border:1px solid rgba(79,142,247,.3);border-radius:10px;padding:2px 8px;position:relative;z-index:9;}
     /* Collector doubles overlay */
     .col-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:20px;}
     .col-panel{background:var(--surface);border-radius:16px;padding:24px;max-width:680px;width:100%;max-height:82vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;}
