@@ -857,6 +857,24 @@
         </div>
       </div>
 
+      <div class="setting-card" id="ntfy-settings-card" style="grid-column:1/-1">
+        <h4>🔔 Notifications (ntfy.sh)</h4>
+        <p style="font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Recevez une notification sur votre téléphone ou navigateur à chaque création de profil. Gratuit, sans compte. <a href="https://ntfy.sh" target="_blank" rel="noopener" style="color:var(--accent)">En savoir plus →</a></p>
+        <label class="cloud-label">Canal ntfy (privé — ne le partagez pas)</label>
+        <div class="cloud-key-row" style="flex-wrap:wrap;gap:6px;">
+          <input type="text" id="ntfy-topic-input" placeholder="ex: wc2026-doubles-monnom" autocomplete="off" spellcheck="false" style="flex:1;min-width:180px;">
+          <button class="btn btn-ghost btn-sm" id="btn-generate-ntfy">🎲 Générer</button>
+          <button class="btn btn-primary btn-sm" id="btn-save-ntfy">Sauver</button>
+        </div>
+        <div id="ntfy-subscribe-section" style="display:none;margin-top:12px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <a id="ntfy-web-link" href="#" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">🌐 S'abonner sur ntfy.sh</a>
+            <button class="btn btn-ghost btn-sm" id="btn-test-ntfy">📨 Envoyer un test</button>
+          </div>
+          <p style="font-size:.7rem;color:var(--muted);line-height:1.5;">Installez l'app <strong>ntfy</strong> (Android / iOS / navigateur) et abonnez-vous au canal ci-dessus pour recevoir les notifications en temps réel.</p>
+        </div>
+      </div>
+
       <div class="setting-card">
         <h4>Légende des types</h4>
         <div style="display:flex;flex-direction:column;gap:6px;font-size:.78rem;">
@@ -1846,6 +1864,7 @@ async function doCreateProfile(name, pin, email='', photo='') {
   sessionStorage.setItem(SESSION_KEY, id);
   activeProfile = newProfile;
   loadProfileData(newProfile);
+  sendNtfyNotif('🆕 Nouveau profil créé', `${name} vient de rejoindre Gestion des Doubles WC2026 !`, 'busts_in_silhouette,soccer');
   return 'ok';
 }
 
@@ -2283,6 +2302,35 @@ function renderSettings() {
   const card = document.getElementById('card-values-admin-note');
   if (card) card.style.display = isAdmin ? 'none' : '';
   renderCloudCard();
+  renderNtfyCard();
+}
+
+// ── NTFY.SH NOTIFICATIONS ─────────────────────────────────────────────
+const NTFY_KEY = 'wc2026_ntfy_topic';
+
+function getNtfyTopic() { return localStorage.getItem(NTFY_KEY) || ''; }
+function setNtfyTopic(t) { if (t) localStorage.setItem(NTFY_KEY, t); else localStorage.removeItem(NTFY_KEY); }
+
+async function sendNtfyNotif(title, body, tags = 'bell') {
+  const topic = getNtfyTopic();
+  if (!topic) return;
+  try {
+    await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+      method: 'POST',
+      headers: { 'Title': title, 'Tags': tags, 'Priority': '3' },
+      body
+    });
+  } catch { /* non-bloquant */ }
+}
+
+function renderNtfyCard() {
+  const topic   = getNtfyTopic();
+  const input   = document.getElementById('ntfy-topic-input');
+  const section = document.getElementById('ntfy-subscribe-section');
+  const link    = document.getElementById('ntfy-web-link');
+  if (input)   input.value = topic;
+  if (section) section.style.display = topic ? '' : 'none';
+  if (link && topic) link.href = `https://ntfy.sh/${encodeURIComponent(topic)}`;
 }
 
 function updateStats() {
@@ -3403,6 +3451,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Player search filters
   document.getElementById('search-player-doubles').addEventListener('input', () => buildPicker('picker-doubles', tempPlayerDoubles, 'search-player-doubles'));
   document.getElementById('search-player-wish').addEventListener('input', () => buildPicker('picker-wish', tempPlayerWish, 'search-player-wish'));
+
+  // Ntfy notifications
+  document.getElementById('btn-generate-ntfy').addEventListener('click', () => {
+    const rand = Math.random().toString(36).slice(2, 10);
+    document.getElementById('ntfy-topic-input').value = `wc2026-doubles-${rand}`;
+  });
+  document.getElementById('btn-save-ntfy').addEventListener('click', () => {
+    const v = document.getElementById('ntfy-topic-input').value.trim().replace(/[^a-zA-Z0-9_-]/g, '-');
+    setNtfyTopic(v);
+    renderNtfyCard();
+    toast(v ? 'Canal ntfy enregistré ✓' : 'Canal ntfy effacé');
+  });
+  document.getElementById('btn-test-ntfy').addEventListener('click', async () => {
+    await sendNtfyNotif('🧪 Test notification', 'Les notifications fonctionnent pour Gestion des Doubles WC2026 !', 'white_check_mark');
+    toast('Notification test envoyée !');
+  });
 
   // Cloud sync
   document.getElementById('btn-save-binkey').addEventListener('click', () => {
