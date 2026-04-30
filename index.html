@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -704,9 +704,6 @@
   <button class="tab-btn active" data-tab="home">🏠 Accueil</button>
   <button class="tab-btn" data-tab="collection">📋 Collection</button>
   <button class="tab-btn" data-tab="doubles">✌️ Mes Doubles</button>
-  <button class="tab-btn" data-tab="wishlist">⭐ Recherchées</button>
-  <button class="tab-btn" data-tab="players">👥 Joueurs</button>
-  <button class="tab-btn" data-tab="exchanges">🔄 Échanges</button>
   <button class="tab-btn" data-tab="settings">⚙️ Paramètres</button>
 </nav>
 
@@ -793,38 +790,6 @@
     <div class="cards-grid" id="doubles-grid"></div>
   </div>
 
-  <!-- WISHLIST TAB -->
-  <div class="tab-content" id="tab-wishlist">
-    <div class="sec-hdr">
-      <span class="sec-title">Cartes recherchées</span>
-      <span class="sec-info" id="wish-count">0 cartes</span>
-    </div>
-    <div class="cards-grid" id="wishlist-grid"></div>
-  </div>
-
-  <!-- PLAYERS TAB -->
-  <div class="tab-content" id="tab-players">
-    <div class="sec-hdr">
-      <span class="sec-title">Joueurs / Échangeurs</span>
-      <button class="btn btn-primary btn-sm" id="btn-add-player">+ Ajouter un joueur</button>
-    </div>
-    <div class="players-grid" id="players-grid"></div>
-  </div>
-
-  <!-- EXCHANGES TAB -->
-  <div class="tab-content" id="tab-exchanges">
-    <div class="sec-hdr">
-      <span class="sec-title">Correspondances d'échanges</span>
-      <span class="sec-info">Doubles ↔ Recherchées automatiquement</span>
-    </div>
-    <div id="exchanges-container"></div>
-
-    <div class="sec-hdr" style="margin-top:24px;">
-      <span class="sec-title">👥 Doubles disponibles chez les autres joueurs</span>
-      <span class="sec-info">Lecture seule · ⭐ = cartes que tu recherches</span>
-    </div>
-    <div id="community-container"></div>
-  </div>
 
   <!-- SETTINGS TAB -->
   <div class="tab-content" id="tab-settings">
@@ -2208,91 +2173,6 @@ function renderDoubles() {
   dblCards.forEach(c => grid.appendChild(renderCard(c)));
 }
 
-function renderWishlist() {
-  const grid = document.getElementById('wishlist-grid');
-  grid.innerHTML = '';
-  const cards = getFilteredCards().filter(c => isWished(c.id));
-  document.getElementById('wish-count').textContent = `${state.wishlist.length} cartes`;
-  if (!cards.length) {
-    grid.innerHTML = '<div class="empty"><div class="e-icon">⭐</div><p>Aucune carte en recherche.<br>Cliquez ⭐ sur une carte pour l\'ajouter.</p></div>';
-    return;
-  }
-  cards.forEach(c => grid.appendChild(renderCard(c)));
-}
-
-function renderPlayers() {
-  const grid = document.getElementById('players-grid');
-  grid.innerHTML = '';
-  if (!state.players.length) {
-    grid.innerHTML = '<div class="empty"><div class="e-icon">👥</div><p>Aucun joueur.<br>Ajoutez des échangeurs pour gérer vos propositions.</p></div>';
-    return;
-  }
-  state.players.forEach(p => {
-    const matches = findMatches(p);
-    const div = document.createElement('div');
-    div.className = 'player-card';
-    div.innerHTML = `
-      <div class="pc-head">
-        <div>
-          <div class="pc-name">${p.name}</div>
-          ${p.email ? `<div class="pc-contact"><a href="mailto:${p.email}" style="color:var(--accent);text-decoration:none;" title="Envoyer un email">✉️ ${p.email}</a></div>` : ''}
-          ${p.contact ? `<div class="pc-contact">${p.contact}</div>` : ''}
-          ${!p.email && !p.contact ? `<div class="pc-contact" style="opacity:.45">Pas de contact</div>` : ''}
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-          ${matches.canGive.length || matches.canReceive.length ? `<span class="pc-match">⚡ Match !</span>` : ''}
-          <button class="btn btn-ghost btn-sm" data-deck="${p.id}">🃏 Voir le jeu</button>
-          <button class="btn btn-ghost btn-sm btn-icon" data-edit="${p.id}">✏️</button>
-          <button class="btn btn-danger btn-sm btn-icon" data-del="${p.id}">✕</button>
-        </div>
-      </div>
-      <div class="pc-sec">
-        <div class="pc-sec-t">Ses doubles (${p.doubles.length})</div>
-        <div class="tags">${p.doubles.map(id => {
-          const c = state.cards.find(x => x.id===id);
-          if (!c) return '';
-          const isMatch = state.wishlist.includes(id);
-          return `<span class="tag tag-${c.type} ${isMatch?'tag-match':''}" title="${c.name} — ${c.team}">${c.flag} ${c.num}</span>`;
-        }).join('')||'<span style="font-size:.7rem;color:var(--muted)">Aucun double renseigné</span>'}</div>
-      </div>
-      <div class="pc-sec">
-        <div class="pc-sec-t">Ce qu'il recherche (${p.wishlist.length})</div>
-        <div class="tags">${p.wishlist.map(id => {
-          const c = state.cards.find(x => x.id===id);
-          if (!c) return '';
-          const isMatch = getDoubles(id) > 0;
-          return `<span class="tag tag-${c.type} ${isMatch?'tag-match':''}" title="${c.name} — ${c.team}">${c.flag} ${c.num}</span>`;
-        }).join('')||'<span style="font-size:.7rem;color:var(--muted)">Aucune recherche renseignée</span>'}</div>
-      </div>
-    `;
-    div.querySelector('[data-deck]').addEventListener('click', () => openPlayerDeck(p));
-    div.querySelector('[data-edit]').addEventListener('click', () => openEditPlayer(p));
-    div.querySelector('[data-del]').addEventListener('click', () => deletePlayer(p.id));
-    grid.appendChild(div);
-  });
-}
-
-function findMatches(player) {
-  const myDoubles = getMyDoubleIds();
-  const canGive = myDoubles.filter(id => player.wishlist.includes(id));
-  const canReceive = state.wishlist.filter(id => player.doubles.includes(id));
-  return { canGive, canReceive };
-}
-
-// ── DECK JOUEUR ───────────────────────────────────────────────────────
-let deckPlayer = null;
-let deckView = 'doubles';
-
-function openPlayerDeck(player) {
-  deckPlayer = player;
-  deckView = 'doubles';
-  document.getElementById('deck-title').textContent = `🃏 Jeu de ${player.name}`;
-  document.querySelectorAll('.deck-pill').forEach(b => {
-    b.classList.toggle('active', b.dataset.deckView === 'doubles');
-  });
-  renderDeckView();
-  document.getElementById('modal-deck').classList.add('open');
-}
 
 function renderDeckView() {
   if (!deckPlayer) return;
@@ -2386,159 +2266,6 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-function renderExchanges() {
-  const container = document.getElementById('exchanges-container');
-  container.innerHTML = '';
-
-  if (!state.players.length) {
-    container.innerHTML = '<div class="empty"><div class="e-icon">🔄</div><p>Ajoutez des joueurs pour voir les correspondances d\'échanges.</p></div>';
-    return;
-  }
-
-  let hasAny = false;
-  state.players.forEach(p => {
-    const matches = findMatches(p);
-    if (!matches.canGive.length && !matches.canReceive.length) return;
-    hasAny = true;
-
-    const panel = document.createElement('div');
-    panel.className = 'exch-panel';
-    let html = `<div class="exch-panel-head"><h3>Avec ${p.name}</h3><span style="font-size:.75rem;color:var(--muted)">${p.contact||''}</span></div>`;
-
-    if (matches.canGive.length) {
-      html += `<div style="font-size:.75rem;color:var(--green);margin-bottom:6px;">✅ Je peux donner (${matches.canGive.length})</div>`;
-      matches.canGive.forEach(id => {
-        const c = state.cards.find(x => x.id===id);
-        if (!c) return;
-        const dbl = getDoubles(id);
-        const emailLink1 = p.email ? ` · <a href="mailto:${p.email}" style="color:var(--accent);text-decoration:none;">✉️ ${p.email}</a>` : '';
-        html += `<div class="match-row">
-          <span class="match-card-tag ct-${c.type}" style="padding:3px 8px;border-radius:5px;font-size:.7rem;font-weight:600;">${c.flag} ${c.num} — ${c.name}</span>
-          <span class="match-arrow">→</span>
-          <span class="match-player">${p.name} cherche cette carte${emailLink1}</span>
-          <span style="font-size:.68rem;color:var(--muted)">(j'ai ${dbl} double${dbl>1?'s':''} · valeur ${cardValue(c)} pt${cardValue(c)>1?'s':''})</span>
-        </div>`;
-      });
-    }
-
-    if (matches.canReceive.length) {
-      html += `<div style="font-size:.75rem;color:var(--accent);margin:8px 0 6px;">⬇️ Je peux recevoir (${matches.canReceive.length})</div>`;
-      matches.canReceive.forEach(id => {
-        const c = state.cards.find(x => x.id===id);
-        if (!c) return;
-        const emailLink2 = p.email ? ` · <a href="mailto:${p.email}" style="color:var(--accent);text-decoration:none;">✉️ ${p.email}</a>` : '';
-        html += `<div class="match-row">
-          <span class="match-player">${p.name} a en double${emailLink2} :</span>
-          <span class="match-card-tag ct-${c.type}" style="padding:3px 8px;border-radius:5px;font-size:.7rem;font-weight:600;">${c.flag} ${c.num} — ${c.name}</span>
-          <span class="match-arrow">→</span>
-          <span style="font-size:.68rem;color:var(--muted)">Je la cherche · valeur ${cardValue(c)} pt${cardValue(c)>1?'s':''}</span>
-        </div>`;
-      });
-    }
-
-    panel.innerHTML = html;
-    container.appendChild(panel);
-  });
-
-  if (!hasAny) {
-    container.innerHTML = '<div class="empty"><div class="e-icon">🔄</div><p>Pas encore de correspondance.<br>Renseignez les doubles et recherches de vos joueurs.</p></div>';
-  }
-
-  renderCommunityDoubles();
-}
-
-function renderCommunityDoubles() {
-  const container = document.getElementById('community-container');
-  if (!container) return;
-  container.innerHTML = '';
-
-  const profiles = getProfiles();
-  const others = profiles.filter(p => p.id !== activeProfile.id);
-
-  if (!others.length) {
-    container.innerHTML = '<div class="empty"><div class="e-icon">👥</div><p>Aucun autre profil sur cet appareil pour l\'instant.</p></div>';
-    return;
-  }
-
-  let hasAny = false;
-
-  others.forEach(profile => {
-    // Cartes avec qty >= 2 → doubles disponibles à l'échange
-    const doubles = [];
-    Object.entries(profile.collection || {}).forEach(([cardId, qty]) => {
-      if (qty >= 2) {
-        const card = state.cards.find(c => c.id === cardId);
-        if (card) doubles.push({ card, qty, available: qty - 1 });
-      }
-    });
-    if (!doubles.length) return;
-    hasAny = true;
-
-    // Tri : cartes recherchées par le joueur connecté en premier
-    doubles.sort((a, b) => {
-      const aw = state.wishlist.includes(a.card.id) ? 0 : 1;
-      const bw = state.wishlist.includes(b.card.id) ? 0 : 1;
-      if (aw !== bw) return aw - bw;
-      return parseInt(a.card.num) - parseInt(b.card.num);
-    });
-
-    const wanted = doubles.filter(d => state.wishlist.includes(d.card.id));
-    const others2 = doubles.filter(d => !state.wishlist.includes(d.card.id));
-
-    const emailBtn = profile.email
-      ? `<a href="mailto:${profile.email}" style="font-size:.7rem;color:var(--accent);text-decoration:none;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);border-radius:5px;padding:2px 9px;">✉️ ${profile.email}</a>`
-      : '';
-
-    const panel = document.createElement('div');
-    panel.className = 'exch-panel';
-    let html = `
-      <div class="exch-panel-head">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:32px;height:32px;border-radius:50%;background:${avatarColor(profile.name)};display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;flex-shrink:0;">${avatarInitials(profile.name)}</div>
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <span style="font-size:.88rem;font-weight:700;">${profile.name}</span>
-            ${emailBtn}
-          </div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
-          ${wanted.length ? `<span style="background:rgba(46,213,115,.15);color:var(--green);border:1px solid rgba(46,213,115,.3);border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:700;">⭐ ${wanted.length} tu cherches !</span>` : ''}
-          <span style="font-size:.7rem;color:var(--muted)">${doubles.length} double${doubles.length>1?'s':''} dispo</span>
-        </div>
-      </div>`;
-
-    // Cartes recherchées par le joueur connecté
-    if (wanted.length) {
-      html += `<div style="font-size:.74rem;color:var(--green);font-weight:600;margin-bottom:6px;">⭐ Cartes que tu recherches (${wanted.length})</div>`;
-      wanted.forEach(({ card, available }) => {
-        const subject = encodeURIComponent(`Échange WC2026 — carte n°${card.num} ${card.name}`);
-        const mailto = profile.email ? `href="mailto:${profile.email}?subject=${subject}"` : '';
-        html += `<div class="match-row">
-          <span class="match-card-tag ct-${card.type}" style="padding:3px 8px;border-radius:5px;font-size:.7rem;font-weight:600;">${getFlagImg(card.cc)} ${card.num} — ${card.name}</span>
-          <span style="font-size:.68rem;background:rgba(46,213,115,.12);color:var(--green);border:1px solid rgba(46,213,115,.25);border-radius:4px;padding:1px 7px;">×${available} dispo</span>
-          ${profile.email ? `<a ${mailto} style="margin-left:auto;font-size:.7rem;color:var(--accent);text-decoration:none;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);border-radius:5px;padding:2px 8px;white-space:nowrap;">✉️ Contacter</a>` : ''}
-        </div>`;
-      });
-    }
-
-    // Autres doubles (compact)
-    if (others2.length) {
-      if (wanted.length) html += `<div style="font-size:.72rem;color:var(--muted);margin:8px 0 5px;">Autres doubles disponibles (${others2.length})</div>`;
-      html += `<div class="tags" style="gap:5px;">`;
-      others2.forEach(({ card, available }) => {
-        html += `<span class="tag tag-${card.type}" title="${card.name} — ${card.team}">${card.num}${available > 1 ? ` ×${available}` : ''}</span>`;
-      });
-      html += `</div>`;
-    }
-
-    panel.innerHTML = html;
-    container.appendChild(panel);
-  });
-
-  if (!hasAny) {
-    container.innerHTML = '<div class="empty"><div class="e-icon">📦</div><p>Aucun autre joueur n\'a de doubles disponibles pour l\'instant.</p></div>';
-  }
-}
-
 function renderSettings() {
   const isAdmin = activeProfile && activeProfile.isAdmin;
   ['LIMITED','ICON','HERO','BASE'].forEach(t => {
@@ -2577,9 +2304,7 @@ function renderAll() {
   if      (active === 'home')      renderHome();
   else if (active === 'collection') renderCollection();
   else if (active === 'doubles')    renderDoubles();
-  else if (active === 'wishlist')   renderWishlist();
-  else if (active === 'players')    renderPlayers();
-  else if (active === 'exchanges')  renderExchanges();
+
   else if (active === 'settings')   renderSettings();
 }
 
@@ -3672,7 +3397,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('modal-card-cancel').addEventListener('click', () => document.getElementById('modal-card').classList.remove('open'));
 
   // Player modal
-  document.getElementById('btn-add-player').addEventListener('click', openAddPlayer);
   document.getElementById('modal-player-save').addEventListener('click', savePlayer);
   document.getElementById('modal-player-cancel').addEventListener('click', () => document.getElementById('modal-player').classList.remove('open'));
 
