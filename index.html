@@ -47,10 +47,14 @@
     body.light .other-collectors{background:#f0f2fb;}
     body.light .field-bg{fill:#2e7d1a;}
     body.light .goal-scene line,body.light .goal-scene ellipse[fill="none"]{ stroke:rgba(255,255,255,.25); }
-    body.light #profile-screen{background:linear-gradient(rgba(230,234,250,.6),rgba(230,234,250,.6)),url('fifa-26.png') center/cover no-repeat;}
-    body.light .ps-profile-card,body.light .ps-pin-wrap,body.light .ps-create-wrap{background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+    body.light #profile-screen{background:linear-gradient(rgba(30,40,100,.72),rgba(30,40,100,.72)),url('fifa-26.png') center/cover no-repeat;}
+    body.light .ps-profile-card{background:#0d1128;}
+    body.light .ps-pin-wrap,body.light .ps-create-wrap{background:rgba(255,255,255,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+    body.light .ps-create-title,body.light .ps-pin-title{color:#1b1e2e;}
+    body.light .ps-input{color:#dde1f4;}
+    body.light .ps-input::placeholder{color:rgba(221,225,244,.5);}
     body.light .ps-key{background:#f0f2fb;border-color:#ced3ec;}
-    body.light .ps-pin-cancel{border-color:#ced3ec;}
+    body.light .ps-pin-cancel{border-color:#ced3ec;color:#dde1f4;}
     body.light .overlay{background:rgba(0,0,0,.55);}
     body.light .modal{background:#fff;}
     body.light .country-card{background:#fff;}
@@ -88,6 +92,8 @@
     .tab-btn{padding:7px 16px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-radius:8px;font-size:0.82rem;font-weight:500;white-space:nowrap;transition:all .2s;}
     .tab-btn:hover{background:var(--surface2);color:var(--text);}
     .tab-btn.active{background:var(--accent);color:#fff;}
+    .tab-btn.ebay-link{color:#e53e3e;text-decoration:none;}
+    .tab-btn.ebay-link:hover{background:rgba(229,62,62,.12);color:#e53e3e;}
 
     /* FILTERS */
     .filters{padding:10px 20px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
@@ -144,9 +150,9 @@
 
     /* ── PHOTO TOOLTIP AU SURVOL ─────────────────────────────────── */
     .card{overflow:visible;}
-    .c-photo-tip{display:none;position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);z-index:300;width:190px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.65);pointer-events:none;}
-    .c-photo-tip img{width:100%;height:auto;display:block;}
-    .c-photo-tip::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:var(--border);border-bottom:none;}
+    .c-photo-tip{display:none;position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);z-index:300;width:200px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.65);pointer-events:none;}
+    .c-photo-tip img{width:100%;height:auto;display:block;object-fit:contain;}
+    .c-photo-tip::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-bottom-color:var(--border);border-top:none;}
     .card.owned:hover .c-photo-tip{display:block;}
 
     /* ── MODAL DECK JOUEUR ────────────────────────────────────────── */
@@ -481,10 +487,32 @@
       .hero-stat-row{gap:14px;}
     }
 
+    /* ═══════════════ PROFILE CARD HOLO LAYERS ═══════════════ */
+    .ps-foil{
+      position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;
+      background:
+        repeating-linear-gradient(130deg,
+          rgba(255,0,80,0) 0%,rgba(255,0,80,0) 24%,
+          rgba(255,0,80,.45) 27%,rgba(255,160,0,.45) 31%,
+          rgba(240,255,0,.45) 35%,rgba(0,255,120,.45) 39%,
+          rgba(0,180,255,.45) 43%,rgba(160,0,255,.45) 47%,
+          rgba(255,0,80,0) 50%,rgba(255,0,80,0) 100%),
+        radial-gradient(ellipse at 50% 40%,rgba(255,255,255,.12) 0%,transparent 65%);
+      background-size:300% 300%,100% 100%;
+      mix-blend-mode:color-dodge;
+      opacity:.28;
+      animation:foil-idle 8s ease-in-out infinite alternate;
+    }
+    .ps-scanlines{
+      position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:6;
+      background:repeating-linear-gradient(
+        0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);
+    }
+
     /* ═══════════════ PROFILE SCREEN ═══════════════ */
     #profile-screen{
       position:fixed;inset:0;z-index:1000;
-      background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),url('fifa-26.png') center/cover no-repeat;
+      background:linear-gradient(rgba(0,0,0,.80),rgba(0,0,0,.80)),url('fifa-26.png') center/cover no-repeat;
       display:flex;align-items:center;justify-content:center;padding:20px;
       transition:opacity .35s ease;
     }
@@ -498,16 +526,28 @@
     .ps-section-title{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.65);align-self:flex-start;margin-bottom:6px;}
     .ps-profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;width:100%;}
     .ps-profile-card{
-      background:rgba(20,22,35,0.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-      border:1px solid rgba(79,142,247,.2);border-radius:18px;
+      background:#080c1a;
+      border:1px solid rgba(79,142,247,.3);border-radius:18px;
       padding:20px 12px;cursor:pointer;text-align:center;
       transition:transform .12s ease-out,box-shadow .12s ease-out,border-color .2s;
       display:flex;flex-direction:column;align-items:center;gap:9px;
       position:relative;overflow:hidden;
       transform-style:preserve-3d;will-change:transform;
-      box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.05);
+      box-shadow:0 4px 20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08);
     }
-    .ps-profile-card:hover{border-color:rgba(79,142,247,.55);}
+    .ps-profile-card::before{
+      content:'';position:absolute;inset:0;border-radius:inherit;
+      background:linear-gradient(125deg,
+        transparent 15%,
+        rgba(255,80,200,.14) 32%,
+        rgba(80,180,255,.18) 50%,
+        rgba(255,220,0,.14) 68%,
+        transparent 85%);
+      background-size:250% 250%;
+      animation:holo-rare 2.8s ease-in-out infinite alternate;
+      pointer-events:none;z-index:1;
+    }
+    .ps-profile-card:hover{border-color:rgba(79,142,247,.7);}
     .ps-profile-card.ps-new{border-style:dashed;border-color:rgba(46,213,115,.25);background:rgba(20,22,35,0.55);}
     .ps-profile-card.ps-new:hover{border-color:rgba(46,213,115,.6);box-shadow:0 8px 28px rgba(46,213,115,.15);}
     .ps-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#fff;flex-shrink:0;}
@@ -528,20 +568,22 @@
     .ps-key:hover{background:var(--accent);border-color:var(--accent);}
     .ps-key:active{transform:scale(.94);}
     .ps-key.ps-del{color:var(--muted);font-size:.82rem;}
-    .ps-pin-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:6px 18px;cursor:pointer;font-size:.74rem;transition:color .2s,border-color .2s;}
-    .ps-pin-cancel:hover{color:var(--text);border-color:var(--muted);}
     .ps-pin-err{font-size:.72rem;color:var(--limited-c);min-height:1em;text-align:center;}
 
     /* Create form */
-    .ps-create-wrap{width:100%;max-width:300px;background:rgba(14,16,26,0.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(79,142,247,.22);border-radius:22px;padding:26px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 16px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07);}
-    .ps-create-title{font-size:.9rem;font-weight:700;text-align:center;}
-    .ps-input{padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.83rem;outline:none;width:100%;}
-    .ps-input:focus{border-color:var(--accent);}
+    .ps-create-wrap{width:100%;max-width:300px;background:#080c1a;border:1px solid rgba(79,142,247,.3);border-radius:22px;padding:26px 20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 16px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);position:relative;overflow:hidden;transform-style:preserve-3d;will-change:transform;transition:transform .12s ease-out,box-shadow .12s ease-out;}
+    body.light .ps-create-wrap{background:#0d1128;}
+    .ps-create-title{font-size:.9rem;font-weight:700;text-align:center;position:relative;z-index:9;}
+    .ps-input{padding:10px 13px;background:rgba(29,32,51,.9);border:1px solid rgba(79,142,247,.3);border-radius:9px;color:var(--text);font-size:.83rem;outline:none;width:100%;position:relative;z-index:9;}
+    .ps-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,.2);}
     .ps-pin-row{display:flex;gap:6px;}
     .ps-pin-row .ps-input{text-align:center;letter-spacing:6px;font-size:1rem;font-weight:700;}
-    .ps-create-btn{padding:10px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .2s;}
+    .ps-create-btn{padding:10px;background:var(--accent);border:none;border-radius:9px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;transition:background .2s;position:relative;z-index:9;}
     .ps-create-btn:hover{background:#3a7ce8;}
-    .ps-create-err{font-size:.72rem;color:var(--limited-c);text-align:center;min-height:1em;}
+    .ps-create-err{font-size:.72rem;color:var(--limited-c);text-align:center;min-height:1em;position:relative;z-index:9;}
+    .ps-pin-cancel{background:transparent;border:1px solid rgba(79,142,247,.25);color:var(--muted);border-radius:7px;padding:6px 18px;cursor:pointer;font-size:.74rem;transition:color .2s,border-color .2s;position:relative;z-index:9;}
+    .ps-pin-cancel:hover{color:var(--text);border-color:var(--muted);}
+    .ps-photo-zone{position:relative;z-index:9;}
     .ps-migrate-notice{font-size:.71rem;color:var(--green);background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.18);border-radius:7px;padding:7px 10px;text-align:center;}
     /* Photo upload in create form */
     .ps-photo-zone{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0;}
@@ -626,48 +668,35 @@
   <div class="ps-inner">
     <div class="ps-logo">Gestion des doubles</div>
 
-    <!-- Liste des profils -->
-    <div id="ps-list">
-      <div class="ps-section-title" id="ps-section-lbl">Choisissez votre profil</div>
-      <div class="ps-profiles-grid" id="ps-profiles-grid"></div>
-    </div>
-
-    <!-- Saisie PIN -->
-    <div id="ps-pin" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;">
-      <div class="ps-pin-wrap">
-        <div class="ps-pin-title">Entrez votre PIN</div>
-        <div class="ps-pin-who" id="ps-pin-who"></div>
-        <div class="ps-pin-dots" id="ps-pin-dots">
-          <div class="ps-dot" id="pd0"></div><div class="ps-dot" id="pd1"></div>
-          <div class="ps-dot" id="pd2"></div><div class="ps-dot" id="pd3"></div>
+    <!-- Connexion -->
+    <div id="ps-login" style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;">
+      <div class="ps-create-wrap">
+        <div class="ps-create-title">Se connecter</div>
+        <input class="ps-input" id="ps-login-email" type="email" placeholder="Votre email" autocomplete="email"/>
+        <input class="ps-input" id="ps-login-pwd" type="password" placeholder="Mot de passe" autocomplete="current-password"/>
+        <button class="ps-create-btn" id="ps-login-submit">Se connecter</button>
+        <div class="ps-create-err" id="ps-login-err"></div>
+        <div style="display:flex;gap:8px;width:100%;justify-content:center;margin-top:4px;flex-wrap:wrap;">
+          <button class="ps-pin-cancel" id="ps-to-register">Créer un compte →</button>
+          <button class="ps-pin-cancel" id="ps-forgot-pwd">Mot de passe oublié</button>
         </div>
-        <div class="ps-pad" id="ps-pad">
-          <div class="ps-key" data-k="1">1</div><div class="ps-key" data-k="2">2</div><div class="ps-key" data-k="3">3</div>
-          <div class="ps-key" data-k="4">4</div><div class="ps-key" data-k="5">5</div><div class="ps-key" data-k="6">6</div>
-          <div class="ps-key" data-k="7">7</div><div class="ps-key" data-k="8">8</div><div class="ps-key" data-k="9">9</div>
-          <div class="ps-key ps-del" data-k="del">⌫</div><div class="ps-key" data-k="0">0</div><div class="ps-key ps-del" data-k="cancel" style="font-size:.7rem">✕</div>
-        </div>
-        <div class="ps-pin-err" id="ps-pin-err"></div>
       </div>
     </div>
 
-    <!-- Création de profil -->
+    <!-- Création de compte -->
     <div id="ps-create" style="display:none;flex-direction:column;align-items:center;gap:14px;width:100%;">
       <div class="ps-create-wrap">
-        <div class="ps-create-title">Nouveau profil</div>
-        <div id="ps-migrate-notice" class="ps-migrate-notice" style="display:none">
-          ✅ Collection existante détectée — elle sera importée dans ce profil
-        </div>
-        <input class="ps-input" id="ps-create-name" placeholder="Votre prénom ou pseudo" maxlength="20" autocomplete="off"/>
+        <div class="ps-create-title">Créer un compte</div>
+        <input class="ps-input" id="ps-create-name" placeholder="Prénom ou pseudo" maxlength="20" autocomplete="off"/>
         <div class="ps-photo-zone">
           <img id="ps-photo-preview" class="ps-photo-preview" alt="aperçu">
           <button type="button" class="ps-photo-btn" onclick="document.getElementById('ps-create-photo').click()">📷 Ajouter une photo (optionnel)</button>
           <input type="file" id="ps-create-photo" accept="image/*" style="display:none">
         </div>
-        <input class="ps-input" id="ps-create-email" type="email" placeholder="Email (optionnel — pour les échanges)" autocomplete="email"/>
-        <input class="ps-input ps-pin-row" id="ps-create-pin" type="password" placeholder="PIN (4 chiffres)" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
-        <input class="ps-input ps-pin-row" id="ps-create-pin2" type="password" placeholder="Confirmer PIN" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" autocomplete="new-password"/>
-        <button class="ps-create-btn" id="ps-create-submit">Créer le profil</button>
+        <input class="ps-input" id="ps-create-email" type="email" placeholder="Email" autocomplete="email"/>
+        <input class="ps-input" id="ps-create-pwd" type="password" placeholder="Mot de passe (6 car. min.)" autocomplete="new-password"/>
+        <input class="ps-input" id="ps-create-pwd2" type="password" placeholder="Confirmer le mot de passe" autocomplete="new-password"/>
+        <button class="ps-create-btn" id="ps-create-submit">Créer le compte</button>
         <div class="ps-create-err" id="ps-create-err"></div>
         <button class="ps-pin-cancel" id="ps-create-back">← Retour</button>
       </div>
@@ -705,6 +734,7 @@
   <button class="tab-btn" data-tab="collection">📋 Collection</button>
   <button class="tab-btn" data-tab="doubles">✌️ Mes Doubles</button>
   <button class="tab-btn" data-tab="settings">⚙️ Paramètres</button>
+  <a class="tab-btn ebay-link" href="https://www.ebay.fr/sch/i.html?_nkw=panini+coupe+du+monde+2026+vignettes" target="_blank" rel="noopener noreferrer">🛒 eBay</a>
 </nav>
 
 <div class="filters" id="filters-bar">
@@ -718,11 +748,6 @@
     <div class="home-hero">
       <div class="hero-particles" id="hero-particles"></div>
       <div class="hero-inner">
-        <div class="home-explorer">
-          <div class="exp-breadcrumb" id="exp-breadcrumb"></div>
-          <p class="exp-section-title" id="exp-section-title">Choisissez un type de carte</p>
-          <div id="exp-grid" class="exp-grid type-grid"></div>
-        </div>
         <div class="hero-blister">
           <div class="blister-wrapper">
             <div class="blister-card" id="blister-card">
@@ -730,7 +755,6 @@
               <div class="blister-scanlines"></div>
               <div class="blister-bottom-glow"></div>
               <div class="blister-top">
-                <span class="blister-badge">⚽ Starter Pack</span>
                 <span class="blister-year">2026</span>
               </div>
               <div class="blister-photo-wrap">
@@ -746,6 +770,11 @@
               <div class="blister-footer">⚽ FIFA WORLD CUP 2026™</div>
             </div>
           </div>
+        </div>
+        <div class="home-explorer">
+          <div class="exp-breadcrumb" id="exp-breadcrumb"></div>
+          <p class="exp-section-title" id="exp-section-title">Choisissez un type de carte</p>
+          <div id="exp-grid" class="exp-grid type-grid"></div>
         </div>
       </div>
     </div>
@@ -815,46 +844,13 @@
         </div>
       </div>
       <div class="setting-card" id="cloud-settings-card" style="grid-column:1/-1">
-        <h4>☁️ Sync Cloud</h4>
-        <p style="font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Sauvegardez vos données sur <strong>JSONBin.io</strong> (gratuit) pour y accéder depuis n'importe quel appareil. <a href="https://jsonbin.io" target="_blank" rel="noopener" style="color:var(--accent)">Créer un compte gratuit →</a></p>
-
-        <label class="cloud-label">Clé API Master Key</label>
-        <div class="cloud-key-row">
-          <input type="password" id="cloud-api-key" placeholder="$2b$10$XXXXXXXXXXXXXXXXXX…" autocomplete="off">
-          <button class="btn btn-primary btn-sm" id="btn-save-binkey">Sauver</button>
-        </div>
-
+        <h4>☁️ Sync Cloud (Firebase)</h4>
+        <p style="font-size:.73rem;color:var(--muted);margin-bottom:10px;line-height:1.5;">Vos données sont automatiquement synchronisées avec Firebase. Connectez-vous depuis n'importe quel appareil avec votre email pour retrouver votre collection.</p>
         <div class="cloud-status-row">
           <span style="color:var(--muted)">Statut :</span>
-          <span id="cloud-status-text" style="font-weight:600;color:var(--muted)">Non configuré</span>
+          <span id="cloud-status-text" style="font-weight:600;color:var(--muted)">Non connecté</span>
         </div>
-
-        <div id="cloud-binid-section" style="display:none;">
-          <hr class="cloud-sep">
-          <label class="cloud-label">Code de synchronisation <span style="color:var(--muted)">(à noter — permet de restaurer sur un autre appareil)</span></label>
-          <div class="cloud-bin-box" id="cloud-binid-display">—</div>
-          <div style="display:flex;gap:6px;margin-top:6px;">
-            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-copy-binid">📋 Copier le code</button>
-            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-force-sync">🔄 Synchroniser</button>
-          </div>
-        </div>
-
-        <div id="cloud-group-section" style="display:none;">
-          <hr class="cloud-sep">
-          <label class="cloud-label">Code de groupe <span style="color:var(--muted)">(à partager — permet à un autre navigateur de voir tous les profils)</span></label>
-          <div class="cloud-bin-box" id="cloud-group-display">—</div>
-          <div style="display:flex;gap:6px;margin-top:6px;">
-            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-copy-groupid">📋 Copier le code groupe</button>
-            <button class="btn btn-ghost btn-sm" style="flex:1" id="btn-push-group">🔄 Mettre à jour le groupe</button>
-          </div>
-        </div>
-
-        <hr class="cloud-sep">
-        <label class="cloud-label">Restaurer depuis un autre appareil</label>
-        <div class="cloud-restore-row">
-          <input type="text" id="cloud-restore-id" placeholder="Coller le code de sync ici…">
-          <button class="btn btn-primary btn-sm" id="btn-restore-cloud">Restaurer</button>
-        </div>
+        <div style="margin-top:10px;font-size:.73rem;color:var(--muted)" id="cloud-user-info"></div>
       </div>
 
       <div class="setting-card" id="ntfy-settings-card" style="grid-column:1/-1">
@@ -1713,7 +1709,7 @@ async function processTsdbQueue() {
       if (players.length) {
         const lc = lastName.toLowerCase();
         const hit = players.find(p => p.strPlayer.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(lc));
-        url = (hit || players[0]).strThumb || null;
+        url = hit ? (hit.strThumb || null) : null;
       }
     } catch {}
     PHOTO_CACHE[card.id] = url;
@@ -1746,11 +1742,8 @@ let state = {
 const CATALOG_VERSION = DEFAULT_CARDS.length; // 630
 
 // ─────────────────────────────────────────────────────────────────────
-// PROFILES
+// PROFILES (Firebase Auth + Firestore)
 // ─────────────────────────────────────────────────────────────────────
-const PROFILES_KEY = 'wc2026_profiles';
-const SESSION_KEY  = 'wc2026_active';
-
 const AVATAR_COLORS = [
   'linear-gradient(135deg,#4f8ef7,#b44fff)',
   'linear-gradient(135deg,#ff4757,#ff9f43)',
@@ -1768,19 +1761,11 @@ function avatarInitials(name) {
   return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
 let activeProfile = null;
+let _firestoreTimer = null;
 
-function getProfiles() {
-  try { return JSON.parse(localStorage.getItem(PROFILES_KEY)) || []; } catch { return []; }
-}
-function saveProfiles(profiles) {
-  localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
-}
+// Cache mémoire des autres collectionneurs (rechargé à chaque connexion)
+let _allUsersCache = [];
 
 function loadProfileData(profile) {
   state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
@@ -1791,86 +1776,54 @@ function loadProfileData(profile) {
 }
 
 function loadState() {
-  // Called only after a profile is activated — loadProfileData handles the real loading
-  if (activeProfile) {
-    loadProfileData(activeProfile);
-  } else {
-    state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
-  }
+  if (activeProfile) loadProfileData(activeProfile);
+  else state.cards = JSON.parse(JSON.stringify(DEFAULT_CARDS));
 }
 
 function saveState() {
-  if (!activeProfile) return;
-  const profiles = getProfiles();
-  const idx = profiles.findIndex(p => p.id === activeProfile.id);
-  if (idx === -1) return;
-  profiles[idx].collection = state.collection;
-  profiles[idx].wishlist   = state.wishlist;
-  profiles[idx].players    = state.players;
-  profiles[idx].values     = state.values;
-  saveProfiles(profiles);
-  activeProfile = profiles[idx];
-  cloudPush();
+  if (!activeProfile || !window.fbSaveUser) return;
+  activeProfile.collection = state.collection;
+  activeProfile.wishlist   = state.wishlist;
+  activeProfile.players    = state.players;
+  activeProfile.values     = state.values;
+  // Debounce Firestore writes (3s)
+  if (_firestoreTimer) clearTimeout(_firestoreTimer);
+  _firestoreTimer = setTimeout(async () => {
+    setCloudUI('syncing');
+    try {
+      await window.fbSaveUser(activeProfile.uid, {
+        collection: state.collection,
+        wishlist:   state.wishlist,
+        players:    state.players,
+        values:     state.values,
+      });
+      setCloudUI('ok');
+    } catch(e) {
+      console.warn('Firestore save error:', e);
+      setCloudUI('err');
+    }
+  }, 3000);
 }
 
-const ADMIN_NAME = 'Philippe';
-
-async function doLogin(profileId, pin) {
-  const profiles = getProfiles();
-  const profile = profiles.find(p => p.id === profileId);
-  if (!profile) return false;
-  if (!profile.pinHash) {
-    // Profil sans PIN (migration) : accepte le premier code saisi et le définit
-    profile.pinHash = await sha256(pin);
-    profiles[profiles.findIndex(p => p.id === profileId)] = profile;
-    saveProfiles(profiles);
-  }
-  const hash = await sha256(pin);
-  if (hash !== profile.pinHash) return false;
-  // Auto-marquer le profil admin si c'est Philippe
-  if (profile.name === ADMIN_NAME && !profile.isAdmin) {
-    profile.isAdmin = true;
-    profiles[profiles.findIndex(p => p.id === profileId)] = profile;
-    saveProfiles(profiles);
-  }
-  sessionStorage.setItem(SESSION_KEY, profileId);
-  activeProfile = profile;
-  loadProfileData(profile);
-  setTimeout(cloudPullOnLogin, 200); // pull cloud data after login (non-bloquant)
-  return true;
-}
-
-async function doCreateProfile(name, pin, email='', photo='') {
-  const profiles = getProfiles();
-  if (profiles.find(p => p.name.toLowerCase() === name.toLowerCase())) return 'duplicate';
-  const id = uid();
-  const pinHash = await sha256(pin);
-  const newProfile = { id, name, email, photo, pinHash, collection:{}, wishlist:[], players:[], values:{LIMITED:15,ICON:10,HERO:5,BASE:1} };
-  // Migration : si données legacy présentes et premier profil
-  if (profiles.length === 0) {
-    const legacy = localStorage.getItem('wc2026');
-    if (legacy) {
+async function lockProfile() {
+  // Vider le timer différé et sauvegarder immédiatement avant de déconnecter
+  if (_firestoreTimer) {
+    clearTimeout(_firestoreTimer);
+    _firestoreTimer = null;
+    if (activeProfile && window.fbSaveUser) {
       try {
-        const d = JSON.parse(legacy);
-        newProfile.collection = d.collection || {};
-        newProfile.wishlist   = d.wishlist   || [];
-        newProfile.players    = d.players    || [];
-        newProfile.values     = d.values     || newProfile.values;
-      } catch {}
+        await window.fbSaveUser(activeProfile.uid, {
+          collection: state.collection,
+          wishlist:   state.wishlist,
+          players:    state.players,
+          values:     state.values,
+        });
+      } catch(e) { /* ignore — déconnexion en cours */ }
     }
   }
-  profiles.push(newProfile);
-  saveProfiles(profiles);
-  sessionStorage.setItem(SESSION_KEY, id);
-  activeProfile = newProfile;
-  loadProfileData(newProfile);
-  sendNtfyNotif('🆕 Nouveau profil créé', `${name} vient de rejoindre Gestion des Doubles WC2026 !`, 'busts_in_silhouette,soccer');
-  return 'ok';
-}
-
-function lockProfile() {
-  sessionStorage.removeItem(SESSION_KEY);
+  if (window.fbSignOut) window.fbSignOut();
   activeProfile = null;
+  _allUsersCache = [];
   document.getElementById('profile-indicator').style.display = 'none';
   showProfileScreen();
 }
@@ -1887,17 +1840,23 @@ function updateProfileIndicator() {
     av.style.background = avatarColor(activeProfile.name);
     av.textContent = avatarInitials(activeProfile.name);
   }
-  nm.textContent  = activeProfile.name;
+  nm.textContent    = activeProfile.name;
   ind.style.display = 'flex';
+  // Cloud indicator status
+  setCloudUI('ok');
+  const info = document.getElementById('cloud-user-info');
+  if (info) info.textContent = `Connecté en tant que ${activeProfile.email}`;
+  const txt = document.getElementById('cloud-status-text');
+  if (txt) { txt.textContent = 'Synchronisé ✓'; txt.style.color = 'var(--green)'; }
 }
 
-// ─── Profile screen UI ────────────────────────────────────────────────
+// ─── Profile screen UI ───────────────────────────────────────────────
 function showProfileScreen() {
   document.body.classList.add('ps-open');
   const ps = document.getElementById('profile-screen');
   ps.style.display = '';
   ps.classList.remove('ps-hidden');
-  renderProfileList();
+  showLoginForm();
 }
 
 function hideProfileScreen() {
@@ -1909,133 +1868,121 @@ function hideProfileScreen() {
   }, 350);
 }
 
-function renderProfileList() {
-  document.getElementById('ps-list').style.display   = '';
-  document.getElementById('ps-pin').style.display    = 'none';
+function showLoginForm() {
+  document.getElementById('ps-login').style.display  = 'flex';
   document.getElementById('ps-create').style.display = 'none';
-  document.getElementById('ps-section-lbl').textContent = 'Choisissez votre profil';
-
-  const profiles = getProfiles();
-  const grid = document.getElementById('ps-profiles-grid');
-  grid.innerHTML = '';
-
-  profiles.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'ps-profile-card';
-    const avatarHtml = p.photo
-      ? `<img src="${p.photo}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:top center;border:2px solid rgba(79,142,247,.55);" alt="${p.name}">`
-      : `<div class="ps-avatar" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
-    card.innerHTML = `${avatarHtml}<div class="ps-pname">${p.name}</div>`;
-    card.addEventListener('click', () => showPinEntry(p.id));
-    grid.appendChild(card);
-    initProfileCardHolo(card);
-  });
-
-  // "+" card
-  const newCard = document.createElement('div');
-  newCard.className = 'ps-profile-card ps-new';
-  newCard.innerHTML = `<div class="ps-new-icon">＋</div><div class="ps-new-label">Nouveau profil</div>`;
-  newCard.addEventListener('click', showCreateForm);
-  grid.appendChild(newCard);
-}
-
-let pinTarget = null;
-let pinBuffer = '';
-
-function showPinEntry(profileId) {
-  pinTarget = profileId;
-  pinBuffer = '';
-  const profiles = getProfiles();
-  const p = profiles.find(x => x.id === profileId);
-  document.getElementById('ps-list').style.display   = 'none';
-  document.getElementById('ps-pin').style.display    = 'flex';
-  document.getElementById('ps-create').style.display = 'none';
-  document.getElementById('ps-pin-who').textContent = p ? p.name : '';
-  document.getElementById('ps-pin-err').textContent = '';
-  updatePinDots(false);
-}
-
-function updatePinDots(error) {
-  for (let i = 0; i < 4; i++) {
-    const dot = document.getElementById('pd' + i);
-    dot.className = 'ps-dot' + (error ? ' err' : (i < pinBuffer.length ? ' on' : ''));
-  }
-}
-
-async function pinKeyPress(k) {
-  if (k === 'cancel') { renderProfileList(); return; }
-  if (k === 'del') { pinBuffer = pinBuffer.slice(0, -1); updatePinDots(false); return; }
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += k;
-  updatePinDots(false);
-  if (pinBuffer.length === 4) {
-    const ok = await doLogin(pinTarget, pinBuffer);
-    if (ok) {
-      hideProfileScreen();
-      updateProfileIndicator();
-      renderAll();
-    } else {
-      updatePinDots(true);
-      document.getElementById('ps-pin-err').textContent = 'PIN incorrect — réessayez';
-      setTimeout(() => { pinBuffer = ''; updatePinDots(false); document.getElementById('ps-pin-err').textContent = ''; }, 900);
-    }
-  }
+  document.getElementById('ps-login-email').value = '';
+  document.getElementById('ps-login-pwd').value   = '';
+  document.getElementById('ps-login-err').textContent = '';
+  setTimeout(() => document.getElementById('ps-login-email').focus(), 50);
 }
 
 function showCreateForm() {
-  document.getElementById('ps-list').style.display   = 'none';
-  document.getElementById('ps-pin').style.display    = 'none';
+  document.getElementById('ps-login').style.display  = 'none';
   document.getElementById('ps-create').style.display = 'flex';
   document.getElementById('ps-create-name').value  = '';
   document.getElementById('ps-create-email').value = '';
-  document.getElementById('ps-create-pin').value   = '';
-  document.getElementById('ps-create-pin2').value  = '';
+  document.getElementById('ps-create-pwd').value   = '';
+  document.getElementById('ps-create-pwd2').value  = '';
   document.getElementById('ps-create-err').textContent = '';
   psCreatePhotoData = '';
   const prev = document.getElementById('ps-photo-preview');
   if (prev) { prev.src = ''; prev.style.display = 'none'; }
   const photoBtn = document.querySelector('.ps-photo-btn');
   if (photoBtn) photoBtn.textContent = '📷 Ajouter une photo (optionnel)';
-  // Wire photo input
   const photoInput = document.getElementById('ps-create-photo');
   if (photoInput) {
     photoInput.value = '';
     photoInput.onchange = function() {
       const file = this.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        psCreatePhotoData = e.target.result;
-        if (prev) { prev.src = psCreatePhotoData; prev.style.display = 'block'; }
+      resizePhoto(file, 80, dataUrl => {
+        psCreatePhotoData = dataUrl;
+        if (prev) { prev.src = dataUrl; prev.style.display = 'block'; }
         if (photoBtn) photoBtn.textContent = '📷 Changer la photo';
-      };
-      reader.readAsDataURL(file);
+      });
     };
   }
-  // Afficher notice de migration si données legacy présentes et aucun profil
-  const hasLegacy = !!localStorage.getItem('wc2026');
-  const noProfiles = getProfiles().length === 0;
-  document.getElementById('ps-migrate-notice').style.display = (hasLegacy && noProfiles) ? '' : 'none';
   setTimeout(() => document.getElementById('ps-create-name').focus(), 50);
+}
+
+function resizePhoto(file, size, cb) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2, sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+      cb(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 let psCreatePhotoData = '';
 
+async function submitLogin() {
+  const email = document.getElementById('ps-login-email').value.trim();
+  const pwd   = document.getElementById('ps-login-pwd').value;
+  const errEl = document.getElementById('ps-login-err');
+  errEl.textContent = '';
+  if (!email || !pwd) { errEl.textContent = 'Remplissez tous les champs'; return; }
+  errEl.textContent = 'Connexion…';
+  try {
+    await window.fbSignIn(email, pwd);
+    // onAuthStateChanged prend le relais
+  } catch(e) {
+    const msgs = { 'auth/invalid-credential':'Email ou mot de passe incorrect', 'auth/user-not-found':'Aucun compte avec cet email', 'auth/wrong-password':'Mot de passe incorrect', 'auth/too-many-requests':'Trop de tentatives — réessayez plus tard' };
+    errEl.textContent = msgs[e.code] || 'Erreur de connexion';
+  }
+}
+
 async function submitCreateProfile() {
   const name  = document.getElementById('ps-create-name').value.trim();
   const email = document.getElementById('ps-create-email').value.trim();
-  const pin   = document.getElementById('ps-create-pin').value.trim();
-  const pin2  = document.getElementById('ps-create-pin2').value.trim();
+  const pwd   = document.getElementById('ps-create-pwd').value;
+  const pwd2  = document.getElementById('ps-create-pwd2').value;
   const errEl = document.getElementById('ps-create-err');
   errEl.textContent = '';
-  if (!name) { errEl.textContent = 'Entrez un prénom ou pseudo'; return; }
-  if (!/^\d{4}$/.test(pin)) { errEl.textContent = 'Le PIN doit contenir exactement 4 chiffres'; return; }
-  if (pin !== pin2) { errEl.textContent = 'Les deux PIN ne correspondent pas'; return; }
-  const result = await doCreateProfile(name, pin, email, psCreatePhotoData);
-  if (result === 'duplicate') { errEl.textContent = 'Ce nom est déjà utilisé'; return; }
-  hideProfileScreen();
-  updateProfileIndicator();
-  renderAll();
+  if (!name)  { errEl.textContent = 'Entrez un prénom ou pseudo'; return; }
+  if (!email) { errEl.textContent = 'Entrez un email'; return; }
+  if (pwd.length < 6) { errEl.textContent = 'Le mot de passe doit contenir au moins 6 caractères'; return; }
+  if (pwd !== pwd2)   { errEl.textContent = 'Les mots de passe ne correspondent pas'; return; }
+  errEl.textContent = 'Création du compte…';
+  try {
+    const cred = await window.fbSignUp(email, pwd);
+    const uid  = cred.user.uid;
+    await window.fbSaveUser(uid, {
+      name, email,
+      photo: psCreatePhotoData || '',
+      isAdmin: email === 'laumondp@gmail.com',
+      collection: {}, wishlist: [], players: [],
+      values: { LIMITED:15, ICON:10, HERO:5, BASE:1 },
+      createdAt: new Date().toISOString(),
+    });
+    sendNtfyNotif('🆕 Nouveau compte créé', `${name} vient de rejoindre Gestion des Doubles WC2026 !`, 'busts_in_silhouette,soccer');
+    // onAuthStateChanged prend le relais
+  } catch(e) {
+    const msgs = { 'auth/email-already-in-use':'Cet email est déjà utilisé', 'auth/invalid-email':'Email invalide', 'auth/weak-password':'Mot de passe trop faible (6 car. min.)' };
+    errEl.textContent = msgs[e.code] || 'Erreur lors de la création';
+  }
+}
+
+async function sendForgotPassword() {
+  const email = document.getElementById('ps-login-email').value.trim();
+  const errEl = document.getElementById('ps-login-err');
+  if (!email) { errEl.textContent = 'Entrez votre email d\'abord'; return; }
+  try {
+    await window.fbResetPwd(email);
+    errEl.style.color = 'var(--green)';
+    errEl.textContent = 'Email de réinitialisation envoyé ✓';
+    setTimeout(() => { errEl.textContent = ''; errEl.style.color = ''; }, 4000);
+  } catch { errEl.textContent = 'Impossible d\'envoyer l\'email'; }
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -2566,23 +2513,7 @@ function animateCount(el, target, dur = 900, suffix = '') {
   requestAnimationFrame(tick);
 }
 
-function createParticles() {
-  const c = document.getElementById('hero-particles');
-  if (!c) return;
-  c.innerHTML = '';
-  const pool = ['⚽','⭐','💎','🌟','🏆','⚽','⭐','⚽','💎','⚽'];
-  for (let i = 0; i < 14; i++) {
-    const p = document.createElement('span');
-    p.className = 'particle';
-    p.textContent = pool[i % pool.length];
-    p.style.left = (3 + Math.random() * 94) + '%';
-    p.style.setProperty('--dur',   (7  + Math.random() * 9)  + 's');
-    p.style.setProperty('--delay', (-Math.random() * 14)     + 's');
-    p.style.setProperty('--drift', ((Math.random() - .5) * 80) + 'px');
-    p.style.fontSize = (.55 + Math.random() * .65) + 'rem';
-    c.appendChild(p);
-  }
-}
+function createParticles() {}
 
 function renderHomeHero() {
   const total   = state.cards.length;
@@ -2616,8 +2547,7 @@ function renderHomeHero() {
 function renderOtherCollectors() {
   const container = document.getElementById('other-collectors');
   if (!container) return;
-  const profiles = getProfiles();
-  const others = profiles.filter(p => !activeProfile || p.id !== activeProfile.id);
+  const others = _allUsersCache.filter(p => !activeProfile || p.uid !== activeProfile.uid);
   if (others.length === 0) { container.style.display = 'none'; return; }
   container.style.display = 'flex';
   container.innerHTML = '';
@@ -2638,15 +2568,14 @@ function renderOtherCollectors() {
       <div class="oc-name">${p.name}</div>
       <div class="oc-pct">${pct}% complété</div>
       <div class="oc-dbl-badge">${dblCount} double${dblCount !== 1 ? 's' : ''}</div>`;
-    card.addEventListener('click', () => showCollectorDoubles(p.id));
+    card.addEventListener('click', () => showCollectorDoubles(p.uid));
     initHoloCard(card);
     container.appendChild(card);
   });
 }
 
-function showCollectorDoubles(profileId) {
-  const profiles = getProfiles();
-  const p = profiles.find(x => x.id === profileId);
+function showCollectorDoubles(uid) {
+  const p = _allUsersCache.find(x => x.uid === uid);
   if (!p) return;
   const doubles = [];
   Object.entries(p.collection || {}).forEach(([cardId, qty]) => {
@@ -2750,7 +2679,7 @@ function _drawHoloFrame(ctx, w, h, mx, my, stars) {
   const fg = ctx.createLinearGradient(w * (.5 - my * .9), 0, w * (.5 + my * .9), h);
   const fw = 8;
   for (let i = 0; i <= fw; i++) {
-    fg.addColorStop(i / fw, `hsla(${(hb + i / fw * 360) % 360},100%,62%,${.55 + tilt * .3})`);
+    fg.addColorStop(i / fw, `hsla(${(hb + i / fw * 360) % 360},100%,65%,${.75 + tilt * .22})`);
   }
   ctx.fillStyle = fg;
   ctx.fillRect(0, 0, w, h);
@@ -2889,11 +2818,24 @@ function initHoloCard(card) {
 
 function initProfileCardHolo(card) {
   const seed = ++_holoSeed * 31337.9;
+
+  // Foil arc-en-ciel idle (comme blister-foil)
+  const foil = document.createElement('div');
+  foil.className = 'ps-foil';
+  card.appendChild(foil);
+
+  // Scanlines texture
+  const scanlines = document.createElement('div');
+  scanlines.className = 'ps-scanlines';
+  card.appendChild(scanlines);
+
+  // Canvas hologramme (survol/tactile)
   const canvas = document.createElement('canvas');
   canvas.className = 'holo-canvas';
   card.insertBefore(canvas, card.firstChild);
 
   let ctx = null, stars = null, dpr = 1, w = 0, h = 0;
+  let idleRaf = null, idleT = 0, isHovered = false;
 
   function ensureReady() {
     if (ctx) return;
@@ -2907,30 +2849,81 @@ function initProfileCardHolo(card) {
     stars = _buildStars(w, h, seed);
   }
 
-  card.addEventListener('mousemove', e => {
+  // Animation idle douce (tourne en continu comme la carte joueur)
+  function tickIdle() {
+    if (isHovered) return;
     ensureReady();
-    const r  = card.getBoundingClientRect();
-    const mx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-    const my = Math.max(0, Math.min(1, (e.clientY - r.top)  / r.height));
-    const rx = (my - .5) * -22;
-    const ry = (mx - .5) *  22;
+    idleT += 0.004;
+    const mx = .5 + Math.sin(idleT * 1.3) * .38;
+    const my = .5 + Math.cos(idleT)       * .28;
+    _drawHoloFrame(ctx, w, h, mx, my, stars);
+    canvas.style.opacity = '0.55';
+    foil.style.animationPlayState = 'running';
+    idleRaf = requestAnimationFrame(tickIdle);
+  }
+
+  function applyHolo(mx, my) {
+    ensureReady();
+    const rx = (my - .5) * -30;
+    const ry = (mx - .5) *  30;
     const hue1 = Math.round(mx * 360), hue2 = (hue1 + 150) % 360;
-    card.style.transform = `perspective(520px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.06)`;
+    card.style.transform = `perspective(520px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.08)`;
     card.style.boxShadow = [
-      `${(-ry * 1.2).toFixed(1)}px ${(rx * 1.2).toFixed(1)}px 40px rgba(0,0,0,.7)`,
-      `0 0 0 1.5px hsl(${hue1},100%,68%)`,
-      `0 0 30px hsl(${hue2},100%,55%,.45)`,
-      `0 0 60px hsl(${hue2},80%,45%,.18)`
+      `${(-ry * 1.5).toFixed(1)}px ${(rx * 1.5).toFixed(1)}px 60px rgba(0,0,0,.85)`,
+      `0 0 0 2px hsl(${hue1},100%,70%)`,
+      `0 0 45px hsl(${hue2},100%,58%,.6)`,
+      `0 0 90px hsl(${hue2},80%,48%,.25)`
     ].join(',');
     _drawHoloFrame(ctx, w, h, mx, my, stars);
     canvas.style.opacity = '1';
+    foil.style.animationPlayState = 'paused';
+  }
+
+  card.addEventListener('mouseenter', () => {
+    isHovered = true;
+    cancelAnimationFrame(idleRaf);
   });
 
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    applyHolo(
+      Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)),
+      Math.max(0, Math.min(1, (e.clientY - r.top)  / r.height))
+    );
+  });
+
+  card.addEventListener('touchmove', e => {
+    e.preventDefault();
+    isHovered = true;
+    cancelAnimationFrame(idleRaf);
+    const t = e.touches[0];
+    const r = card.getBoundingClientRect();
+    applyHolo(
+      Math.max(0, Math.min(1, (t.clientX - r.left) / r.width)),
+      Math.max(0, Math.min(1, (t.clientY - r.top)  / r.height))
+    );
+  }, { passive: false });
+
   card.addEventListener('mouseleave', () => {
+    isHovered = false;
     card.style.transform = '';
     card.style.boxShadow = '';
     canvas.style.opacity = '0';
+    tickIdle();
   });
+
+  card.addEventListener('touchend', () => {
+    isHovered = false;
+    setTimeout(() => {
+      card.style.transform = '';
+      card.style.boxShadow = '';
+      canvas.style.opacity = '0';
+      tickIdle();
+    }, 600);
+  });
+
+  // Démarre l'idle dès que la carte est visible
+  setTimeout(tickIdle, 120 + Math.random() * 400);
 }
 
 function quickAddFromInput() {
@@ -3142,210 +3135,23 @@ function switchTab(tab) {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// CLOUD SYNC (JSONBin.io)
+// CLOUD SYNC (Firebase Firestore — géré via saveState + module Firebase)
 // ─────────────────────────────────────────────────────────────────────
-const BINKEY_STORE = 'wc2026_binkey';
-const JSONBIN_URL  = 'https://api.jsonbin.io/v3/b';
-
-let cloudTimer = null;
-
-function getBinKey()        { return localStorage.getItem(BINKEY_STORE) || ''; }
-function setBinKey(k)       { localStorage.setItem(BINKEY_STORE, k.trim()); }
-
-const GROUP_STORE = 'wc2026_group';
-function getGroupId() { return localStorage.getItem(GROUP_STORE) || ''; }
-function setGroupId(id) { localStorage.setItem(GROUP_STORE, id); }
-
-function groupPayload() {
-  return {
-    profiles: getProfiles().map(({ id, name, email, pinHash, binId }) =>
-      ({ id, name, email: email||'', pinHash, binId: binId||null })),
-    updatedAt: new Date().toISOString()
-  };
-}
-
-async function pushGroupList() {
-  const key = getBinKey();
-  if (!key) return;
-  let groupId = getGroupId();
-  const body = JSON.stringify(groupPayload());
-  try {
-    if (!groupId) {
-      const r = await fetch(JSONBIN_URL, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'X-Master-Key':key, 'X-Bin-Name':'wc2026-group', 'X-Bin-Private':'true' },
-        body
-      });
-      if (!r.ok) return;
-      const d = await r.json();
-      setGroupId(d.metadata.id);
-    } else {
-      const r = await fetch(`${JSONBIN_URL}/${groupId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type':'application/json', 'X-Master-Key':key },
-        body
-      });
-      if (!r.ok) return;
-    }
-    renderCloudCard();
-  } catch(e) { console.warn('Group push error:', e); }
-}
-
-async function importGroupProfiles(groupId, apiKey) {
-  try {
-    const r = await fetch(`${JSONBIN_URL}/${groupId}/latest`, { headers: { 'X-Master-Key': apiKey } });
-    if (!r.ok) return false;
-    const d = await r.json();
-    const remoteProfiles = d.record?.profiles || [];
-    const local = getProfiles();
-    let changed = false;
-    for (const rp of remoteProfiles) {
-      const existing = local.find(p => p.name.toLowerCase() === rp.name.toLowerCase());
-      if (!existing) {
-        local.push({ id: rp.id||uid(), name:rp.name, email:rp.email||'', pinHash:rp.pinHash,
-          binId:rp.binId||null, collection:{}, wishlist:[], players:[],
-          values:{ LIMITED:15, ICON:10, HERO:5, BASE:1 } });
-        changed = true;
-      } else {
-        if (rp.binId && !existing.binId) { existing.binId = rp.binId; changed = true; }
-        if (rp.pinHash && !existing.pinHash) { existing.pinHash = rp.pinHash; changed = true; }
-      }
-    }
-    if (changed) saveProfiles(local);
-    return true;
-  } catch(e) { console.warn('Group import error:', e); return false; }
-}
-
-
-function cloudPayload() {
-  return { collection: state.collection, wishlist: state.wishlist, players: state.players, values: state.values, syncedAt: new Date().toISOString() };
-}
-
 function setCloudUI(status) {
-  // status: 'off' | 'syncing' | 'ok' | 'err'
   const ind = document.getElementById('cloud-ind');
-  const txt = document.getElementById('cloud-status-text');
   if (!ind) return;
   ind.className = `cloud-ind ${status}`;
-  const icons = { off:'☁', syncing:'↻', ok:'☁✓', err:'☁✗' };
-  const labels = { off:'Non configuré', syncing:'Synchronisation…', ok:'Synchronisé ✓', err:'Erreur de sync' };
+  const icons  = { off:'☁', syncing:'↻', ok:'☁✓', err:'☁✗' };
+  const labels = { off:'Non connecté', syncing:'Synchronisation…', ok:'Synchronisé ✓', err:'Erreur de sync' };
   const colors = { off:'var(--muted)', syncing:'var(--accent)', ok:'var(--green)', err:'var(--limited-c)' };
   ind.textContent = icons[status] || '☁';
   ind.title = labels[status] || '';
+  const txt = document.getElementById('cloud-status-text');
   if (txt) { txt.textContent = labels[status] || ''; txt.style.color = colors[status] || 'var(--muted)'; }
 }
 
-async function cloudPushNow() {
-  if (!activeProfile) return;
-  const key = getBinKey();
-  if (!key) { setCloudUI('off'); return; }
-  setCloudUI('syncing');
-  try {
-    const body = JSON.stringify(cloudPayload());
-    let binId = activeProfile.binId;
-    if (!binId) {
-      const r = await fetch(JSONBIN_URL, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'X-Master-Key': key, 'X-Bin-Name': `wc2026-${activeProfile.name}`, 'X-Bin-Private':'true' },
-        body
-      });
-      if (!r.ok) throw new Error(r.status);
-      const d = await r.json();
-      binId = d.metadata.id;
-      const profiles = getProfiles();
-      const idx = profiles.findIndex(p => p.id === activeProfile.id);
-      if (idx !== -1) { profiles[idx].binId = binId; saveProfiles(profiles); activeProfile = profiles[idx]; }
-      renderCloudCard();
-    } else {
-      const r = await fetch(`${JSONBIN_URL}/${binId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type':'application/json', 'X-Master-Key': key },
-        body
-      });
-      if (!r.ok) throw new Error(r.status);
-    }
-    setCloudUI('ok');
-    pushGroupList();
-  } catch(e) {
-    console.warn('Cloud sync error:', e);
-    setCloudUI('err');
-  }
-}
-
-function cloudPush() {
-  if (cloudTimer) clearTimeout(cloudTimer);
-  cloudTimer = setTimeout(cloudPushNow, 3000);
-}
-
-async function cloudFetch(binId) {
-  const key = getBinKey();
-  if (!key || !binId) return null;
-  try {
-    const r = await fetch(`${JSONBIN_URL}/${binId}/latest`, { headers: { 'X-Master-Key': key } });
-    if (!r.ok) return null;
-    const d = await r.json();
-    return d.record || null;
-  } catch { return null; }
-}
-
-async function cloudPullOnLogin() {
-  if (!activeProfile || !activeProfile.binId || !getBinKey()) return;
-  setCloudUI('syncing');
-  const data = await cloudFetch(activeProfile.binId);
-  if (!data) { setCloudUI('err'); return; }
-  if (data.collection) state.collection = data.collection;
-  if (data.wishlist)   state.wishlist   = data.wishlist;
-  if (data.players)    state.players    = data.players;
-  if (data.values)     state.values     = Object.assign(state.values, data.values);
-  setCloudUI('ok');
-  renderAll();
-}
-
-async function cloudRestore() {
-  const binId = document.getElementById('cloud-restore-id').value.trim();
-  if (!binId) { toast('Entrez un code de synchronisation', 'err'); return; }
-  if (!getBinKey()) { toast('Entrez d\'abord votre clé API cloud dans ce panneau', 'err'); return; }
-  if (!activeProfile) { toast('Connectez-vous d\'abord à un profil', 'err'); return; }
-  setCloudUI('syncing');
-  const data = await cloudFetch(binId);
-  if (!data) { setCloudUI('err'); toast('Code invalide ou clé API incorrecte', 'err'); return; }
-  if (data.collection) state.collection = data.collection;
-  if (data.wishlist)   state.wishlist   = data.wishlist;
-  if (data.players)    state.players    = data.players;
-  if (data.values)     state.values     = Object.assign(state.values, data.values);
-  const profiles = getProfiles();
-  const idx = profiles.findIndex(p => p.id === activeProfile.id);
-  if (idx !== -1) {
-    profiles[idx].binId = binId;
-    profiles[idx].collection = state.collection;
-    profiles[idx].wishlist   = state.wishlist;
-    profiles[idx].players    = state.players;
-    profiles[idx].values     = state.values;
-    saveProfiles(profiles);
-    activeProfile = profiles[idx];
-  }
-  document.getElementById('cloud-restore-id').value = '';
-  renderCloudCard();
-  renderAll();
-  setCloudUI('ok');
-  toast('Données restaurées depuis le cloud ✓');
-}
-
 function renderCloudCard() {
-  const keyInput = document.getElementById('cloud-api-key');
-  if (keyInput && !keyInput.value) keyInput.placeholder = getBinKey() ? '••••••••••••••••••• (clé enregistrée)' : '$2b$10$XXXXXXXXXXXXXXXXXX…';
-  const binId = activeProfile ? activeProfile.binId : null;
-  const section = document.getElementById('cloud-binid-section');
-  const display = document.getElementById('cloud-binid-display');
-  if (section) section.style.display = binId ? '' : 'none';
-  if (display) display.textContent = binId || '—';
-  const groupId = getGroupId();
-  const groupSection = document.getElementById('cloud-group-section');
-  const groupDisplay = document.getElementById('cloud-group-display');
-  if (groupSection) groupSection.style.display = groupId ? '' : 'none';
-  if (groupDisplay) groupDisplay.textContent = groupId || '—';
-  if (getBinKey()) setCloudUI(binId ? 'ok' : 'off');
-  else setCloudUI('off');
+  // Rien à rendre — l'état Firebase est affiché dans updateProfileIndicator
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -3369,49 +3175,45 @@ function toggleTheme() {
 // INIT
 // ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  // Masquer l'UI par défaut jusqu'à connexion
+  // Masquer l'UI par défaut jusqu'à que Firebase confirme l'état auth
   document.body.classList.add('ps-open');
-  // Apply saved theme immediately
   applyTheme(localStorage.getItem(THEME_KEY) === 'light');
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-  // Wiring up profile screen buttons
-  document.getElementById('ps-pad').addEventListener('click', e => {
-    const k = e.target.closest('.ps-key');
-    if (k) pinKeyPress(k.dataset.k);
-  });
-  document.getElementById('ps-create-submit').addEventListener('click', submitCreateProfile);
-  document.getElementById('ps-create-back').addEventListener('click', renderProfileList);
-  document.getElementById('ps-create-pin').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ps-create-pin2').focus(); });
-  document.getElementById('ps-create-pin2').addEventListener('keydown', e => { if (e.key === 'Enter') submitCreateProfile(); });
-  // Keyboard support for PIN pad
-  document.addEventListener('keydown', e => {
-    const ps = document.getElementById('profile-screen');
-    if (!ps || ps.classList.contains('ps-hidden') || ps.style.display === 'none') return;
-    const pinEl = document.getElementById('ps-pin');
-    if (!pinEl || pinEl.style.display === 'none') return;
-    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pinKeyPress(e.key); }
-    else if (e.key === 'Backspace') { e.preventDefault(); pinKeyPress('del'); }
-    else if (e.key === 'Escape') { e.preventDefault(); pinKeyPress('cancel'); }
-  });
 
-  // Check for active session
-  const sessionId = sessionStorage.getItem(SESSION_KEY);
-  if (sessionId) {
-    const profiles = getProfiles();
-    const p = profiles.find(x => x.id === sessionId);
-    if (p) {
-      activeProfile = p;
-      loadProfileData(p);
-      document.getElementById('profile-screen').style.display = 'none';
-      document.body.classList.remove('ps-open');
-      updateProfileIndicator();
-      setTimeout(cloudPullOnLogin, 300);
-    } else {
-      showProfileScreen();
+  // Callbacks appelés par le module Firebase
+  window._fbOnLogin = async (userData) => {
+    activeProfile = userData;
+    loadProfileData(activeProfile);
+    // Charger les autres collectionneurs en arrière-plan
+    if (window.fbGetAllUsers) {
+      window.fbGetAllUsers().then(all => {
+        _allUsersCache = all;
+        renderOtherCollectors();
+      }).catch(() => {});
     }
-  } else {
+    hideProfileScreen();
+    updateProfileIndicator();
+    renderAll();
+  };
+  window._fbOnLogout = () => {
+    activeProfile = null;
+    _allUsersCache = [];
     showProfileScreen();
-  }
+  };
+
+  // Hologramme 3D sur les cartes de connexion / création
+  document.querySelectorAll('.ps-create-wrap').forEach(card => initProfileCardHolo(card));
+
+  // Wiring écran de connexion
+  document.getElementById('ps-login-submit').addEventListener('click', submitLogin);
+  document.getElementById('ps-to-register').addEventListener('click', showCreateForm);
+  document.getElementById('ps-forgot-pwd').addEventListener('click', sendForgotPassword);
+  document.getElementById('ps-create-submit').addEventListener('click', submitCreateProfile);
+  document.getElementById('ps-create-back').addEventListener('click', showLoginForm);
+  document.getElementById('ps-login-email').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ps-login-pwd').focus(); });
+  document.getElementById('ps-login-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') submitLogin(); });
+  document.getElementById('ps-create-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('ps-create-pwd2').focus(); });
+  document.getElementById('ps-create-pwd2').addEventListener('keydown', e => { if (e.key === 'Enter') submitCreateProfile(); });
 
   createParticles();
 
@@ -3468,29 +3270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast('Notification test envoyée !');
   });
 
-  // Cloud sync
-  document.getElementById('btn-save-binkey').addEventListener('click', () => {
-    const v = document.getElementById('cloud-api-key').value.trim();
-    if (!v) { toast('Entrez une clé API', 'err'); return; }
-    setBinKey(v);
-    document.getElementById('cloud-api-key').value = '';
-    renderCloudCard();
-    toast('Clé API enregistrée');
-    if (activeProfile && !activeProfile.binId) cloudPushNow();
-  });
-  document.getElementById('btn-copy-binid').addEventListener('click', () => {
-    const id = activeProfile && activeProfile.binId;
-    if (!id) return;
-    navigator.clipboard.writeText(id).then(() => toast('Code copié ✓')).catch(() => toast('Copie impossible', 'err'));
-  });
-  document.getElementById('btn-force-sync').addEventListener('click', cloudPushNow);
-  document.getElementById('btn-restore-cloud').addEventListener('click', cloudRestore);
-  document.getElementById('btn-copy-groupid').addEventListener('click', () => {
-    const id = getGroupId();
-    if (!id) return;
-    navigator.clipboard.writeText(id).then(() => toast('Code groupe copié ✓')).catch(() => toast('Copie impossible', 'err'));
-  });
-  document.getElementById('btn-push-group').addEventListener('click', pushGroupList);
+  // Cloud sync (Firebase — pas de boutons manuels nécessaires)
 
   document.getElementById('btn-save-values').addEventListener('click', saveValues);
   document.getElementById('btn-export').addEventListener('click', exportData);
@@ -3527,6 +3307,71 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderSettings();
   renderAll();
+});
+</script>
+
+<!-- ══════════════════════════ FIREBASE MODULE ══════════════════════════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js';
+import { initializeFirestore, doc, setDoc, getDoc, collection, getDocs } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBSDNRDIiU6P8PqEzhRUtZouCT8Tku--SE",
+  authDomain: "wc2026-doubles.firebaseapp.com",
+  projectId: "wc2026-doubles",
+  storageBucket: "wc2026-doubles.firebasestorage.app",
+  messagingSenderId: "101154941099",
+  appId: "1:101154941099:web:1ead64bb899ec75e166fee"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = initializeFirestore(app, { ignoreUndefinedProperties: true });
+
+window.fbSignIn   = (email, pwd) => signInWithEmailAndPassword(auth, email, pwd);
+window.fbSignUp   = (email, pwd) => createUserWithEmailAndPassword(auth, email, pwd);
+window.fbSignOut  = ()           => signOut(auth);
+window.fbResetPwd = (email)      => sendPasswordResetEmail(auth, email);
+
+window.fbSaveUser = (uid, data) =>
+  setDoc(doc(db, 'users', uid), data, { merge: true });
+
+window.fbGetUser = async (uid) => {
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? { uid: snap.id, ...snap.data() } : null;
+};
+
+window.fbGetAllUsers = async () => {
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      let data = await window.fbGetUser(user.uid);
+      if (!data) {
+        // Compte Auth existant mais doc Firestore absent : créer un profil vide
+        const name = user.displayName || user.email.split('@')[0];
+        data = {
+          uid: user.uid, email: user.email, name,
+          photo: '', isAdmin: user.email === 'laumondp@gmail.com',
+          collection: {}, wishlist: [], players: [],
+          values: { LIMITED:15, ICON:10, HERO:5, BASE:1 },
+          createdAt: new Date().toISOString(),
+        };
+        await window.fbSaveUser(user.uid, data);
+      }
+      if (window._fbOnLogin) window._fbOnLogin(data);
+      else if (window._fbOnLogout) window._fbOnLogout();
+    } catch(e) {
+      console.warn('Firebase load error:', e);
+      if (window._fbOnLogout) window._fbOnLogout();
+    }
+  } else {
+    if (window._fbOnLogout) window._fbOnLogout();
+  }
 });
 </script>
 </body>
