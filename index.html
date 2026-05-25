@@ -660,6 +660,29 @@
     .setting-card .cloud-restore-row input{flex:1;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.78rem;font-family:monospace;outline:none;}
     .setting-card .cloud-restore-row input:focus{border-color:var(--accent);}
     .cloud-label{font-size:.73rem;color:var(--muted);display:block;margin-bottom:4px;}
+
+    /* RAPPORT DES DOUBLES */
+    .rpt-type-section{margin-bottom:14px;}
+    .rpt-type-hdr{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .rpt-row{display:flex;align-items:center;gap:8px;font-size:.75rem;padding:4px 8px;background:var(--surface2);border-radius:6px;margin-bottom:3px;}
+    .rpt-row-num{color:var(--muted);min-width:32px;font-variant-numeric:tabular-nums;}
+    .rpt-row-name{flex:1;}
+    .rpt-row-team{color:var(--muted);font-size:.68rem;}
+    .rpt-row-qty{background:var(--green);color:#000;border-radius:4px;padding:1px 6px;font-size:.67rem;font-weight:700;flex-shrink:0;}
+    .rpt-match-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+    .rpt-match-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+    .rpt-match-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,215,0,.4);}
+    .rpt-match-initials{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:900;color:#fff;flex-shrink:0;}
+    .rpt-match-badge{margin-left:auto;background:rgba(46,213,115,.15);color:var(--green);border:1px solid rgba(46,213,115,.3);border-radius:10px;padding:2px 8px;font-size:.67rem;font-weight:700;white-space:nowrap;}
+    .rpt-share-textarea{width:100%;height:180px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.72rem;font-family:monospace;padding:8px;outline:none;resize:vertical;}
+
+    @media print {
+      body > *:not(#modal-rapport) { display: none !important; }
+      #modal-rapport { position:static !important; background:none !important; padding:0 !important; }
+      #modal-rapport .modal { border:none !important; box-shadow:none !important; max-height:none !important; }
+      #modal-rapport .btn, #modal-rapport .deck-pill, #modal-rapport #rpt-partager, #modal-rapport #rpt-echanges { display:none !important; }
+      #modal-rapport #rpt-resume { display:block !important; }
+    }
   </style>
 </head>
 <body>
@@ -816,6 +839,7 @@
     <div class="sec-hdr">
       <span class="sec-title">Mes doubles</span>
       <span class="sec-info" id="dbl-count">0 doubles</span>
+      <button class="btn btn-ghost btn-sm" onclick="openDoublesReport()">📊 Rapport</button>
     </div>
     <div class="cards-grid" id="doubles-grid"></div>
   </div>
@@ -960,6 +984,24 @@
       </div>
     </div>
     <div class="cards-grid" id="deck-grid"></div>
+  </div>
+</div>
+
+<!-- MODAL: Rapport des doubles -->
+<div class="overlay" id="modal-rapport" onclick="if(event.target===this)closeModal('modal-rapport')">
+  <div class="modal" style="max-width:600px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap;">
+      <h2>📊 Rapport des doubles</h2>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-rapport')">✕ Fermer</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="deck-pill active" data-rpt="resume"   onclick="switchRptTab('resume')">Résumé</button>
+      <button class="deck-pill"        data-rpt="partager" onclick="switchRptTab('partager')">Partager</button>
+      <button class="deck-pill"        data-rpt="echanges" onclick="switchRptTab('echanges')">Échanges potentiels</button>
+    </div>
+    <div id="rpt-resume"></div>
+    <div id="rpt-partager" style="display:none"></div>
+    <div id="rpt-echanges" style="display:none"></div>
   </div>
 </div>
 
@@ -2139,6 +2181,168 @@ function renderDoubles() {
   dblCards.forEach(c => grid.appendChild(renderCard(c)));
 }
 
+// ─── RAPPORT DES DOUBLES ──────────────────────────────────────────────────────
+function openDoublesReport() {
+  buildRptResume();
+  buildRptPartager();
+  buildRptEchanges();
+  switchRptTab('resume');
+  document.getElementById('modal-rapport').classList.add('open');
+}
+
+function switchRptTab(tab) {
+  ['resume','partager','echanges'].forEach(t => {
+    document.getElementById('rpt-' + t).style.display = t === tab ? '' : 'none';
+    document.querySelector('[data-rpt="' + t + '"]').classList.toggle('active', t === tab);
+  });
+}
+
+function buildRptResume() {
+  const TYPE_ORDER  = ['LIMITED','ICON','HERO','OR','BASE'];
+  const TYPE_COLOR  = {LIMITED:'var(--limited-c)',ICON:'var(--icon-c)',HERO:'var(--hero-c)',OR:'var(--or-c)',BASE:'var(--base-c)'};
+  const TYPE_LABEL  = {LIMITED:"Ballon d'Or",ICON:'ICON',HERO:'Fan Favourite',OR:'OR',BASE:'Base'};
+  const allDbl = state.cards.filter(c => getDoubles(c.id) > 0);
+  const total      = allDbl.length;
+  const totalExtra = allDbl.reduce((s,c) => s + getDoubles(c.id), 0);
+  const totalPts   = allDbl.reduce((s,c) => s + getDoubles(c.id) * cardValue(c), 0);
+
+  let sectionsHtml = '';
+  TYPE_ORDER.forEach(type => {
+    const cards = allDbl.filter(c => c.type === type).sort((a,b) => a.num - b.num);
+    if (!cards.length) return;
+    const typeDbl = cards.reduce((s,c) => s + getDoubles(c.id), 0);
+    sectionsHtml += `<div class="rpt-type-section">
+      <div class="rpt-type-hdr" style="color:${TYPE_COLOR[type]}">${TYPE_LABEL[type]} — ${cards.length} carte${cards.length>1?'s':''} · ${typeDbl} exemplaire${typeDbl>1?'s':''}</div>
+      ${cards.map(c => {
+        const dbl = getDoubles(c.id);
+        return `<div class="rpt-row">
+          <span class="rpt-row-num">#${c.num}</span>
+          <span class="rpt-row-name">${c.name}</span>
+          <span class="rpt-row-team">${c.team}</span>
+          <span class="rpt-row-qty">×${dbl}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  });
+
+  document.getElementById('rpt-resume').innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <div class="sum-card" style="flex:1;min-width:90px"><div class="sv" style="color:var(--green)">${total}</div><div class="sl">Cartes en double</div></div>
+      <div class="sum-card" style="flex:1;min-width:90px"><div class="sv" style="color:var(--accent)">${totalExtra}</div><div class="sl">Exemplaires dispo</div></div>
+      <div class="sum-card" style="flex:1;min-width:90px"><div class="sv" style="color:var(--or-c)">${totalPts}</div><div class="sl">Valeur totale pts</div></div>
+    </div>
+    ${sectionsHtml || '<div class="empty" style="padding:20px 0"><p>Aucun double pour l\'instant</p></div>'}
+    ${total > 0 ? '<button class="btn btn-ghost btn-sm" style="margin-top:4px" onclick="window.print()">🖨️ Imprimer</button>' : ''}
+  `;
+}
+
+function buildRptPartager() {
+  const TYPE_ORDER = ['LIMITED','ICON','HERO','OR','BASE'];
+  const TYPE_LABEL = {LIMITED:"Ballon d'Or",ICON:'ICON',HERO:'Fan Favourite',OR:'OR',BASE:'Base'};
+  const allDbl = state.cards.filter(c => getDoubles(c.id) > 0).sort((a,b) => a.num - b.num);
+
+  const lines = ['🃏 Mes doubles WC 2026 — ' + new Date().toLocaleDateString('fr-FR'), ''];
+  TYPE_ORDER.forEach(type => {
+    const cards = allDbl.filter(c => c.type === type);
+    if (!cards.length) return;
+    lines.push('[' + TYPE_LABEL[type] + ']');
+    cards.forEach(c => {
+      const dbl = getDoubles(c.id);
+      lines.push('  #' + c.num + ' ' + c.name + ' (' + c.team + ')' + (dbl > 1 ? ' ×' + dbl : ''));
+    });
+    lines.push('');
+  });
+  const text = lines.join('\n').trim();
+
+  const csvLines = ['Numéro,Nom,Équipe,Type,Exemplaires en double'];
+  allDbl.forEach(c => csvLines.push(c.num + ',"' + c.name + '","' + c.team + '",' + c.type + ',' + getDoubles(c.id)));
+  window._rptCsv = csvLines.join('\n');
+
+  document.getElementById('rpt-partager').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Texte à partager</div>
+      <textarea id="rpt-txt" class="rpt-share-textarea" readonly>${text}</textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:6px"
+        onclick="navigator.clipboard.writeText(document.getElementById('rpt-txt').value).then(()=>toast('Copié !','ok'))">
+        📋 Copier dans le presse-papier
+      </button>
+    </div>
+    <div>
+      <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Export CSV</div>
+      <button class="btn btn-ghost btn-sm" onclick="downloadRptCsv()">⬇️ Télécharger CSV</button>
+    </div>
+  `;
+}
+
+function downloadRptCsv() {
+  const blob = new Blob([window._rptCsv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'doubles-wc2026-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function buildRptEchanges() {
+  const myDblIds = new Set(state.cards.filter(c => getDoubles(c.id) > 0).map(c => c.id));
+  const others   = _allUsersCache.filter(p => !activeProfile || p.uid !== activeProfile.uid);
+
+  if (!others.length) {
+    document.getElementById('rpt-echanges').innerHTML =
+      '<div class="empty" style="padding:20px 0"><p>Aucun autre collectionneur connecté</p></div>';
+    return;
+  }
+
+  let matchCount = 0;
+  let html = '';
+
+  others.forEach(p => {
+    const matches = (p.wishlist || []).filter(id => myDblIds.has(id));
+    if (!matches.length) return;
+    matchCount++;
+
+    const avatarHtml = p.photo
+      ? `<img class="rpt-match-avatar" src="${p.photo}" alt="${p.name}">`
+      : `<div class="rpt-match-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
+
+    const cardsHtml = matches.map(id => {
+      const card = state.cards.find(c => c.id === id);
+      if (!card) return '';
+      return `<div class="rpt-row">
+        <span class="tag tag-${card.type}" style="font-size:.57rem;padding:1px 4px;flex-shrink:0">${card.type}</span>
+        <span class="rpt-row-num">#${card.num}</span>
+        <span class="rpt-row-name">${card.name}</span>
+        <span class="rpt-row-team">${card.team}</span>
+      </div>`;
+    }).join('');
+
+    html += `<div class="rpt-match-card">
+      <div class="rpt-match-hdr">
+        ${avatarHtml}
+        <div>
+          <div style="font-size:.82rem;font-weight:700">${p.name}</div>
+          <div style="font-size:.65rem;color:var(--muted)">${matches.length} carte${matches.length>1?'s':''} recherchée${matches.length>1?'s':''}</div>
+        </div>
+        <span class="rpt-match-badge">match ×${matches.length}</span>
+      </div>
+      <div>${cardsHtml}</div>
+      ${p.contact ? `<div style="margin-top:8px;font-size:.68rem;color:var(--muted)">📞 ${p.contact}</div>` : ''}
+    </div>`;
+  });
+
+  if (!matchCount) {
+    html = '<div class="empty" style="padding:20px 0"><p>Aucun match trouvé pour l\'instant</p></div>';
+  }
+
+  document.getElementById('rpt-echanges').innerHTML = `
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px">
+      ${matchCount} collecteur${matchCount>1?'s':''} cherche${matchCount>1?'nt':''} au moins une de tes cartes en double.
+    </div>
+    ${html}
+  `;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function renderDeckView() {
   if (!deckPlayer) return;
