@@ -142,7 +142,8 @@
     .c-dbl{position:absolute;top:5px;left:5px;background:var(--green);color:#000;font-size:.58rem;font-weight:700;padding:2px 5px;border-radius:4px;}
     .c-wish{position:absolute;top:5px;left:5px;background:var(--accent);color:#fff;font-size:.58rem;font-weight:700;padding:2px 5px;border-radius:4px;}
 
-    .c-num{font-size:.6rem;color:var(--muted);margin-bottom:3px;}
+    .c-num{font-size:.6rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:3px;}
+    .c-dbl-badge{background:var(--green);color:#000;font-size:.52rem;font-weight:700;padding:1px 4px;border-radius:3px;line-height:1.4;}
     .c-flag{line-height:1;margin-bottom:4px;height:30px;display:flex;align-items:center;justify-content:flex-start;}
     .c-flag img{width:30px;height:auto;border-radius:2px;display:block;}
     .c-name{font-size:.72rem;font-weight:600;line-height:1.2;margin-bottom:4px;}
@@ -2038,8 +2039,7 @@ function renderCard(card, options = {}) {
   div.dataset.id = card.id;
 
   let badges = `<span class="c-type ct-${card.type}">${card.type}</span>`;
-  if (dbl > 0) badges += `<span class="c-dbl">+${dbl}</span>`;
-  else if (wished && !readOnly) badges += `<span class="c-wish">★</span>`;
+  if (wished && !readOnly) badges += `<span class="c-wish">★</span>`;
   else if (wished && readOnly)  badges += `<span class="c-wish">🔍</span>`;
 
   const showVal = card.type !== 'BASE';
@@ -2051,7 +2051,7 @@ function renderCard(card, options = {}) {
   div.innerHTML = `
     ${photoSection}
     ${badges}
-    <div class="c-num">${card.num}</div>
+    <div class="c-num">${card.num}${dbl > 0 ? `<span class="c-dbl-badge">+${dbl}</span>` : ''}</div>
     <div class="c-flag" title="${card.team}">${getFlagImg(card.cc)}</div>
     <div class="c-name">${card.name}</div>
     ${showVal ? `<div class="c-val">⭐ ${val} pt${val>1?'s':''}</div>` : ''}
