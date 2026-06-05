@@ -106,6 +106,7 @@
     .fbtn.active[data-f="OR"]{background:var(--or-c);border-color:var(--or-c);color:#000;}
     .fbtn.active[data-f="BASE"]{background:var(--base-c);border-color:var(--base-c);color:#fff;}
     .fbtn.active[data-f="MISSING"]{background:var(--accent);border-color:var(--accent);color:#fff;}
+    body.filter-missing .card.not-owned{opacity:1;}
     .search-box{padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:0.78rem;outline:none;min-width:160px;}
     .search-box:focus{border-color:var(--accent);}
     .filter-sep{color:var(--border);font-size:1.2rem;}
@@ -3491,6 +3492,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.querySelectorAll('.fbtn').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
       filterType = b.dataset.f;
+      document.body.classList.toggle('filter-missing', filterType === 'MISSING');
       renderAll();
     });
   });
