@@ -2285,8 +2285,9 @@ function downloadRptCsv() {
 }
 
 function buildRptEchanges() {
-  const myDblIds = new Set(state.cards.filter(c => getDoubles(c.id) > 0).map(c => c.id));
-  const others   = _allUsersCache.filter(p => !activeProfile || p.uid !== activeProfile.uid);
+  const myDblIds  = new Set(state.cards.filter(c => getDoubles(c.id) > 0).map(c => c.id));
+  const myWishIds = new Set(state.wishlist);
+  const others    = _allUsersCache.filter(p => !activeProfile || p.uid !== activeProfile.uid);
 
   if (!others.length) {
     document.getElementById('rpt-echanges').innerHTML =
@@ -2294,18 +2295,16 @@ function buildRptEchanges() {
     return;
   }
 
+  // Section 1 : collectionneurs qui veulent tes doubles
   let matchCount = 0;
-  let html = '';
-
+  let htmlGive = '';
   others.forEach(p => {
     const matches = (p.wishlist || []).filter(id => myDblIds.has(id));
     if (!matches.length) return;
     matchCount++;
-
     const avatarHtml = p.photo
       ? `<img class="rpt-match-avatar" src="${p.photo}" alt="${p.name}">`
       : `<div class="rpt-match-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
-
     const cardsHtml = matches.map(id => {
       const card = state.cards.find(c => c.id === id);
       if (!card) return '';
@@ -2316,8 +2315,7 @@ function buildRptEchanges() {
         <span class="rpt-row-team">${card.team}</span>
       </div>`;
     }).join('');
-
-    html += `<div class="rpt-match-card">
+    htmlGive += `<div class="rpt-match-card">
       <div class="rpt-match-hdr">
         ${avatarHtml}
         <div>
@@ -2330,16 +2328,62 @@ function buildRptEchanges() {
       ${p.contact ? `<div style="margin-top:8px;font-size:.68rem;color:var(--muted)">📞 ${p.contact}</div>` : ''}
     </div>`;
   });
-
   if (!matchCount) {
-    html = '<div class="empty" style="padding:20px 0"><p>Aucun match trouvé pour l\'instant</p></div>';
+    htmlGive = '<div class="empty" style="padding:12px 0"><p>Aucun match trouvé pour l\'instant</p></div>';
+  }
+
+  // Section 2 : collectionneurs qui ont en double les cartes que tu recherches
+  let matchCount2 = 0;
+  let htmlGet = '';
+  others.forEach(p => {
+    const matches = state.wishlist.filter(id => (p.collection?.[id] || 0) >= 2);
+    if (!matches.length) return;
+    matchCount2++;
+    const avatarHtml = p.photo
+      ? `<img class="rpt-match-avatar" src="${p.photo}" alt="${p.name}">`
+      : `<div class="rpt-match-initials" style="background:${avatarColor(p.name)}">${avatarInitials(p.name)}</div>`;
+    const cardsHtml = matches.map(id => {
+      const card = state.cards.find(c => c.id === id);
+      if (!card) return '';
+      return `<div class="rpt-row">
+        <span class="tag tag-${card.type}" style="font-size:.57rem;padding:1px 4px;flex-shrink:0">${card.type}</span>
+        <span class="rpt-row-num">#${card.num}</span>
+        <span class="rpt-row-name">${card.name}</span>
+        <span class="rpt-row-team">${card.team}</span>
+      </div>`;
+    }).join('');
+    htmlGet += `<div class="rpt-match-card">
+      <div class="rpt-match-hdr">
+        ${avatarHtml}
+        <div>
+          <div style="font-size:.82rem;font-weight:700">${p.name}</div>
+          <div style="font-size:.65rem;color:var(--muted)">${matches.length} carte${matches.length>1?'s':''} disponible${matches.length>1?'s':''}</div>
+        </div>
+        <span class="rpt-match-badge" style="background:rgba(79,142,247,.15);color:var(--accent);border-color:rgba(79,142,247,.3)">à recevoir ×${matches.length}</span>
+      </div>
+      <div>${cardsHtml}</div>
+      ${p.contact ? `<div style="margin-top:8px;font-size:.68rem;color:var(--muted)">📞 ${p.contact}</div>` : ''}
+    </div>`;
+  });
+  if (!matchCount2) {
+    htmlGet = '<div class="empty" style="padding:12px 0"><p>Aucun collectionneur ne dispose de tes cartes recherchées en double</p></div>';
   }
 
   document.getElementById('rpt-echanges').innerHTML = `
-    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px">
-      ${matchCount} collecteur${matchCount>1?'s':''} cherche${matchCount>1?'nt':''} au moins une de tes cartes en double.
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green);margin-bottom:6px">
+      Tu peux donner — ${matchCount} collectionneur${matchCount>1?'s':''}
     </div>
-    ${html}
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">
+      Ils cherchent une de tes cartes en double.
+    </div>
+    ${htmlGive}
+    <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-top:20px;margin-bottom:6px">
+      Tu peux recevoir — ${matchCount2} collectionneur${matchCount2>1?'s':''}
+    </div>
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px">
+      Ils ont en double une carte que tu recherches.
+    </div>
+    ${htmlGet}
   `;
 }
 // ─────────────────────────────────────────────────────────────────────────────
