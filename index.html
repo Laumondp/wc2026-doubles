@@ -3552,6 +3552,7 @@ window.fbGetAllUsers = async () => {
 };
 
 window._setState = (patch) => { Object.assign(state, patch); saveState(); renderAll(); };
+window._setWishlist = () => { state.wishlist = ['C3','C5','C6','C9','C19','C23','C24','C28','C47','C56','C58','C70','C71','C82','C105','C131','C178','C180','C190','C204','C239','C275','C319','C334','C454','C455','C467','C491','C517','C519','C528','C546','C559','C574','C583','C600','C604','C628','C629','C630']; saveState(); renderAll(); return 'Wishlist: ' + state.wishlist.length + ' cartes'; };
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
