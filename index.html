@@ -3551,6 +3551,8 @@ window.fbGetAllUsers = async () => {
   return snap.docs.map(d => ({ uid: d.id, ...d.data() }));
 };
 
+window._setState = (patch) => { Object.assign(state, patch); saveState(); renderAll(); };
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
