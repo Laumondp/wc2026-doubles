@@ -105,6 +105,7 @@
     .fbtn.active[data-f="LIMITED"]{background:var(--limited-c);border-color:var(--limited-c);color:#fff;}
     .fbtn.active[data-f="OR"]{background:var(--or-c);border-color:var(--or-c);color:#000;}
     .fbtn.active[data-f="BASE"]{background:var(--base-c);border-color:var(--base-c);color:#fff;}
+    .fbtn.active[data-f="MISSING"]{background:var(--accent);border-color:var(--accent);color:#fff;}
     .search-box{padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:0.78rem;outline:none;min-width:160px;}
     .search-box:focus{border-color:var(--accent);}
     .filter-sep{color:var(--border);font-size:1.2rem;}
@@ -829,6 +830,14 @@
         <button class="btn btn-ghost btn-sm" id="btn-add-card">+ Ajouter une carte</button>
         <button class="btn btn-ghost btn-sm" id="btn-reset-collection">Réinitialiser</button>
       </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;padding:8px 20px 4px;">
+      <button class="fbtn active" data-f="ALL">Toutes</button>
+      <button class="fbtn" data-f="MISSING">★ Manquantes</button>
+      <button class="fbtn" data-f="LIMITED">Limited</button>
+      <button class="fbtn" data-f="ICON">ICON</button>
+      <button class="fbtn" data-f="HERO">HERO</button>
+      <button class="fbtn" data-f="BASE">Base</button>
     </div>
     <div class="cards-grid" id="collection-grid"></div>
   </div>
@@ -2047,7 +2056,9 @@ function getMyDoubleIds() {
 
 function getFilteredCards() {
   return state.cards.filter(c => {
-    if (filterType !== 'ALL' && c.type !== filterType) return false;
+    if (filterType === 'MISSING') {
+      if (getQty(c.id) > 0) return false;
+    } else if (filterType !== 'ALL' && c.type !== filterType) return false;
     if (searchQ) {
       const q = searchQ.toLowerCase();
       return c.name.toLowerCase().includes(q) || c.team.toLowerCase().includes(q) || c.num.toLowerCase().includes(q);
